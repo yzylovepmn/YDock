@@ -1,0 +1,54 @@
+﻿<Window x:Class="YDockTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:YDockTest"
+        xmlns:ydock="clr-namespace:YDock;assembly=YDock"
+        xmlns:ydockmodel="clr-namespace:YDock.Model;assembly=YDock"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <!--<Grid x:Name="GD" MouseMove="OnMouseMove" MouseLeftButtonDown="OnMouseLeftButtonDown" MouseLeftButtonUp="OnMouseLeftButtonUp">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="1" Height="20" Width="80" Text="aaa"/>
+    </Grid>-->
+    <DockPanel>
+        <ydock:YDock>
+            <ydockmodel:YDockRoot>
+                <ydockmodel:RootGird/>
+                <ydockmodel:YDockRoot.LeftSide>
+                    <ydockmodel:YDockSide>
+                        <ydockmodel:LayoutElement Title="我是"/>
+                        <ydockmodel:LayoutElement Title="一只"/>
+                        <ydockmodel:LayoutElement Title="憨憨彭"/>
+                    </ydockmodel:YDockSide>
+                </ydockmodel:YDockRoot.LeftSide>
+                <ydockmodel:YDockRoot.RightSide>
+                    <ydockmodel:YDockSide>
+                        <ydockmodel:LayoutElement Title="我是"/>
+                        <ydockmodel:LayoutElement Title="一只"/>
+                        <ydockmodel:LayoutElement Title="憨憨彭"/>
+                    </ydockmodel:YDockSide>
+                </ydockmodel:YDockRoot.RightSide>
+                <ydockmodel:YDockRoot.TopSide>
+                    <ydockmodel:YDockSide>
+                        <ydockmodel:LayoutElement Title="我是"/>
+                        <ydockmodel:LayoutElement Title="一只"/>
+                        <ydockmodel:LayoutElement Title="憨憨彭"/>
+                    </ydockmodel:YDockSide>
+                </ydockmodel:YDockRoot.TopSide>
+                <ydockmodel:YDockRoot.BottomSide>
+                    <ydockmodel:YDockSide>
+                        <ydockmodel:LayoutElement Title="我是"/>
+                        <ydockmodel:LayoutElement Title="一只"/>
+                        <ydockmodel:LayoutElement Title="憨憨彭"/>
+                    </ydockmodel:YDockSide>
+                </ydockmodel:YDockRoot.BottomSide>
+            </ydockmodel:YDockRoot>
+        </ydock:YDock>
+    </DockPanel>
+</Window>
