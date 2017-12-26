@@ -5,12 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Media;
 using YDock.Interface;
 using YDock.Model;
 
 namespace YDock.View
 {
-    public class YDockSideControl : Control, IView
+    public class YDockSideControl : ItemsControl, IView
     {
         static YDockSideControl()
         {
@@ -22,15 +24,21 @@ namespace YDock.View
         {
             Model = model;
 
-            _CreateViewChildren();
+            SetBinding(ItemsSourceProperty, new Binding("Model.Children") { Source = this });
 
-            ((YDockSide)Model).Children.CollectionChanged += Children_CollectionChanged;
+            var transform = new RotateTransform();
+            switch (Model.Side)
+            {
+                case Enum.DockSide.Left:
+                    transform.Angle = 270;
+                    break;
+                case Enum.DockSide.Right:
+                    transform.Angle = 90;
+                    break;
+            }
+            LayoutTransform = transform;
         }
 
-        private void Children_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            
-        }
 
         private IAnchorModel _model;
         public IAnchorModel Model
@@ -38,8 +46,12 @@ namespace YDock.View
             get { return _model; }
             set
             {
+                if (_model != null) _model.View = null;
                 if (_model != value)
+                {
                     _model = value;
+                    _model.View = this;
+                }
             }
         }
 
@@ -49,21 +61,20 @@ namespace YDock.View
             {
                 return _model;
             }
+            set
+            {
+                if (_model != null) _model.View = null;
+                if (_model != value)
+                {
+                    _model = (IAnchorModel)value;
+                    _model.View = this;
+                }
+            }
         }
 
-        ObservableCollection<DocumentHeaderControl> _childViews = new ObservableCollection<DocumentHeaderControl>();
-
-        public ObservableCollection<DocumentHeaderControl> Children
+        protected override DependencyObject GetContainerForItemOverride()
         {
-            get { return _childViews; }
-        }
-
-        private void _CreateViewChildren()
-        {
-            if (Model == null) return;
-            YDockSide dockSide = Model as YDockSide;
-            foreach (var child in dockSide.Children)
-                Children.Add(new DocumentHeaderControl(child));
+            return new DockSideItemControl();
         }
     }
 }

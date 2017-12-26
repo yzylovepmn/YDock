@@ -17,9 +17,52 @@
         <TextBlock Grid.Row="1" Height="20" Width="80" Text="aaa"/>
     </Grid>-->
     <DockPanel>
-        <ydock:YDock>
+        <ydock:YDock x:Name="DockManager">
             <ydockmodel:YDockRoot>
-                <ydockmodel:RootGird/>
+                <ydockmodel:RootGird>
+                    <ydockmodel:LayoutElement Title="憨憨彭憨憨彭憨憨彭">
+                        <ydockmodel:LayoutElement.Content>
+                            <Border>
+                                <TextBlock Text="在哪里"/>
+                            </Border>
+                        </ydockmodel:LayoutElement.Content>
+                    </ydockmodel:LayoutElement>
+                    <ydockmodel:LayoutElement Title="勺器彭勺器彭勺器彭">
+                        <ydockmodel:LayoutElement.Content>
+                            <Border>
+                                <TextBlock Text="在这里"/>
+                            </Border>
+                        </ydockmodel:LayoutElement.Content>
+                    </ydockmodel:LayoutElement>
+                    <ydockmodel:LayoutElement Title="蠢彭蠢彭蠢彭蠢彭蠢彭">
+                        <ydockmodel:LayoutElement.Content>
+                            <Border>
+                                <TextBlock Text="在床上干啥呢"/>
+                            </Border>
+                        </ydockmodel:LayoutElement.Content>
+                    </ydockmodel:LayoutElement>
+                    <ydockmodel:LayoutElement Title="憨憨彭憨憨彭憨憨彭">
+                        <ydockmodel:LayoutElement.Content>
+                            <Border>
+                                <TextBlock Text="在哪里"/>
+                            </Border>
+                        </ydockmodel:LayoutElement.Content>
+                    </ydockmodel:LayoutElement>
+                    <ydockmodel:LayoutElement Title="勺器彭勺器彭勺器彭">
+                        <ydockmodel:LayoutElement.Content>
+                            <Border>
+                                <TextBlock Text="在这里"/>
+                            </Border>
+                        </ydockmodel:LayoutElement.Content>
+                    </ydockmodel:LayoutElement>
+                    <ydockmodel:LayoutElement Title="蠢彭蠢彭蠢彭蠢彭蠢彭">
+                        <ydockmodel:LayoutElement.Content>
+                            <Border>
+                                <TextBlock Text="在床上干啥呢"/>
+                            </Border>
+                        </ydockmodel:LayoutElement.Content>
+                    </ydockmodel:LayoutElement>
+                </ydockmodel:RootGird>
                 <ydockmodel:YDockRoot.LeftSide>
                     <ydockmodel:YDockSide>
                         <ydockmodel:LayoutElement Title="我是"/>

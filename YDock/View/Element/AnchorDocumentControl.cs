@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -9,26 +10,31 @@ using YDock.Model;
 
 namespace YDock.View
 {
-    public class AnchorDocumentControl : Control
+    public class AnchorDocumentControl : Control, INotifyPropertyChanged
     {
         static AnchorDocumentControl()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(AnchorDocumentControl), new FrameworkPropertyMetadata(typeof(AnchorDocumentControl)));
         }
 
-        public AnchorDocumentControl(LayoutElement model)
+        public AnchorDocumentControl()
         {
-            _model = model;
         }
 
         private LayoutElement _model;
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
         public LayoutElement Model
         {
             get { return _model; }
-            internal set
+            set
             {
                 if (_model != value)
+                {
                     _model = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs("Model"));
+                }
             }
         }
     }

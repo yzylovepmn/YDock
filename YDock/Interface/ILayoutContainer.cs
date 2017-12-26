@@ -5,8 +5,8 @@ using System.Text;
 
 namespace YDock.Interface
 {
-    public interface IView
+    public interface ILayoutContainer
     {
-        IModel Model { get; set; }
+        IEnumerable<ILayoutElement> Children { get; }
     }
 }

@@ -43,30 +43,44 @@
                             BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" MinHeight="20"/>
+                                <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto" MinHeight="20"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" MinWidth="20"/>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto" MinWidth="20"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <ContentPresenter Content="{TemplateBinding TopSideContent}" Grid.ColumnSpan="5"/>
                             <ContentPresenter Content="{TemplateBinding BottomSideContent}" Grid.Row="4" Grid.ColumnSpan="5"/>
                             <ContentPresenter Content="{TemplateBinding LeftSideContent}" Grid.Row="2" Grid.Column="0"/>
                             <ContentPresenter Content="{TemplateBinding RightSideContent}" Grid.Row="2" Grid.Column="4"/>
-                            <ContentPresenter Grid.Row="2" Grid.Column="2"/>
-                            <GridSplitter Height="6" HorizontalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="5"/>
-                            <GridSplitter Height="6" HorizontalAlignment="Stretch" Grid.Row="3" Grid.ColumnSpan="5"/>
-                            <GridSplitter Width="6" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="1"/>
-                            <GridSplitter Width="6" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="3"/>
+                            <ContentPresenter Content="{TemplateBinding DocumentTabs}" Grid.Row="2" Grid.Column="2"/>
+                            <GridSplitter x:Name="LeftSplitter" Width="4" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="1"/>
+                            <GridSplitter x:Name="TopSplitter" Height="4" HorizontalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="5"/>
+                            <GridSplitter x:Name="RightSplitter" Width="4" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="3"/>
+                            <GridSplitter x:Name="BottomSplitter" Height="4" HorizontalAlignment="Stretch" Grid.Row="3" Grid.ColumnSpan="5"/>
                         </Grid>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <!--<DataTrigger Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=TopSideContent.Model}" Value="{x:Null}">
+                            <Setter TargetName="TopSplitter" Property="Height" Value="0"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=BottomSideContent.Model}" Value="{x:Null}">
+                            <Setter TargetName="BottomSplitter" Property="Height" Value="0"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=LeftSideContent.Model}" Value="{x:Null}">
+                            <Setter TargetName="LeftSplitter" Property="Width" Value="0"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=RightSideContent.Model}" Value="{x:Null}">
+                            <Setter TargetName="RightSplitter" Property="Width" Value="0"/>
+                        </DataTrigger>-->
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -83,7 +97,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <view:DocumentHeaderControl Model="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model}"/>
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Title}"/>
                         <ContentPresenter Grid.Row="1" Content="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Content}"/>
                     </Grid>
                 </ControlTemplate>
@@ -91,48 +105,133 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type view:DocumentHeaderControl}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type view:DocumentHeaderControl}">
-                    <Border x:Name="Border">
-                        <Grid Margin="5,0,5,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.ImageSource,Converter={StaticResource NullToDoNothingConverter}}" Stretch="Uniform"/>
-                            <TextBlock x:Name="title" Margin="4,0,0,0" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Title}" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
-                        </Grid>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.ImageSource}" Value="{x:Null}">
-                            <Setter Property="Margin" Value="0" TargetName="title"/>
-                        </DataTrigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="#FF7A95E0"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
 
     <Style TargetType="{x:Type view:YDockSideControl}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:YDockSideControl}">
-                    <ItemsControl ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Children}">
-                        <ItemsControl.LayoutTransform>
-                            <RotateTransform Angle="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Side,Converter={StaticResource SideToAngleConverter}}"/>
-                        </ItemsControl.LayoutTransform>
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel FlowDirection="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type view:YDockSideControl}},Path=Model.Side,Converter={StaticResource SideToFlowDirectionConverter}}" Orientation="Horizontal"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
+                    <Border Background="{TemplateBinding Background}">
+                        <StackPanel IsItemsHost="True" FlowDirection="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Side,Converter={StaticResource SideToFlowDirectionConverter}}"
+                                    Orientation="Horizontal"/>
+                    </Border>
                 </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="{x:Type view:DockSideItemControl}">
+                    <Setter Property="Model" Value="{Binding}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type view:DockSideItemControl}">
+                                <Border x:Name="Border">
+                                    <Grid Margin="5,0,5,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image Source="{Binding Path=ImageSource,Converter={StaticResource NullToDoNothingConverter}}" Stretch="Uniform"/>
+                                        <TextBlock x:Name="title" Margin="4,0,0,0" Text="{Binding Path=Title}" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Path=ImageSource}" Value="{x:Null}">
+                                        <Setter Property="Margin" Value="0" TargetName="title"/>
+                                    </DataTrigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Border" Property="Background" Value="#FF7A95E0"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type view:DocumentTabControl}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type view:DocumentTabControl}">
+                    <Grid ClipToBounds="true" SnapsToDevicePixels="true" KeyboardNavigation.TabNavigation="Local">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Border Background="Transparent" Grid.RowSpan="2"/>
+                        <Grid Panel.ZIndex="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <view:DocumentPanel IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
+                        </Grid>
+                        <Border x:Name="ContentPanel"
+                                VerticalAlignment="Stretch"
+                                HorizontalAlignment="Stretch"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}"
+                                KeyboardNavigation.DirectionalNavigation="Contained"
+                                Grid.Row="1"
+                                KeyboardNavigation.TabIndex="2"
+                                KeyboardNavigation.TabNavigation="Cycle">
+                            <ContentPresenter x:Name="PART_SelectedContentHost" 
+                                              ContentSource="SelectedContent"
+                                              Margin="{TemplateBinding Padding}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="{x:Type TabItem}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type TabItem}">
+                                <Border Name="Border" BorderBrush="Black" BorderThickness="1,1,1,0" CornerRadius="5,5,0,0" Background="{TemplateBinding Background}">
+                                    <ContentPresenter Name="ContentSite" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <ContentPresenter.ContentTemplate>
+                                            <DataTemplate>
+                                                <Border x:Name="Border">
+                                                    <Grid Margin="5,0,5,0">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Image Source="{Binding Path=ImageSource,Converter={StaticResource NullToDoNothingConverter}}" Stretch="Uniform"/>
+                                                        <TextBlock x:Name="title" Margin="4,0,0,0" Text="{Binding Path=Title}" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ContentPresenter.ContentTemplate>
+                                    </ContentPresenter>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                    <Setter Property="ToolTip" Value="{Binding ToolTip}"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="LightBlue"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Border>
+                        <ContentPresenter Content="{Binding Content}"/>
+                    </Border>
+                </DataTemplate>
             </Setter.Value>
         </Setter>
     </Style>

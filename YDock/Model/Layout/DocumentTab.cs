@@ -4,15 +4,13 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows.Markup;
-using YDock.Enum;
 using YDock.Interface;
 
 namespace YDock.Model
 {
-    [ContentProperty("Children")]
-    public class YDockSide : IAnchorModel, ILayoutContainer
+    public class DocumentTab : IModel, ILayoutContainer
     {
-        public YDockSide()
+        public DocumentTab()
         {
             _children.CollectionChanged += _children_CollectionChanged;
         }
@@ -27,31 +25,12 @@ namespace YDock.Model
                     item.Container = this;
         }
 
-
-        #region Root
-        private YDockRoot _root;
-        public YDockRoot Root
+        ObservableCollection<ILayoutElement> _children = new ObservableCollection<ILayoutElement>();
+        public ObservableCollection<ILayoutElement> Children
         {
-            get { return _root; }
-            set
-            {
-                if (_root != value)
-                    _root = value;
-            }
+            get { return _children; }
         }
-        #endregion
 
-        #region Side
-        private DockSide _side;
-        public DockSide Side
-        {
-            get { return _side; }
-            set
-            {
-                if (_side != value)
-                    _side = value;
-            }
-        }
         private IView _view;
         public IView View
         {
@@ -59,20 +38,23 @@ namespace YDock.Model
             {
                 return _view;
             }
+
             set
             {
                 if (_view != value)
                     _view = value;
             }
         }
-        #endregion
 
-        ObservableCollection<LayoutElement> _children = new ObservableCollection<LayoutElement>();
-        public ObservableCollection<LayoutElement> Children
+        public IEnumerable<ILayoutElement> ChildrenSorted
         {
-            get { return _children; }
+            get
+            {
+                var listSorted = Children.ToList();
+                listSorted.Sort();
+                return listSorted;
+            }
         }
-
 
         IEnumerable<ILayoutElement> ILayoutContainer.Children
         {

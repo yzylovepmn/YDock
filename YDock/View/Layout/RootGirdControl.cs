@@ -30,10 +30,14 @@ namespace YDock.View
             {
                 return _model;
             }
-            internal set
+            set
             {
+                if (_model != null) _model.View = null;
                 if (_model != value)
+                {
                     _model = value;
+                    _model.View = this;
+                }
             }
         }
 
@@ -127,6 +131,42 @@ namespace YDock.View
                 RemoveLogicalChild(e.OldValue);
             if (e.NewValue != null)
                 AddLogicalChild(e.NewValue);
+        }
+
+
+        public static readonly DependencyProperty DocumentTabsProperty =
+            DependencyProperty.Register("DocumentTabs", typeof(DocumentTabControl), typeof(RootGirdControl),
+                new FrameworkPropertyMetadata(null, new PropertyChangedCallback(OnDocumentTabsChanged)));
+
+        public DocumentTabControl DocumentTabs
+        {
+            get { return (DocumentTabControl)GetValue(DocumentTabsProperty); }
+            set { SetValue(DocumentTabsProperty, value); }
+        }
+
+        private static void OnDocumentTabsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((RootGirdControl)d).OnDocumentTabsChanged(e);
+        }
+
+        protected virtual void OnDocumentTabsChanged(DependencyPropertyChangedEventArgs e)
+        {
+            if (e.OldValue != null)
+                RemoveLogicalChild(e.OldValue);
+            if (e.NewValue != null)
+                AddLogicalChild(e.NewValue);
+        }
+
+
+        protected override void OnInitialized(EventArgs e)
+        {
+            base.OnInitialized(e);
+
+            LeftSideContent = new AnchorDocumentControl();
+            RightSideContent = new AnchorDocumentControl();
+            TopSideContent = new AnchorDocumentControl();
+            BottomSideContent = new AnchorDocumentControl();
+            DocumentTabs = new DocumentTabControl(((RootGird)Model).Tab);
         }
     }
 }

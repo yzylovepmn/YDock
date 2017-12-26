@@ -56,9 +56,11 @@
     <Compile Include="Converters\SideToAngleConverter.cs" />
     <Compile Include="Converters\SideToFlowDirectionConverter.cs" />
     <Compile Include="Enum\DockSide.cs" />
+    <Compile Include="Interface\ILayoutContainer.cs" />
     <Compile Include="Interface\IModel.cs" />
     <Compile Include="Interface\IView.cs" />
     <Compile Include="Model\Element\LayoutElement.cs" />
+    <Compile Include="Model\Layout\DocumentTab.cs" />
     <Compile Include="Model\Layout\RootGird.cs" />
     <Compile Include="Model\Layout\YDockSide.cs" />
     <Compile Include="Model\YDockRoot.cs" />
@@ -76,7 +78,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="View\Element\AnchorDocumentControl.cs" />
-    <Compile Include="View\Element\DocumentHeaderControl.cs" />
+    <Compile Include="View\Element\DockSideItemControl.cs" />
+    <Compile Include="View\Layout\DocumentPanel.cs" />
+    <Compile Include="View\Layout\DocumentTabControl.cs" />
     <Compile Include="View\Layout\RootGirdControl.cs" />
     <Compile Include="View\Layout\YDockSideControl.cs" />
     <Compile Include="YDock.cs" />

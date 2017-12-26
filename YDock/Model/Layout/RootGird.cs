@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Windows.Markup;
 using YDock.Interface;
 
 namespace YDock.Model
 {
+    [ContentProperty("Children")]
     public class RootGird : IModel
     {
         public RootGird()
         {
-
+            _tab = new DocumentTab();
         }
 
         #region Root
@@ -24,6 +27,9 @@ namespace YDock.Model
                     _root = value;
             }
         }
+        #endregion
+
+        #region View
         private IView _view;
         public IView View
         {
@@ -32,12 +38,23 @@ namespace YDock.Model
                 return _view;
             }
 
-            internal set
+            set
             {
                 if (_view != value)
                     _view = value;
             }
         }
         #endregion
+
+        private DocumentTab _tab;
+        public DocumentTab Tab
+        {
+            get { return _tab; }
+        }
+
+        public ObservableCollection<ILayoutElement> Children
+        {
+            get { return _tab.Children; }
+        }
     }
 }

@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using YDock.Interface;
 
 namespace YDock.Model
 {
-    public class LayoutElement : DependencyObject
+    public class LayoutElement : DependencyObject, ILayoutElement
     {
         public LayoutElement()
         {
@@ -19,7 +21,14 @@ namespace YDock.Model
         public UIElement Content
         {
             get { return _content; }
-            set { _content = value; }
+            set
+            {
+                if (_content != value)
+                {
+                    _content = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs("Content"));
+                }
+            }
         }
         #endregion
 
@@ -42,6 +51,33 @@ namespace YDock.Model
         {
             set { SetValue(ImageSourceProperty, value); }
             get { return (ImageSource)GetValue(ImageSourceProperty); }
+        }
+        #endregion
+
+        #region IsVisible
+        public static readonly DependencyProperty IsVisibleProperty =
+            DependencyProperty.Register("IsVisible", typeof(bool), typeof(LayoutElement));
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
+        public bool IsVisible
+        {
+            set { SetValue(IsVisibleProperty, value); }
+            get { return (bool)GetValue(ImageSourceProperty); }
+        }
+
+        private ILayoutContainer _container;
+        public ILayoutContainer Container
+        {
+            get
+            {
+                return _container;
+            }
+            set
+            {
+                if (_container != value)
+                    _container = value;
+            }
         }
         #endregion
     }
