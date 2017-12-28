@@ -79,11 +79,14 @@
     </Compile>
     <Compile Include="View\Element\AnchorDocumentControl.cs" />
     <Compile Include="View\Element\DockSideItemControl.cs" />
+    <Compile Include="View\Layout\DockSidePanel.cs" />
     <Compile Include="View\Layout\DocumentPanel.cs" />
     <Compile Include="View\Layout\DocumentTabControl.cs" />
+    <Compile Include="View\Layout\LayoutGridSplitter.cs" />
     <Compile Include="View\Layout\RootGirdControl.cs" />
     <Compile Include="View\Layout\YDockSideControl.cs" />
     <Compile Include="YDock.cs" />
+    <Compile Include="YDockHelper.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

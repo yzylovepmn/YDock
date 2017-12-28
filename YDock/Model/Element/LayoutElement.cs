@@ -58,13 +58,14 @@ namespace YDock.Model
         public static readonly DependencyProperty IsVisibleProperty =
             DependencyProperty.Register("IsVisible", typeof(bool), typeof(LayoutElement));
 
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         public bool IsVisible
         {
             set { SetValue(IsVisibleProperty, value); }
             get { return (bool)GetValue(ImageSourceProperty); }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         private ILayoutContainer _container;
         public ILayoutContainer Container

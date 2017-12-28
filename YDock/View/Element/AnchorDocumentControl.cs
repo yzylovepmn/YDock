@@ -19,13 +19,14 @@ namespace YDock.View
 
         public AnchorDocumentControl()
         {
+            Height = 0;
         }
-
-        private LayoutElement _model;
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
-        public LayoutElement Model
+
+        private ILayoutElement _model;
+        public ILayoutElement Model
         {
             get { return _model; }
             set
@@ -33,6 +34,9 @@ namespace YDock.View
                 if (_model != value)
                 {
                     _model = value;
+                    if (_model != null)
+                        Height = double.NaN;
+                    else Height = 0.0;
                     PropertyChanged(this, new PropertyChangedEventArgs("Model"));
                 }
             }

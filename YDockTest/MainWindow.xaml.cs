@@ -25,10 +25,6 @@ namespace YDockTest
         public MainWindow()
         {
             InitializeComponent();
-            ((RootGirdControl)DockManager.Root.RootGrid.View).LeftSideContent.Model = new LayoutElement() { Content = new TextBlock() { Text = "LeftContent" }, Title = "LeftTitle" };
-            ((RootGirdControl)DockManager.Root.RootGrid.View).RightSideContent.Model = new LayoutElement() { Content = new TextBlock() { Text = "RightContent" }, Title = "RightTitle" };
-            ((RootGirdControl)DockManager.Root.RootGrid.View).TopSideContent.Model = new LayoutElement() { Content = new TextBlock() { Text = "TopContent" }, Title = "TopTitle" };
-            ((RootGirdControl)DockManager.Root.RootGrid.View).BottomSideContent.Model = new LayoutElement() { Content = new TextBlock() { Text = "BottomContent" }, Title = "BottomTitle" };
         }
 
         //private Window wnd;

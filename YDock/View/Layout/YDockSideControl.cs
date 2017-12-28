@@ -12,7 +12,7 @@ using YDock.Model;
 
 namespace YDock.View
 {
-    public class YDockSideControl : ItemsControl, IView
+    public class YDockSideControl : ItemsControl, IView, ILayoutContainer
     {
         static YDockSideControl()
         {
@@ -72,9 +72,17 @@ namespace YDock.View
             }
         }
 
+        public IEnumerable<ILayoutElement> Children
+        {
+            get
+            {
+                return Items.Cast<ILayoutElement>();
+            }
+        }
+
         protected override DependencyObject GetContainerForItemOverride()
         {
-            return new DockSideItemControl();
+            return new DockSideItemControl(this);
         }
     }
 }

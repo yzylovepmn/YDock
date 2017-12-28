@@ -65,9 +65,13 @@
                 </ydockmodel:RootGird>
                 <ydockmodel:YDockRoot.LeftSide>
                     <ydockmodel:YDockSide>
-                        <ydockmodel:LayoutElement Title="我是"/>
-                        <ydockmodel:LayoutElement Title="一只"/>
-                        <ydockmodel:LayoutElement Title="憨憨彭"/>
+                        <ydockmodel:LayoutElement Title="我是asdsa">
+                            <ydockmodel:LayoutElement.Content>
+                                <TextBlock Text="heiheihei"/>
+                            </ydockmodel:LayoutElement.Content>
+                        </ydockmodel:LayoutElement>
+                        <ydockmodel:LayoutElement Title="一sfsdf只"/>
+                        <ydockmodel:LayoutElement Title="憨ahdfhfdh憨彭"/>
                     </ydockmodel:YDockSide>
                 </ydockmodel:YDockRoot.LeftSide>
                 <ydockmodel:YDockRoot.RightSide>

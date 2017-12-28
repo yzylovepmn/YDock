@@ -41,7 +41,7 @@
                 <ControlTemplate TargetType="{x:Type view:RootGirdControl}">
                     <Border BorderThickness="{TemplateBinding BorderThickness}"
                             BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
-                        <Grid>
+                        <Grid x:Name="PART_Gird">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
@@ -61,26 +61,18 @@
                             <ContentPresenter Content="{TemplateBinding LeftSideContent}" Grid.Row="2" Grid.Column="0"/>
                             <ContentPresenter Content="{TemplateBinding RightSideContent}" Grid.Row="2" Grid.Column="4"/>
                             <ContentPresenter Content="{TemplateBinding DocumentTabs}" Grid.Row="2" Grid.Column="2"/>
-                            <GridSplitter x:Name="LeftSplitter" Width="4" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="1"/>
-                            <GridSplitter x:Name="TopSplitter" Height="4" HorizontalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="5"/>
-                            <GridSplitter x:Name="RightSplitter" Width="4" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="3"/>
-                            <GridSplitter x:Name="BottomSplitter" Height="4" HorizontalAlignment="Stretch" Grid.Row="3" Grid.ColumnSpan="5"/>
                         </Grid>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <!--<DataTrigger Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=TopSideContent.Model}" Value="{x:Null}">
-                            <Setter TargetName="TopSplitter" Property="Height" Value="0"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=BottomSideContent.Model}" Value="{x:Null}">
-                            <Setter TargetName="BottomSplitter" Property="Height" Value="0"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=LeftSideContent.Model}" Value="{x:Null}">
-                            <Setter TargetName="LeftSplitter" Property="Width" Value="0"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=RightSideContent.Model}" Value="{x:Null}">
-                            <Setter TargetName="RightSplitter" Property="Width" Value="0"/>
-                        </DataTrigger>-->
-                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type view:LayoutGridSplitter}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type view:LayoutGridSplitter}">
+                    <Rectangle Fill="{TemplateBinding Background}"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -107,12 +99,13 @@
 
 
     <Style TargetType="{x:Type view:YDockSideControl}">
+        <Setter Property="MinWidth" Value="200"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:YDockSideControl}">
                     <Border Background="{TemplateBinding Background}">
-                        <StackPanel IsItemsHost="True" FlowDirection="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Side,Converter={StaticResource SideToFlowDirectionConverter}}"
-                                    Orientation="Horizontal"/>
+                        <view:DockSidePanel IsItemsHost="True"
+                                            FlowDirection="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Side,Converter={StaticResource SideToFlowDirectionConverter}}"/>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -120,11 +113,10 @@
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="{x:Type view:DockSideItemControl}">
-                    <Setter Property="Model" Value="{Binding}"/>
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type view:DockSideItemControl}">
-                                <Border x:Name="Border">
+                                <Border x:Name="Border" Background="White">
                                     <Grid Margin="5,0,5,0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>

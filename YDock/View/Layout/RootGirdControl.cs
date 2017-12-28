@@ -5,11 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using YDock.Interface;
 using YDock.Model;
 
 namespace YDock.View
 {
+    [TemplatePart(Name = "PART_Gird", Type = typeof(Grid))]
     public class RootGirdControl : Control, IView
     {
         static RootGirdControl()
@@ -167,6 +169,111 @@ namespace YDock.View
             TopSideContent = new AnchorDocumentControl();
             BottomSideContent = new AnchorDocumentControl();
             DocumentTabs = new DocumentTabControl(((RootGird)Model).Tab);
+            LeftSideContent.PropertyChanged += SideContentChanged;
+            RightSideContent.PropertyChanged += SideContentChanged;
+            TopSideContent.PropertyChanged += SideContentChanged;
+            BottomSideContent.PropertyChanged += SideContentChanged;
+        }
+
+        private void SideContentChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (sender == LeftSideContent)
+            {
+                if (_leftSplitter == null) return;
+                if (LeftSideContent.Model != null)
+                    _leftSplitter.Width = 4;
+                else _leftSplitter.Width = 0;
+            }
+            if (sender == RightSideContent)
+            {
+                if (_rightSplitter == null) return;
+                if (RightSideContent.Model != null)
+                    _rightSplitter.Width = 4;
+                else _rightSplitter.Width = 0;
+            }
+            if (sender == TopSideContent)
+            {
+                if (_topSplitter == null) return;
+                if (TopSideContent.Model != null)
+                    _topSplitter.Height = 4;
+                else _topSplitter.Height = 0;
+            }
+            if (sender == BottomSideContent)
+            {
+                if (_bottomSplitter == null) return;
+                if (BottomSideContent.Model != null)
+                    _bottomSplitter.Height = 4;
+                else _bottomSplitter.Height = 0;
+            }
+        }
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            _SetupSplitter();
+        }
+
+        private Grid _internelGrid;
+        private LayoutGridSplitter _leftSplitter;
+        private LayoutGridSplitter _rightSplitter;
+        private LayoutGridSplitter _topSplitter;
+        private LayoutGridSplitter _bottomSplitter;
+
+
+        private void _SetupSplitter()
+        {
+            _leftSplitter = new LayoutGridSplitter() { VerticalAlignment = VerticalAlignment.Stretch, Width = LeftSideContent.Model == null ? 0 : 4, Cursor = Cursors.SizeWE };
+            _rightSplitter = new LayoutGridSplitter() { VerticalAlignment = VerticalAlignment.Stretch, Width = RightSideContent.Model == null ? 0 : 4, Cursor = Cursors.SizeWE };
+            _topSplitter = new LayoutGridSplitter() { HorizontalAlignment = HorizontalAlignment.Stretch, Height = TopSideContent.Model == null ? 0 : 4, Cursor = Cursors.SizeNS };
+            _bottomSplitter = new LayoutGridSplitter() { HorizontalAlignment = HorizontalAlignment.Stretch, Height = BottomSideContent.Model == null ? 0 : 4, Cursor = Cursors.SizeNS };
+
+            _internelGrid = YDockHelper.GetTemplateChild<Grid>(Template, this, "PART_Gird");
+            _internelGrid.Children.Add(_leftSplitter);
+            _internelGrid.Children.Add(_rightSplitter);
+            _internelGrid.Children.Add(_topSplitter);
+            _internelGrid.Children.Add(_bottomSplitter);
+
+            Grid.SetColumn(_leftSplitter, 1);
+            Grid.SetRow(_leftSplitter, 2);
+
+            Grid.SetColumn(_rightSplitter, 3);
+            Grid.SetRow(_rightSplitter, 2);
+
+            Grid.SetRow(_topSplitter, 1);
+            Grid.SetColumnSpan(_topSplitter, 5);
+
+            Grid.SetRow(_bottomSplitter, 3);
+            Grid.SetColumnSpan(_bottomSplitter, 5);
+
+
+            _leftSplitter.DragStarted += _Splitter_DragStarted;
+            _leftSplitter.DragCompleted += _Splitter_DragCompleted;
+            _leftSplitter.DragDelta += _Splitter_DragDelta;
+            _rightSplitter.DragStarted += _Splitter_DragStarted;
+            _rightSplitter.DragCompleted += _Splitter_DragCompleted;
+            _rightSplitter.DragDelta += _Splitter_DragDelta;
+            _topSplitter.DragStarted += _Splitter_DragStarted;
+            _topSplitter.DragCompleted += _Splitter_DragCompleted;
+            _topSplitter.DragDelta += _Splitter_DragDelta;
+            _bottomSplitter.DragStarted += _Splitter_DragStarted;
+            _bottomSplitter.DragCompleted += _Splitter_DragCompleted;
+            _bottomSplitter.DragDelta += _Splitter_DragDelta;
+        }
+
+        private void _Splitter_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        {
+            
+        }
+
+        private void _Splitter_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            
+        }
+
+        private void _Splitter_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        {
+
         }
     }
 }
