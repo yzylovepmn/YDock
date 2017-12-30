@@ -12,5 +12,12 @@ namespace YDock
         {
             return (T)template.FindName(name, templateParent);
         }
+
+        public static double GetMaxOrMinValue(double value, double min, double max)
+        {
+            if (value > max) return max;
+            if (value < min) return min;
+            return value;
+        }
     }
 }

@@ -79,19 +79,24 @@
     </Style>
 
     <Style TargetType="{x:Type view:AnchorDocumentControl}">
+        <Setter Property="BorderThickness" Value="0.6"/>
+        <Setter Property="BorderBrush" Value="LightGray"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:AnchorDocumentControl}">
-                    <Grid ClipToBounds="true"
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}">
+                        <Grid ClipToBounds="true"
                           SnapsToDevicePixels="true"
                           KeyboardNavigation.TabNavigation="Local">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Title}"/>
-                        <ContentPresenter Grid.Row="1" Content="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Content}"/>
-                    </Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Title}"/>
+                            <ContentPresenter Grid.Row="1" Content="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Content}"/>
+                        </Grid>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -143,6 +148,8 @@
     </Style>
 
     <Style TargetType="{x:Type view:DocumentTabControl}">
+        <Setter Property="BorderThickness" Value="0.6"/>
+        <Setter Property="BorderBrush" Value="LightGray"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:DocumentTabControl}">

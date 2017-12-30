@@ -5,7 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
+using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
 
@@ -181,29 +185,61 @@ namespace YDock.View
             {
                 if (_leftSplitter == null) return;
                 if (LeftSideContent.Model != null)
-                    _leftSplitter.Width = 4;
-                else _leftSplitter.Width = 0;
+                {
+                    _leftSplitter.Width = 6;
+                    if (LeftSideContent.Model.ActualWidth > 0)
+                        _internelGrid.ColumnDefinitions[0].Width = new GridLength(LeftSideContent.Model.ActualWidth);
+                }
+                else
+                {
+                    _leftSplitter.Width = 0;
+                    _internelGrid.ColumnDefinitions[0].Width = new GridLength();
+                }
             }
             if (sender == RightSideContent)
             {
                 if (_rightSplitter == null) return;
                 if (RightSideContent.Model != null)
-                    _rightSplitter.Width = 4;
-                else _rightSplitter.Width = 0;
+                {
+                    _rightSplitter.Width = 6;
+                    if (RightSideContent.Model.ActualWidth > 0)
+                        _internelGrid.ColumnDefinitions[4].Width = new GridLength(RightSideContent.Model.ActualWidth);
+                }
+                else
+                {
+                    _rightSplitter.Width = 0;
+                    _internelGrid.ColumnDefinitions[4].Width = new GridLength();
+                }
             }
             if (sender == TopSideContent)
             {
                 if (_topSplitter == null) return;
                 if (TopSideContent.Model != null)
-                    _topSplitter.Height = 4;
-                else _topSplitter.Height = 0;
+                {
+                    _topSplitter.Height = 6;
+                    if (TopSideContent.Model.ActualHeight > 0)
+                        _internelGrid.RowDefinitions[0].Height = new GridLength(TopSideContent.Model.ActualHeight);
+                }
+                else
+                {
+                    _topSplitter.Height = 0;
+                    _internelGrid.RowDefinitions[0].Height = new GridLength();
+                }
             }
             if (sender == BottomSideContent)
             {
                 if (_bottomSplitter == null) return;
                 if (BottomSideContent.Model != null)
-                    _bottomSplitter.Height = 4;
-                else _bottomSplitter.Height = 0;
+                {
+                    _bottomSplitter.Height = 6;
+                    if (BottomSideContent.Model.ActualHeight > 0)
+                        _internelGrid.RowDefinitions[4].Height = new GridLength(BottomSideContent.Model.ActualHeight);
+                }
+                else
+                {
+                    _bottomSplitter.Height = 0;
+                    _internelGrid.RowDefinitions[4].Height = new GridLength();
+                }
             }
         }
 
@@ -219,7 +255,9 @@ namespace YDock.View
         private LayoutGridSplitter _rightSplitter;
         private LayoutGridSplitter _topSplitter;
         private LayoutGridSplitter _bottomSplitter;
-
+        private Window _dragWnd;
+        private Rectangle _dragRect;
+        private Point _pToInterGrid;
 
         private void _SetupSplitter()
         {
@@ -233,6 +271,7 @@ namespace YDock.View
             _internelGrid.Children.Add(_rightSplitter);
             _internelGrid.Children.Add(_topSplitter);
             _internelGrid.Children.Add(_bottomSplitter);
+            _internelGrid.SizeChanged += _internelGrid_SizeChanged; ;
 
             Grid.SetColumn(_leftSplitter, 1);
             Grid.SetRow(_leftSplitter, 2);
@@ -261,19 +300,108 @@ namespace YDock.View
             _bottomSplitter.DragDelta += _Splitter_DragDelta;
         }
 
-        private void _Splitter_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        private void _internelGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            
+            if (_internelGrid.ColumnDefinitions[2].ActualWidth < 30)
+            {
+                var delta = 30 - _internelGrid.ColumnDefinitions[2].ActualWidth;
+                if (_internelGrid.ColumnDefinitions[0].ActualWidth - delta >= 30)
+                    _internelGrid.ColumnDefinitions[0].Width = new GridLength(_internelGrid.ColumnDefinitions[0].ActualWidth - delta);
+                if (_internelGrid.ColumnDefinitions[4].ActualWidth - delta >= 30)
+                    _internelGrid.ColumnDefinitions[4].Width = new GridLength(_internelGrid.ColumnDefinitions[4].ActualWidth - delta);
+            }
+            if (_internelGrid.RowDefinitions[2].ActualHeight < 30)
+            {
+                var delta = 30 - _internelGrid.RowDefinitions[2].ActualHeight;
+                if (_internelGrid.RowDefinitions[0].ActualHeight - delta >= 30)
+                    _internelGrid.RowDefinitions[0].Height = new GridLength(_internelGrid.RowDefinitions[0].ActualHeight - delta);
+                if (_internelGrid.RowDefinitions[4].ActualHeight - delta >= 30)
+                    _internelGrid.RowDefinitions[4].Height = new GridLength(_internelGrid.RowDefinitions[4].ActualHeight - delta);
+            }
         }
 
-        private void _Splitter_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        private void _Splitter_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            
+            if (sender == _leftSplitter)
+                Canvas.SetLeft(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.X + e.HorizontalChange, 30, ActualWidth - 36 - RightSideContent.ActualWidth));
+            if (sender == _rightSplitter)
+                Canvas.SetLeft(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.X + e.HorizontalChange, 30 + LeftSideContent.ActualWidth, ActualWidth - 36));
+            if (sender == _topSplitter)
+                Canvas.SetTop(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.Y + e.VerticalChange, 30, ActualHeight - 36 - BottomSideContent.ActualHeight));
+            if (sender == _bottomSplitter)
+                Canvas.SetTop(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.Y + e.VerticalChange, 30 + TopSideContent.ActualHeight, ActualHeight - 36));
         }
 
-        private void _Splitter_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        private void _Splitter_DragCompleted(object sender, DragCompletedEventArgs e)
         {
+            double delta;
+            if (sender == _leftSplitter || sender == _rightSplitter)
+                delta = Canvas.GetLeft(_dragRect) - _pToInterGrid.X;
+            else delta = Canvas.GetTop(_dragRect) - _pToInterGrid.Y;
+            if (sender == _leftSplitter)
+                _internelGrid.ColumnDefinitions[0].Width = new GridLength(_internelGrid.ColumnDefinitions[0].ActualWidth + delta);
+            if (sender == _rightSplitter)
+                _internelGrid.ColumnDefinitions[4].Width = new GridLength(_internelGrid.ColumnDefinitions[4].ActualWidth - delta);
+            if (sender == _topSplitter)
+                _internelGrid.RowDefinitions[0].Height = new GridLength(_internelGrid.RowDefinitions[0].ActualHeight + delta);
+            if (sender == _bottomSplitter)
+                _internelGrid.RowDefinitions[4].Height = new GridLength(_internelGrid.RowDefinitions[4].ActualHeight - delta);
+            _DisposeDragWnd();
+        }
 
+        private void _Splitter_DragStarted(object sender, DragStartedEventArgs e)
+        {
+            _CreateDragWnd(sender as LayoutGridSplitter);
+        }
+
+        private void _CreateDragWnd(LayoutGridSplitter splitter)
+        {
+            var canvas = new Canvas()
+            {
+                Height = ActualHeight,
+                Width = ActualWidth
+            };
+            _dragRect = new Rectangle()
+            {
+                Fill = splitter.BackgroundWhileDragging,
+                Opacity = splitter.OpacityWhileDragging,
+                Width = splitter.ActualWidth,
+                Height = splitter.ActualHeight
+            };
+            canvas.Children.Add(_dragRect);
+
+            var pToScreen = _internelGrid.PointToScreenDPIWithoutFlowDirection(new Point());
+            var transfrom = splitter.TransformToAncestor(_internelGrid);
+            _pToInterGrid = transfrom.Transform(new Point(0, 0));
+
+            Canvas.SetLeft(_dragRect, _pToInterGrid.X);
+            Canvas.SetTop(_dragRect, _pToInterGrid.Y);
+
+            _dragWnd = new Window()
+            {
+                WindowStyle = WindowStyle.None,
+                AllowsTransparency = true,
+                Height = ActualHeight,
+                Width = ActualWidth,
+                Background = Brushes.Transparent,
+                Owner = Window.GetWindow(this),
+                ResizeMode = ResizeMode.NoResize,
+                ShowInTaskbar = false,
+                IsHitTestVisible = false,
+                ShowActivated = false,
+                Content = canvas,
+                Top = pToScreen.Y,
+                Left = pToScreen.X
+            };
+
+            _dragWnd.Show();
+        }
+
+        private void _DisposeDragWnd()
+        {
+            _dragWnd.Close();
+            _dragRect = null;
+            _dragWnd = null;
         }
     }
 }

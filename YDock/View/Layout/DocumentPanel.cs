@@ -60,7 +60,7 @@ namespace YDock.View
             {
                 var selecteditem = visibleChildren[index];
                 int startindex = index - 1;
-                for (; startindex >= 0; startindex--)
+                for (; startindex > 0; startindex--)
                 {
                     var item = visibleChildren[startindex];
                     width -= item.DesiredSize.Width + item.Margin.Left + item.Margin.Right;

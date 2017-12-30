@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
 
@@ -20,6 +21,7 @@ namespace YDock.View
         public AnchorDocumentControl()
         {
             Height = 0;
+            Width = 0;
         }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
@@ -33,11 +35,28 @@ namespace YDock.View
             {
                 if (_model != value)
                 {
+                    if (_model != null)
+                    {
+                        (_model as LayoutElement).ActualWidth = ActualWidth;
+                        (_model as LayoutElement).ActualHeight = ActualHeight;
+                        _model = null;
+                        Height = 0;
+                        Width = 0;
+                        MinHeight = 0;
+                        MinWidth = 0;
+                        PropertyChanged(this, new PropertyChangedEventArgs("Model"));
+                    }
                     _model = value;
                     if (_model != null)
+                    {
+                        DockSide side = (_model.Container as YDockSide).Side;
+                        if (side == DockSide.Left || side == DockSide.Right)
+                            MinWidth = 30;
+                        else MinHeight = 30;
+                        Width = double.NaN;
                         Height = double.NaN;
-                    else Height = 0.0;
-                    PropertyChanged(this, new PropertyChangedEventArgs("Model"));
+                        PropertyChanged(this, new PropertyChangedEventArgs("Model"));
+                    }
                 }
             }
         }

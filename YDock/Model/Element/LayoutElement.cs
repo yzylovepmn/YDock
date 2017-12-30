@@ -80,6 +80,32 @@ namespace YDock.Model
                     _container = value;
             }
         }
+
+        private double _actualWidth;
+        public double ActualWidth
+        {
+            get
+            {
+                return _actualWidth;
+            }
+            internal set
+            {
+                _actualWidth = value;
+            }
+        }
+
+        private double _actualHeight;
+        public double ActualHeight
+        {
+            get
+            {
+                return _actualHeight;
+            }
+            internal set
+            {
+                _actualHeight = value;
+            }
+        }
         #endregion
     }
 }
