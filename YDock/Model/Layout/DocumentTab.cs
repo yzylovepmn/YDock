@@ -10,8 +10,9 @@ namespace YDock.Model
 {
     public class DocumentTab : IModel, ILayoutContainer
     {
-        public DocumentTab()
+        public DocumentTab(IModel parent)
         {
+            _parent = parent;
             _children.CollectionChanged += _children_CollectionChanged;
         }
 
@@ -45,6 +46,11 @@ namespace YDock.Model
                     _view = value;
             }
         }
+        private IModel _parent;
+        public IModel Parent
+        {
+            get { return _parent; }
+        }
 
         public IEnumerable<ILayoutElement> ChildrenSorted
         {
@@ -61,6 +67,14 @@ namespace YDock.Model
             get
             {
                 return Children;
+            }
+        }
+
+        public YDock DockManager
+        {
+            get
+            {
+                return _parent.DockManager;
             }
         }
     }

@@ -37,8 +37,7 @@ namespace YDock.View
                 {
                     if (_model != null)
                     {
-                        (_model as LayoutElement).ActualWidth = ActualWidth;
-                        (_model as LayoutElement).ActualHeight = ActualHeight;
+                        (_model as LayoutElement).IsVisible = false;
                         _model = null;
                         Height = 0;
                         Width = 0;
@@ -55,8 +54,22 @@ namespace YDock.View
                         else MinHeight = 30;
                         Width = double.NaN;
                         Height = double.NaN;
+                        (_model as LayoutElement).IsVisible = true;
                         PropertyChanged(this, new PropertyChangedEventArgs("Model"));
                     }
+                }
+            }
+        }
+
+        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        {
+            base.OnRenderSizeChanged(sizeInfo);
+            if (_model != null)
+            {
+                if (_model.ActualWidth <= 0.1 && _model.ActualHeight <= 0.1)
+                {
+                    (_model as LayoutElement).ActualWidth = ActualWidth;
+                    (_model as LayoutElement).ActualHeight = ActualHeight;
                 }
             }
         }

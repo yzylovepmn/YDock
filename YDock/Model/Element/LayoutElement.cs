@@ -55,15 +55,36 @@ namespace YDock.Model
         #endregion
 
         #region IsVisible
-        public static readonly DependencyProperty IsVisibleProperty =
-            DependencyProperty.Register("IsVisible", typeof(bool), typeof(LayoutElement));
-
-
+        private bool isVisible = false;
         public bool IsVisible
         {
-            set { SetValue(IsVisibleProperty, value); }
-            get { return (bool)GetValue(ImageSourceProperty); }
+            internal set
+            {
+                if (isVisible != value)
+                {
+                    isVisible = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs("IsVisible"));
+                }
+            }
+            get { return isVisible; }
         }
+        #endregion
+
+        #region IsActive
+        private bool isActive = false;
+        public bool IsActive
+        {
+            internal set
+            {
+                if (isActive != value)
+                {
+                    isActive = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs("IsActive"));
+                }
+            }
+            get { return isActive; }
+        }
+        #endregion
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
@@ -106,6 +127,5 @@ namespace YDock.Model
                 _actualHeight = value;
             }
         }
-        #endregion
     }
 }

@@ -81,5 +81,13 @@ namespace YDock.Model
                 return Children;
             }
         }
+
+        public YDock DockManager
+        {
+            get
+            {
+                return _root.DockManager;
+            }
+        }
     }
 }

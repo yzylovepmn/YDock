@@ -43,10 +43,12 @@ namespace YDock.View
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
-        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        private bool _isDragging = false;
+
+        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
             var parent = _container as YDockSideControl;
-            var dock = parent.Parent as YDock;
+            var dock = parent.Model.DockManager;
             switch (parent.Model.Side)
             {
                 case DockSide.Left:
@@ -71,7 +73,7 @@ namespace YDock.View
                     break;
             }
 
-            base.OnMouseLeftButtonDown(e);
+            base.OnMouseLeftButtonUp(e);
         }
     }
 }

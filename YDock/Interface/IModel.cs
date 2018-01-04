@@ -7,7 +7,11 @@ using YDock.Enum;
 
 namespace YDock.Interface
 {
-    public interface IModel
+    public interface ILayoutModel
+    {
+        YDock DockManager { get; }
+    }
+    public interface IModel: ILayoutModel
     {
         IView View { get; set; }
     }

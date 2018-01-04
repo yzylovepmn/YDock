@@ -13,7 +13,7 @@ namespace YDock.Model
     {
         public RootGird()
         {
-            _tab = new DocumentTab();
+            _tab = new DocumentTab(this);
         }
 
         #region Root
@@ -55,6 +55,14 @@ namespace YDock.Model
         public ObservableCollection<ILayoutElement> Children
         {
             get { return _tab.Children; }
+        }
+
+        public YDock DockManager
+        {
+            get
+            {
+                return _root.DockManager;
+            }
         }
     }
 }

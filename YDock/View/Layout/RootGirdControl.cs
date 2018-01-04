@@ -29,6 +29,7 @@ namespace YDock.View
             Model = model;
         }
 
+
         private IModel _model;
         public IModel Model
         {
@@ -46,6 +47,11 @@ namespace YDock.View
                 }
             }
         }
+
+        #region SideWidth
+        public const double SideWidth = 30;
+        public const double SplitterWidth = 6;
+        #endregion
 
         public static readonly DependencyProperty TopSideContentProperty =
             DependencyProperty.Register("TopSideContent", typeof(AnchorDocumentControl), typeof(RootGirdControl),
@@ -177,6 +183,157 @@ namespace YDock.View
             RightSideContent.PropertyChanged += SideContentChanged;
             TopSideContent.PropertyChanged += SideContentChanged;
             BottomSideContent.PropertyChanged += SideContentChanged;
+            DocumentTabs.SizeChanged += DocumentTabs_SizeChanged;
+            SizeChanged += OnSizeChanged;
+        }
+
+        private void DocumentTabs_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (DocumentTabs.ActualWidth < SideWidth)
+            {
+                var delta = SideWidth - DocumentTabs.ActualWidth;
+                if (_internelGrid.ColumnDefinitions[0].ActualWidth - delta >= SideWidth)
+                    _internelGrid.ColumnDefinitions[0].Width = new GridLength(_internelGrid.ColumnDefinitions[0].ActualWidth - delta);
+                if (_internelGrid.ColumnDefinitions[4].ActualWidth - delta >= SideWidth)
+                    _internelGrid.ColumnDefinitions[4].Width = new GridLength(_internelGrid.ColumnDefinitions[4].ActualWidth - delta);
+            }
+            if (DocumentTabs.ActualHeight < SideWidth)
+            {
+                var delta = SideWidth - DocumentTabs.ActualHeight;
+                if (_internelGrid.RowDefinitions[0].ActualHeight - delta >= SideWidth)
+                    _internelGrid.RowDefinitions[0].Height = new GridLength(_internelGrid.RowDefinitions[0].ActualHeight - delta);
+                if (_internelGrid.RowDefinitions[4].ActualHeight - delta >= SideWidth)
+                    _internelGrid.RowDefinitions[4].Height = new GridLength(_internelGrid.RowDefinitions[4].ActualHeight - delta);
+            }
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.WidthChanged)
+            {
+                double delta = e.NewSize.Width - e.PreviousSize.Width;
+                if (delta > 0)
+                {
+                    if (LeftSideContent.Model != null && LeftSideContent.ActualWidth < LeftSideContent.Model.ActualWidth)
+                        _internelGrid.ColumnDefinitions[0].Width = new GridLength(LeftSideContent.ActualWidth + delta);
+                    else if (RightSideContent.Model != null && RightSideContent.ActualWidth < RightSideContent.Model.ActualWidth)
+                        _internelGrid.ColumnDefinitions[4].Width = new GridLength(RightSideContent.ActualWidth + delta);
+                }
+                else
+                {
+                    if (DocumentTabs.ActualWidth <= SideWidth)
+                    {
+                        if (RightSideContent.Model != null && RightSideContent.ActualWidth > SideWidth)
+                        {
+                            if (RightSideContent.ActualWidth + delta < SideWidth)
+                            {
+                                delta += RightSideContent.ActualWidth - SideWidth;
+                                _internelGrid.ColumnDefinitions[4].Width = new GridLength(SideWidth);
+                                if (LeftSideContent.Model != null && LeftSideContent.ActualWidth > SideWidth)
+                                {
+                                    if (LeftSideContent.ActualWidth + delta < SideWidth)
+                                    {
+                                        delta += LeftSideContent.ActualWidth - SideWidth;
+                                        _internelGrid.ColumnDefinitions[0].Width = new GridLength(SideWidth);
+                                    }
+                                    else _internelGrid.ColumnDefinitions[0].Width = new GridLength(LeftSideContent.ActualWidth + delta);
+                                }
+                            }
+                            else _internelGrid.ColumnDefinitions[4].Width = new GridLength(RightSideContent.ActualWidth + delta);
+                        }
+                        else if (LeftSideContent.Model != null && LeftSideContent.ActualWidth > SideWidth)
+                        {
+                            if (LeftSideContent.ActualWidth + delta < SideWidth)
+                            {
+                                delta += LeftSideContent.ActualWidth - SideWidth;
+                                _internelGrid.ColumnDefinitions[0].Width = new GridLength(SideWidth);
+                            }
+                            else _internelGrid.ColumnDefinitions[0].Width = new GridLength(LeftSideContent.ActualWidth + delta);
+                        }
+
+                        double remain = ActualWidth - SideWidth - (LeftSideContent.Model != null ? _internelGrid.ColumnDefinitions[0].Width.Value + SplitterWidth : 0) - (RightSideContent.Model != null ? _internelGrid.ColumnDefinitions[4].Width.Value + SplitterWidth : 0);
+
+                        if (remain > 0 && RightSideContent.Model != null)
+                        {
+                            if (_internelGrid.ColumnDefinitions[4].Width.Value + remain > RightSideContent.Model.ActualWidth)
+                            {
+                                remain -= RightSideContent.Model.ActualWidth - _internelGrid.ColumnDefinitions[4].Width.Value;
+                                _internelGrid.ColumnDefinitions[4].Width = new GridLength(_internelGrid.ColumnDefinitions[4].Width.Value);
+                                if (remain > 0 && LeftSideContent.Model != null)
+                                {
+                                    if (_internelGrid.ColumnDefinitions[0].Width.Value + remain > LeftSideContent.Model.ActualWidth)
+                                        _internelGrid.ColumnDefinitions[0].Width = new GridLength(LeftSideContent.Model.ActualWidth);
+                                    else _internelGrid.ColumnDefinitions[0].Width = new GridLength(_internelGrid.ColumnDefinitions[0].Width.Value + remain);
+                                }
+                            }
+                            else _internelGrid.ColumnDefinitions[4].Width = new GridLength(_internelGrid.ColumnDefinitions[4].Width.Value + remain);
+                        }
+                    }
+                }
+            }
+
+            if (e.HeightChanged)
+            {
+                double delta = e.NewSize.Height - e.PreviousSize.Height;
+                if (delta > 0)
+                {
+                    if (TopSideContent.Model != null && TopSideContent.ActualHeight < TopSideContent.Model.ActualHeight)
+                        _internelGrid.RowDefinitions[0].Height = new GridLength(Math.Min(TopSideContent.ActualHeight + delta, TopSideContent.Model.ActualHeight));
+                    else if (BottomSideContent.Model != null && BottomSideContent.ActualHeight < BottomSideContent.Model.ActualHeight)
+                        _internelGrid.RowDefinitions[4].Height = new GridLength(Math.Min(BottomSideContent.ActualHeight + delta, BottomSideContent.Model.ActualHeight));
+                }
+                else
+                {
+                    if (DocumentTabs.ActualHeight <= SideWidth)
+                    {
+                        if (BottomSideContent.Model != null && BottomSideContent.ActualHeight > SideWidth)
+                        {
+                            if (BottomSideContent.ActualHeight + delta < SideWidth)
+                            {
+                                delta += BottomSideContent.ActualHeight - SideWidth;
+                                _internelGrid.RowDefinitions[4].Height = new GridLength(SideWidth);
+                                if (TopSideContent.Model != null && TopSideContent.ActualHeight > SideWidth)
+                                {
+                                    if (TopSideContent.ActualHeight + delta < SideWidth)
+                                    {
+                                        delta += TopSideContent.ActualHeight - SideWidth;
+                                        _internelGrid.RowDefinitions[0].Height = new GridLength(SideWidth);
+                                    }
+                                    else _internelGrid.RowDefinitions[0].Height = new GridLength(TopSideContent.ActualHeight + delta);
+                                }
+                            }
+                            else _internelGrid.RowDefinitions[4].Height = new GridLength(BottomSideContent.ActualHeight + delta);
+                        }
+                        else if (TopSideContent.Model != null && TopSideContent.ActualHeight > SideWidth)
+                        {
+                            if (TopSideContent.ActualHeight + delta < SideWidth)
+                            {
+                                delta += TopSideContent.ActualHeight - SideWidth;
+                                _internelGrid.RowDefinitions[0].Height = new GridLength(SideWidth);
+                            }
+                            else _internelGrid.RowDefinitions[0].Height = new GridLength(TopSideContent.ActualHeight + delta);
+                        }
+
+                        double remain = ActualHeight - SideWidth - (TopSideContent.Model != null ? _internelGrid.RowDefinitions[0].Height.Value + SplitterWidth : 0) - (BottomSideContent.Model != null ? _internelGrid.RowDefinitions[4].Height.Value + SplitterWidth : 0);
+
+                        if (remain > 0 && BottomSideContent.Model != null)
+                        {
+                            if (_internelGrid.RowDefinitions[4].Height.Value + remain > BottomSideContent.Model.ActualHeight)
+                            {
+                                remain -= BottomSideContent.Model.ActualHeight - _internelGrid.RowDefinitions[4].Height.Value;
+                                _internelGrid.RowDefinitions[4].Height = new GridLength(_internelGrid.RowDefinitions[4].Height.Value);
+                                if (remain > 0 && TopSideContent.Model != null)
+                                {
+                                    if (_internelGrid.RowDefinitions[0].Height.Value + remain > TopSideContent.Model.ActualHeight)
+                                        _internelGrid.RowDefinitions[0].Height = new GridLength(TopSideContent.Model.ActualHeight);
+                                    else _internelGrid.RowDefinitions[0].Height = new GridLength(_internelGrid.RowDefinitions[0].Height.Value + remain);
+                                }
+                            }
+                            else _internelGrid.RowDefinitions[4].Height = new GridLength(_internelGrid.RowDefinitions[4].Height.Value + remain);
+                        }
+                    }
+                }
+            }
         }
 
         private void SideContentChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -186,7 +343,7 @@ namespace YDock.View
                 if (_leftSplitter == null) return;
                 if (LeftSideContent.Model != null)
                 {
-                    _leftSplitter.Width = 6;
+                    _leftSplitter.Width = SplitterWidth;
                     if (LeftSideContent.Model.ActualWidth > 0)
                         _internelGrid.ColumnDefinitions[0].Width = new GridLength(LeftSideContent.Model.ActualWidth);
                 }
@@ -201,7 +358,7 @@ namespace YDock.View
                 if (_rightSplitter == null) return;
                 if (RightSideContent.Model != null)
                 {
-                    _rightSplitter.Width = 6;
+                    _rightSplitter.Width = SplitterWidth;
                     if (RightSideContent.Model.ActualWidth > 0)
                         _internelGrid.ColumnDefinitions[4].Width = new GridLength(RightSideContent.Model.ActualWidth);
                 }
@@ -216,7 +373,7 @@ namespace YDock.View
                 if (_topSplitter == null) return;
                 if (TopSideContent.Model != null)
                 {
-                    _topSplitter.Height = 6;
+                    _topSplitter.Height = SplitterWidth;
                     if (TopSideContent.Model.ActualHeight > 0)
                         _internelGrid.RowDefinitions[0].Height = new GridLength(TopSideContent.Model.ActualHeight);
                 }
@@ -231,7 +388,7 @@ namespace YDock.View
                 if (_bottomSplitter == null) return;
                 if (BottomSideContent.Model != null)
                 {
-                    _bottomSplitter.Height = 6;
+                    _bottomSplitter.Height = SplitterWidth;
                     if (BottomSideContent.Model.ActualHeight > 0)
                         _internelGrid.RowDefinitions[4].Height = new GridLength(BottomSideContent.Model.ActualHeight);
                 }
@@ -271,7 +428,6 @@ namespace YDock.View
             _internelGrid.Children.Add(_rightSplitter);
             _internelGrid.Children.Add(_topSplitter);
             _internelGrid.Children.Add(_bottomSplitter);
-            _internelGrid.SizeChanged += _internelGrid_SizeChanged; ;
 
             Grid.SetColumn(_leftSplitter, 1);
             Grid.SetRow(_leftSplitter, 2);
@@ -300,36 +456,20 @@ namespace YDock.View
             _bottomSplitter.DragDelta += _Splitter_DragDelta;
         }
 
-        private void _internelGrid_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (_internelGrid.ColumnDefinitions[2].ActualWidth < 30)
-            {
-                var delta = 30 - _internelGrid.ColumnDefinitions[2].ActualWidth;
-                if (_internelGrid.ColumnDefinitions[0].ActualWidth - delta >= 30)
-                    _internelGrid.ColumnDefinitions[0].Width = new GridLength(_internelGrid.ColumnDefinitions[0].ActualWidth - delta);
-                if (_internelGrid.ColumnDefinitions[4].ActualWidth - delta >= 30)
-                    _internelGrid.ColumnDefinitions[4].Width = new GridLength(_internelGrid.ColumnDefinitions[4].ActualWidth - delta);
-            }
-            if (_internelGrid.RowDefinitions[2].ActualHeight < 30)
-            {
-                var delta = 30 - _internelGrid.RowDefinitions[2].ActualHeight;
-                if (_internelGrid.RowDefinitions[0].ActualHeight - delta >= 30)
-                    _internelGrid.RowDefinitions[0].Height = new GridLength(_internelGrid.RowDefinitions[0].ActualHeight - delta);
-                if (_internelGrid.RowDefinitions[4].ActualHeight - delta >= 30)
-                    _internelGrid.RowDefinitions[4].Height = new GridLength(_internelGrid.RowDefinitions[4].ActualHeight - delta);
-            }
-        }
-
         private void _Splitter_DragDelta(object sender, DragDeltaEventArgs e)
         {
             if (sender == _leftSplitter)
-                Canvas.SetLeft(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.X + e.HorizontalChange, 30, ActualWidth - 36 - RightSideContent.ActualWidth));
+                Canvas.SetLeft(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.X + e.HorizontalChange, SideWidth, Math.Max(ActualWidth - SideWidth - 2 * SplitterWidth - RightSideContent.ActualWidth, SideWidth)));
             if (sender == _rightSplitter)
-                Canvas.SetLeft(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.X + e.HorizontalChange, 30 + LeftSideContent.ActualWidth, ActualWidth - 36));
+                Canvas.SetLeft(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.X + e.HorizontalChange, Math.Min(SideWidth + SplitterWidth + LeftSideContent.ActualWidth, ActualWidth - SideWidth - SplitterWidth), ActualWidth - SideWidth - SplitterWidth));
             if (sender == _topSplitter)
-                Canvas.SetTop(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.Y + e.VerticalChange, 30, ActualHeight - 36 - BottomSideContent.ActualHeight));
+                Canvas.SetTop(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.Y + e.VerticalChange, SideWidth, Math.Max(ActualHeight - SideWidth - 2 * SplitterWidth - BottomSideContent.ActualHeight, SideWidth)));
             if (sender == _bottomSplitter)
-                Canvas.SetTop(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.Y + e.VerticalChange, 30 + TopSideContent.ActualHeight, ActualHeight - 36));
+            {
+                double height = SideWidth + SplitterWidth + (TopSideContent.Model != null ? SideWidth + SplitterWidth : 0);
+                if (ActualHeight <= height) return;
+                Canvas.SetTop(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.Y + e.VerticalChange, Math.Min(SideWidth + SplitterWidth + TopSideContent.ActualHeight, ActualHeight - SideWidth - SplitterWidth), ActualHeight - SideWidth - SplitterWidth));
+            }
         }
 
         private void _Splitter_DragCompleted(object sender, DragCompletedEventArgs e)
@@ -339,13 +479,25 @@ namespace YDock.View
                 delta = Canvas.GetLeft(_dragRect) - _pToInterGrid.X;
             else delta = Canvas.GetTop(_dragRect) - _pToInterGrid.Y;
             if (sender == _leftSplitter)
+            {
                 _internelGrid.ColumnDefinitions[0].Width = new GridLength(_internelGrid.ColumnDefinitions[0].ActualWidth + delta);
+                (LeftSideContent.Model as LayoutElement).ActualWidth = _internelGrid.ColumnDefinitions[0].ActualWidth + delta;
+            }
             if (sender == _rightSplitter)
+            {
                 _internelGrid.ColumnDefinitions[4].Width = new GridLength(_internelGrid.ColumnDefinitions[4].ActualWidth - delta);
+                (RightSideContent.Model as LayoutElement).ActualWidth = _internelGrid.ColumnDefinitions[4].ActualWidth - delta;
+            }
             if (sender == _topSplitter)
+            {
                 _internelGrid.RowDefinitions[0].Height = new GridLength(_internelGrid.RowDefinitions[0].ActualHeight + delta);
+                (TopSideContent.Model as LayoutElement).ActualHeight = _internelGrid.RowDefinitions[0].ActualHeight + delta;
+            }
             if (sender == _bottomSplitter)
+            {
                 _internelGrid.RowDefinitions[4].Height = new GridLength(_internelGrid.RowDefinitions[4].ActualHeight - delta);
+                (BottomSideContent.Model as LayoutElement).ActualHeight = _internelGrid.RowDefinitions[4].ActualHeight - delta;
+            }
             _DisposeDragWnd();
         }
 
