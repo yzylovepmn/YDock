@@ -9,9 +9,9 @@ using YDock.Interface;
 namespace YDock.Model
 {
     [ContentProperty("Children")]
-    public class RootGird : IModel
+    public class RootPanel : IModel
     {
-        public RootGird()
+        public RootPanel()
         {
             _tab = new DocumentTab(this);
         }

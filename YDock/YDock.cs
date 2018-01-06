@@ -33,6 +33,8 @@ namespace YDock
             {
                 if (_root != value)
                 {
+                    if (_root != null)
+                        _root.DockManager = null;
                     _root = value;
                     if (_root != null)
                         _root.DockManager = this;
@@ -139,23 +141,47 @@ namespace YDock
                 AddLogicalChild(e.NewValue);
         }
 
-        public static readonly DependencyProperty CenterGirdProperty =
-            DependencyProperty.Register("CenterGird", typeof(RootGirdControl), typeof(YDock),
+        //public static readonly DependencyProperty CenterGirdProperty =
+        //    DependencyProperty.Register("CenterGird", typeof(RootGirdControl), typeof(YDock),
+        //        new FrameworkPropertyMetadata(null,
+        //            new PropertyChangedCallback(OnCenterGirdChanged)));
+
+        //public RootGirdControl CenterGird
+        //{
+        //    get { return (RootGirdControl)GetValue(CenterGirdProperty); }
+        //    set { SetValue(CenterGirdProperty, value); }
+        //}
+
+        //private static void OnCenterGirdChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    ((YDock)d).OnCenterGirdChanged(e);
+        //}
+
+        //protected virtual void OnCenterGirdChanged(DependencyPropertyChangedEventArgs e)
+        //{
+        //    if (e.OldValue != null)
+        //        RemoveLogicalChild(e.OldValue);
+        //    if (e.NewValue != null)
+        //        AddLogicalChild(e.NewValue);
+        //}
+
+        public static readonly DependencyProperty LayoutRootPanelProperty =
+            DependencyProperty.Register("LayoutRootPanel", typeof(LayoutRootPanel), typeof(YDock),
                 new FrameworkPropertyMetadata(null,
-                    new PropertyChangedCallback(OnCenterGirdChanged)));
+                    new PropertyChangedCallback(OnLayoutRootPanelChanged)));
 
-        public RootGirdControl CenterGird
+        public LayoutRootPanel LayoutRootPanel
         {
-            get { return (RootGirdControl)GetValue(CenterGirdProperty); }
-            set { SetValue(CenterGirdProperty, value); }
+            get { return (LayoutRootPanel)GetValue(LayoutRootPanelProperty); }
+            set { SetValue(LayoutRootPanelProperty, value); }
         }
 
-        private static void OnCenterGirdChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnLayoutRootPanelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((YDock)d).OnCenterGirdChanged(e);
+            ((YDock)d).OnLayoutRootPanelChanged(e);
         }
 
-        protected virtual void OnCenterGirdChanged(DependencyPropertyChangedEventArgs e)
+        protected virtual void OnLayoutRootPanelChanged(DependencyPropertyChangedEventArgs e)
         {
             if (e.OldValue != null)
                 RemoveLogicalChild(e.OldValue);
@@ -170,7 +196,8 @@ namespace YDock
 
             if (_root.DockManager == this)
             {
-                CenterGird = new RootGirdControl(_root.RootGrid);
+                //CenterGird = new RootGirdControl(_root.RootGrid);
+                LayoutRootPanel = new LayoutRootPanel(_root.RootPanel);
                 LeftSide = new YDockSideControl(_root.LeftSide);
                 RightSide = new YDockSideControl(_root.RightSide);
                 BottomSide = new YDockSideControl(_root.BottomSide);

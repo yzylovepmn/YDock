@@ -127,5 +127,43 @@ namespace YDock.Model
                 _actualHeight = value;
             }
         }
+
+        private double _floatLeft;
+        public double FloatLeft
+        {
+            get { return _floatLeft; }
+            set
+            {
+                if (_floatLeft != value)
+                    _floatLeft = value;
+            }
+        }
+
+        private double _floatTop;
+        public double FloatTop
+        {
+            get { return _floatTop; }
+            set
+            {
+                if (_floatTop != value)
+                    _floatTop = value;
+            }
+        }
+
+        public bool IsDock
+        {
+            get
+            {
+                return _container != null && _container is YDockSide;
+            }
+        }
+
+        public bool IsDocument
+        {
+            get
+            {
+                return _container != null && _container is DocumentTab;
+            }
+        }
     }
 }

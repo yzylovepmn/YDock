@@ -23,7 +23,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <ContentPresenter Content="{TemplateBinding CenterGird}" Grid.Column="1" Grid.Row="1"/>
+                            <ContentPresenter Content="{TemplateBinding LayoutRootPanel}" Grid.Column="1" Grid.Row="1"/>
                             <ContentPresenter Content="{TemplateBinding RightSide}" Grid.Column="2" Grid.Row="1"/>
                             <ContentPresenter Content="{TemplateBinding LeftSide}" Grid.Column="0" Grid.Row="1"/>
                             <ContentPresenter Content="{TemplateBinding TopSide}" Grid.Column="1" Grid.Row="0"/>

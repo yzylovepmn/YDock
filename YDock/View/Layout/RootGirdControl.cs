@@ -39,11 +39,13 @@ namespace YDock.View
             }
             set
             {
-                if (_model != null) _model.View = null;
                 if (_model != value)
                 {
+                    if (_model != null)
+                        _model.View = null;
                     _model = value;
-                    _model.View = this;
+                    if (_model != null)
+                        _model.View = this;
                 }
             }
         }
@@ -178,7 +180,7 @@ namespace YDock.View
             RightSideContent = new AnchorDocumentControl();
             TopSideContent = new AnchorDocumentControl();
             BottomSideContent = new AnchorDocumentControl();
-            DocumentTabs = new DocumentTabControl(((RootGird)Model).Tab);
+            DocumentTabs = new DocumentTabControl(((RootPanel)Model).Tab);
             LeftSideContent.PropertyChanged += SideContentChanged;
             RightSideContent.PropertyChanged += SideContentChanged;
             TopSideContent.PropertyChanged += SideContentChanged;

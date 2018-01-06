@@ -19,5 +19,15 @@ namespace YDock
             if (value < min) return min;
             return value;
         }
+
+        public static bool IsSizeEmpty(Size size)
+        {
+            return size.Width < 0.1 && size.Height < 0.1;
+        }
+
+        public static bool IsSizeEmpty(double width, double height)
+        {
+            return width < 0.1 && height < 0.1;
+        }
     }
 }

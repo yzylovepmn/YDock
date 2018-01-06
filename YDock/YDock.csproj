@@ -61,7 +61,7 @@
     <Compile Include="Interface\IView.cs" />
     <Compile Include="Model\Element\LayoutElement.cs" />
     <Compile Include="Model\Layout\DocumentTab.cs" />
-    <Compile Include="Model\Layout\RootGird.cs" />
+    <Compile Include="Model\Layout\RootPanel.cs" />
     <Compile Include="Model\Layout\YDockSide.cs" />
     <Compile Include="Model\YDockRoot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -83,6 +83,7 @@
     <Compile Include="View\Layout\DocumentPanel.cs" />
     <Compile Include="View\Layout\DocumentTabControl.cs" />
     <Compile Include="View\Layout\LayoutGridSplitter.cs" />
+    <Compile Include="View\Layout\LayoutRootPanel.cs" />
     <Compile Include="View\Layout\RootGirdControl.cs" />
     <Compile Include="View\Layout\YDockSideControl.cs" />
     <Compile Include="View\Extensions.cs" />

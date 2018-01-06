@@ -19,7 +19,7 @@
     <DockPanel>
         <ydock:YDock x:Name="DockManager">
             <ydockmodel:YDockRoot>
-                <ydockmodel:RootGird>
+                <ydockmodel:RootPanel>
                     <ydockmodel:LayoutElement Title="憨憨彭憨憨彭憨憨彭">
                         <ydockmodel:LayoutElement.Content>
                             <Border>
@@ -62,7 +62,7 @@
                             </Border>
                         </ydockmodel:LayoutElement.Content>
                     </ydockmodel:LayoutElement>
-                </ydockmodel:RootGird>
+                </ydockmodel:RootPanel>
                 <ydockmodel:YDockRoot.LeftSide>
                     <ydockmodel:YDockSide>
                         <ydockmodel:LayoutElement Title="我是asdsa">

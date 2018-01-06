@@ -9,12 +9,12 @@ using YDock.Enum;
 
 namespace YDock.Model
 {
-    [ContentProperty("RootGrid")]
+    [ContentProperty("RootPanel")]
     public class YDockRoot : DependencyObject, INotifyPropertyChanged
     {
         public YDockRoot()
         {
-            RootGrid = new RootGird();
+            RootPanel = new RootPanel();
             LeftSide = new YDockSide();
             RightSide = new YDockSide();
             TopSide = new YDockSide();
@@ -33,19 +33,19 @@ namespace YDock.Model
 
         #endregion
 
-        #region RootGrid
+        #region RootPanel
 
-        private RootGird _rootGrid;
-        public RootGird RootGrid
+        private RootPanel _rootPanel;
+        public RootPanel RootPanel
         {
-            get { return _rootGrid; }
+            get { return _rootPanel; }
             set
             {
-                if (_rootGrid != value)
+                if (_rootPanel != value)
                 {
-                    _rootGrid = value;
-                    if (_rootGrid != null)
-                        _rootGrid.Root = this;
+                    _rootPanel = value;
+                    if (_rootPanel != null)
+                        _rootPanel.Root = this;
                     PropertyChanged(this, new PropertyChangedEventArgs("RootGrid"));
                 }
             }

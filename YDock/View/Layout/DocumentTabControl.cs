@@ -33,13 +33,27 @@ namespace YDock.View
             }
             set
             {
-                if (_model != null) _model.View = null;
                 if (_model != value)
                 {
+                    if (_model != null)
+                        _model.View = null;
                     _model = value;
-                    _model.View = this;
+                    if (_model != null)
+                        _model.View = this;
                 }
             }
+        }
+
+        protected override void OnSelectionChanged(SelectionChangedEventArgs e)
+        {
+            base.OnSelectionChanged(e);
+            if (e.RemovedItems != null)
+                foreach (LayoutElement item in e.RemovedItems)
+                    item.IsVisible = false;
+
+            if (e.AddedItems != null)
+                foreach (LayoutElement item in e.AddedItems)
+                    item.IsVisible = true;
         }
     }
 }
