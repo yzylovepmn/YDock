@@ -52,9 +52,11 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
     <Compile Include="Converters\NullBindingConverter.cs" />
     <Compile Include="Converters\SideToAngleConverter.cs" />
     <Compile Include="Converters\SideToFlowDirectionConverter.cs" />
+    <Compile Include="Enum\Direction.cs" />
     <Compile Include="Enum\DockSide.cs" />
     <Compile Include="Interface\ILayoutContainer.cs" />
     <Compile Include="Interface\IModel.cs" />
@@ -79,6 +81,7 @@
     </Compile>
     <Compile Include="View\Element\AnchorDocumentControl.cs" />
     <Compile Include="View\Element\DockSideItemControl.cs" />
+    <Compile Include="View\Layout\AnchorSidePanel.cs" />
     <Compile Include="View\Layout\DockSidePanel.cs" />
     <Compile Include="View\Layout\DocumentPanel.cs" />
     <Compile Include="View\Layout\DocumentTabControl.cs" />

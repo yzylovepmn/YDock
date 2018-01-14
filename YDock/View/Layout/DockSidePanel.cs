@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Controls;
 using System.Windows;
+using YDock.Model;
 
 namespace YDock.View
 {
@@ -52,28 +53,54 @@ namespace YDock.View
                 double subWidth = ele_deceed.Sum((e) => e.DesiredSize.Width + e.Margin.Left + e.Margin.Right);
                 double exceed_avaWidth = (finalSize.Width - subWidth) / cnt;
 
-                double offset = 0.0;
-                foreach (var child in visibleChildren)
+                double offset_left = 0.0;
+                double offset_right = 0.0;
+                foreach (DockSideItemControl child in visibleChildren)
                 {
-                    if (child.DesiredSize.Width + child.Margin.Left + child.Margin.Right <= avaWidth)
+                    if (!(child.Content as LayoutElement).IsSplitMode)
                     {
-                        child.Arrange(new Rect(new Point(offset, 0), child.DesiredSize));
-                        offset += child.DesiredSize.Width + child.Margin.Left + child.Margin.Right;
+                        if (child.DesiredSize.Width + child.Margin.Left + child.Margin.Right <= avaWidth)
+                        {
+                            child.Arrange(new Rect(new Point(offset_left + child.Margin.Left, 0), child.DesiredSize));
+                            offset_left += child.DesiredSize.Width + child.Margin.Left + child.Margin.Right;
+                        }
+                        else
+                        {
+                            child.Arrange(new Rect(new Point(offset_left + child.Margin.Left, 0), new Size(exceed_avaWidth - child.Margin.Left - child.Margin.Right, child.DesiredSize.Height)));
+                            offset_left += exceed_avaWidth;
+                        }
                     }
                     else
                     {
-                        child.Arrange(new Rect(new Point(offset, 0), new Size(exceed_avaWidth - child.Margin.Left - child.Margin.Right, child.DesiredSize.Height)));
-                        offset += exceed_avaWidth;
+                        if (child.DesiredSize.Width + child.Margin.Left + child.Margin.Right <= avaWidth)
+                        {
+                            child.Arrange(new Rect(new Point(finalSize.Width - (child.DesiredSize.Width + child.Margin.Right + offset_right), 0), child.DesiredSize));
+                            offset_right += child.DesiredSize.Width + child.Margin.Left + child.Margin.Right;
+                        }
+                        else
+                        {
+                            child.Arrange(new Rect(new Point(finalSize.Width - (exceed_avaWidth - child.Margin.Left + offset_right), 0), new Size(exceed_avaWidth - child.Margin.Left - child.Margin.Right, child.DesiredSize.Height)));
+                            offset_right += exceed_avaWidth;
+                        }
                     }
                 }
             }
             else
             {
-                double width = 0.0;
-                foreach (var child in visibleChildren)
+                double offset_left = 0.0;
+                double offset_right = 0.0;
+                foreach (DockSideItemControl child in visibleChildren)
                 {
-                    child.Arrange(new Rect(new Point(width, 0), child.DesiredSize));
-                    width += child.DesiredSize.Width + child.Margin.Left + child.Margin.Right;
+                    if (!(child.Content as LayoutElement).IsSplitMode)
+                    {
+                        child.Arrange(new Rect(new Point(offset_left + child.Margin.Left, 0), child.DesiredSize));
+                        offset_left += child.DesiredSize.Width + child.Margin.Left + child.Margin.Right;
+                    }
+                    else
+                    {
+                        child.Arrange(new Rect(new Point(finalSize.Width - (child.DesiredSize.Width + child.Margin.Right + offset_right), 0), child.DesiredSize));
+                        offset_right += child.DesiredSize.Width + child.Margin.Left + child.Margin.Right;
+                    }
                 }
             }
             return finalSize;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -24,7 +25,7 @@ namespace YDock.View
         {
             Model = model;
 
-            SetBinding(ItemsSourceProperty, new Binding("Model.Children") { Source = this });
+            SetBinding(ItemsSourceProperty, new Binding("Model.Children_CanSelect") { Source = this });
 
             var transform = new RotateTransform();
             switch (Model.Side)
@@ -41,6 +42,9 @@ namespace YDock.View
 
 
         private IAnchorModel _model;
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
         public IAnchorModel Model
         {
             get { return _model; }

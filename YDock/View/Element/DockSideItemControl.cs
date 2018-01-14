@@ -43,65 +43,107 @@ namespace YDock.View
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
-        private bool _isDragging = false;
-
-        //protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
-        //{
-        //    var parent = _container as YDockSideControl;
-        //    var dock = parent.Model.DockManager;
-        //    switch (parent.Model.Side)
-        //    {
-        //        case DockSide.Left:
-        //            if (dock.CenterGird.LeftSideContent.Model == Content)
-        //                dock.CenterGird.LeftSideContent.Model = null;
-        //            else dock.CenterGird.LeftSideContent.Model = Content as ILayoutElement;
-        //            break;
-        //        case DockSide.Right:
-        //            if (dock.CenterGird.RightSideContent.Model == Content)
-        //                dock.CenterGird.RightSideContent.Model = null;
-        //            else dock.CenterGird.RightSideContent.Model = Content as ILayoutElement;
-        //            break;
-        //        case DockSide.Top:
-        //            if (dock.CenterGird.TopSideContent.Model == Content)
-        //                dock.CenterGird.TopSideContent.Model = null;
-        //            else dock.CenterGird.TopSideContent.Model = Content as ILayoutElement;
-        //            break;
-        //        case DockSide.Bottom:
-        //            if (dock.CenterGird.BottomSideContent.Model == Content)
-        //                dock.CenterGird.BottomSideContent.Model = null;
-        //            else dock.CenterGird.BottomSideContent.Model = Content as ILayoutElement;
-        //            break;
-        //    }
-
-        //    base.OnMouseLeftButtonUp(e);
-        //}
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
             var parent = _container as YDockSideControl;
             var dock = parent.Model.DockManager;
+            AnchorSidePanel asp = default(AnchorSidePanel);
             switch (parent.Model.Side)
             {
                 case DockSide.Left:
-                    if (dock.LayoutRootPanel.LeftSideContent.Model == Content)
-                        dock.LayoutRootPanel.LeftSideContent.Model = null;
-                    else dock.LayoutRootPanel.LeftSideContent.Model = Content as ILayoutElement;
+                    asp = dock.LayoutRootPanel.LeftSideContent;
                     break;
                 case DockSide.Right:
-                    if (dock.LayoutRootPanel.RightSideContent.Model == Content)
-                        dock.LayoutRootPanel.RightSideContent.Model = null;
-                    else dock.LayoutRootPanel.RightSideContent.Model = Content as ILayoutElement;
+                    asp = dock.LayoutRootPanel.RightSideContent;
                     break;
                 case DockSide.Top:
-                    if (dock.LayoutRootPanel.TopSideContent.Model == Content)
-                        dock.LayoutRootPanel.TopSideContent.Model = null;
-                    else dock.LayoutRootPanel.TopSideContent.Model = Content as ILayoutElement;
+                    asp = dock.LayoutRootPanel.TopSideContent;
                     break;
                 case DockSide.Bottom:
-                    if (dock.LayoutRootPanel.BottomSideContent.Model == Content)
-                        dock.LayoutRootPanel.BottomSideContent.Model = null;
-                    else dock.LayoutRootPanel.BottomSideContent.Model = Content as ILayoutElement;
+                    asp = dock.LayoutRootPanel.BottomSideContent;
                     break;
+            }
+
+            if (asp != null)
+            {
+                LayoutElement ele = Content as LayoutElement;
+                if (!ele.IsSplitMode)
+                {
+                    if (asp.NormalDocument.Model == ele)
+                        asp.NormalDocument.Model = null;
+                    else
+                    {
+                        if (!asp.HasContent || (!asp.IsFullMode && asp.NormalDocument.Model != null))
+                        {
+                            switch (parent.Model.Side)
+                            {
+                                case DockSide.Left:
+                                case DockSide.Right:
+                                    asp.ContentSideLenght = Math.Max(ele.Width, Constants.SideLength);
+                                    if (asp.NormalDocument.Model != null)
+                                        ele.Height = asp.NormalDocument.Model.Height;
+                                    break;
+                                case DockSide.Top:
+                                case DockSide.Bottom:
+                                    asp.ContentSideLenght = Math.Max(ele.Height, Constants.SideLength);
+                                    if (asp.NormalDocument.Model != null)
+                                        ele.Width = asp.NormalDocument.Model.Width;
+                                    break;
+                            }
+                        }
+                        asp.NormalDocument.Model = ele;
+                    }
+                }
+                else
+                {
+                    if (asp.SplitDocument.Model == ele)
+                        asp.SplitDocument.Model = null;
+                    else
+                    {
+                        if (!asp.HasContent || (!asp.IsFullMode && asp.SplitDocument.Model != null))
+                        {
+                            switch (parent.Model.Side)
+                            {
+                                case DockSide.Left:
+                                case DockSide.Right:
+                                    asp.ContentSideLenght = Math.Max(ele.Width, Constants.SideLength);
+                                    if (asp.SplitDocument.Model != null)
+                                        ele.Height = asp.SplitDocument.Model.Height;
+                                    break;
+                                case DockSide.Top:
+                                case DockSide.Bottom:
+                                    asp.ContentSideLenght = Math.Max(ele.Height, Constants.SideLength);
+                                    if (asp.SplitDocument.Model != null)
+                                        ele.Width = asp.SplitDocument.Model.Width;
+                                    break;
+                            }
+                        }
+                        asp.SplitDocument.Model = ele;
+                    }
+                }
+                if (!asp.HasContent)
+                    asp.ContentSideLenght = 0;
+                if (asp.IsFullMode)
+                {
+                    switch (parent.Model.Side)
+                    {
+                        case DockSide.Left:
+                        case DockSide.Right:
+                            ele.Width = asp.ContentSideLenght;
+                            if (ele.IsSplitMode)
+                                ele.Height = asp.NormalDocument.Model.Height;
+                            else ele.Height = asp.SplitDocument.Model.Height;
+                            break;
+                        case DockSide.Top:
+                        case DockSide.Bottom:
+                            ele.Height = asp.ContentSideLenght;
+                            if (ele.IsSplitMode)
+                                ele.Width = asp.NormalDocument.Model.Width;
+                            else ele.Width = asp.SplitDocument.Model.Width;
+                            break;
+                    }
+                }
             }
 
             base.OnMouseLeftButtonUp(e);

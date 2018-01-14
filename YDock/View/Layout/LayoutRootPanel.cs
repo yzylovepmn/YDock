@@ -8,6 +8,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
 
@@ -25,13 +26,8 @@ namespace YDock.View
             Model = model;
         }
 
-        #region SideWidth & SplitterWidth
-        public const double SideWidth = 30;
-        public const double SplitterWidth = 6;
-        #endregion
-
-        private AnchorDocumentControl _topSideContent;
-        public AnchorDocumentControl TopSideContent
+        private AnchorSidePanel _topSideContent;
+        public AnchorSidePanel TopSideContent
         {
             get { return _topSideContent; }
             set
@@ -47,8 +43,8 @@ namespace YDock.View
             }
         }
 
-        private AnchorDocumentControl _bottomSideContent;
-        public AnchorDocumentControl BottomSideContent
+        private AnchorSidePanel _bottomSideContent;
+        public AnchorSidePanel BottomSideContent
         {
             get { return _bottomSideContent; }
             set
@@ -64,8 +60,8 @@ namespace YDock.View
             }
         }
 
-        private AnchorDocumentControl _leftSideContent;
-        public AnchorDocumentControl LeftSideContent
+        private AnchorSidePanel _leftSideContent;
+        public AnchorSidePanel LeftSideContent
         {
             get { return _leftSideContent; }
             set
@@ -81,8 +77,8 @@ namespace YDock.View
             }
         }
 
-        private AnchorDocumentControl _rightSideContent;
-        public AnchorDocumentControl RightSideContent
+        private AnchorSidePanel _rightSideContent;
+        public AnchorSidePanel RightSideContent
         {
             get { return _rightSideContent; }
             set
@@ -97,6 +93,8 @@ namespace YDock.View
                 }
             }
         }
+
+
 
         private DocumentTabControl _documentTabs;
         public DocumentTabControl DocumentTabs
@@ -168,16 +166,16 @@ namespace YDock.View
         private void _Splitter_DragDelta(object sender, DragDeltaEventArgs e)
         {
             if (sender == _leftSplitter)
-                Canvas.SetLeft(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.X + e.HorizontalChange, SideWidth, Math.Max(ActualWidth - SideWidth - 2 * SplitterWidth - RightSideContent.ActualWidth, SideWidth)));
+                Canvas.SetLeft(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.X + e.HorizontalChange, Constants.SideLength, Math.Max(ActualWidth - Constants.SideLength - 2 * Constants.SplitterSpan - RightSideContent.ActualWidth, Constants.SideLength)));
             if (sender == _rightSplitter)
-                Canvas.SetLeft(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.X + e.HorizontalChange, Math.Min(SideWidth + SplitterWidth + LeftSideContent.ActualWidth, ActualWidth - SideWidth - SplitterWidth), ActualWidth - SideWidth - SplitterWidth));
+                Canvas.SetLeft(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.X + e.HorizontalChange, Math.Min(Constants.SideLength + Constants.SplitterSpan + LeftSideContent.ActualWidth, ActualWidth - Constants.SideLength - Constants.SplitterSpan), ActualWidth - Constants.SideLength - Constants.SplitterSpan));
             if (sender == _topSplitter)
-                Canvas.SetTop(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.Y + e.VerticalChange, SideWidth, Math.Max(ActualHeight - SideWidth - 2 * SplitterWidth - BottomSideContent.ActualHeight, SideWidth)));
+                Canvas.SetTop(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.Y + e.VerticalChange, Constants.SideLength, Math.Max(ActualHeight - Constants.SideLength - 2 * Constants.SplitterSpan - BottomSideContent.ActualHeight, Constants.SideLength)));
             if (sender == _bottomSplitter)
             {
-                double height = SideWidth + SplitterWidth + (TopSideContent.Model != null ? SideWidth + SplitterWidth : 0);
+                double height = Constants.SideLength + Constants.SplitterSpan + (TopSideContent.HasContent ? Constants.SideLength + Constants.SplitterSpan : 0);
                 if (ActualHeight <= height) return;
-                Canvas.SetTop(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.Y + e.VerticalChange, Math.Min(SideWidth + SplitterWidth + TopSideContent.ActualHeight, ActualHeight - SideWidth - SplitterWidth), ActualHeight - SideWidth - SplitterWidth));
+                Canvas.SetTop(_dragRect, YDockHelper.GetMaxOrMinValue(_pToInterGrid.Y + e.VerticalChange, Math.Min(Constants.SideLength + Constants.SplitterSpan + TopSideContent.ActualHeight, ActualHeight - Constants.SideLength - Constants.SplitterSpan), ActualHeight - Constants.SideLength - Constants.SplitterSpan));
             }
         }
 
@@ -188,13 +186,13 @@ namespace YDock.View
                 delta = Canvas.GetLeft(_dragRect) - _pToInterGrid.X;
             else delta = Canvas.GetTop(_dragRect) - _pToInterGrid.Y;
             if (sender == _leftSplitter)
-                (LeftSideContent.Model as LayoutElement).ActualWidth = _leftSideContent.ActualWidth + delta;
+                LeftSideContent.ContentSideLenght = _leftSideContent.ActualWidth + delta;
             if (sender == _rightSplitter)
-                (RightSideContent.Model as LayoutElement).ActualWidth = _rightSideContent.ActualWidth - delta;
+                RightSideContent.ContentSideLenght = _rightSideContent.ActualWidth - delta;
             if (sender == _topSplitter)
-                (TopSideContent.Model as LayoutElement).ActualHeight = _topSideContent.ActualHeight + delta;
+                TopSideContent.ContentSideLenght = _topSideContent.ActualHeight + delta;
             if (sender == _bottomSplitter)
-                (BottomSideContent.Model as LayoutElement).ActualHeight = _bottomSideContent.ActualHeight - delta;
+                BottomSideContent.ContentSideLenght = _bottomSideContent.ActualHeight - delta;
             if (delta != 0)
                 InvalidateMeasure();
             _DisposeDragWnd();
@@ -261,15 +259,15 @@ namespace YDock.View
 
             _SetupSplitter();
 
-            TopSideContent = new AnchorDocumentControl();
+            TopSideContent = new AnchorSidePanel(Direction.LeftToRight);
             Children.Add(_topSplitter);
-            LeftSideContent = new AnchorDocumentControl();
+            LeftSideContent = new AnchorSidePanel(Direction.UpToDown);
             Children.Add(_leftSplitter);
             DocumentTabs = new DocumentTabControl(((RootPanel)Model).Tab);
             Children.Add(_rightSplitter);
-            RightSideContent = new AnchorDocumentControl();
+            RightSideContent = new AnchorSidePanel(Direction.UpToDown);
             Children.Add(_bottomSplitter);
-            BottomSideContent = new AnchorDocumentControl();
+            BottomSideContent = new AnchorSidePanel(Direction.LeftToRight);
 
             LeftSideContent.PropertyChanged += SideContentChanged;
             RightSideContent.PropertyChanged += SideContentChanged;
@@ -286,70 +284,69 @@ namespace YDock.View
         protected override Size MeasureOverride(Size availableSize)
         {
             foreach (UIElement child in InternalChildren)
-                child.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            {
+                if (child is AnchorSidePanel)
+                {
+                    var panel = child as AnchorSidePanel;
+                    if (panel.Direction == Direction.LeftToRight)
+                        panel.Measure(new Size(availableSize.Width, panel.ContentSideLenght));
+                    else panel.Measure(new Size(panel.ContentSideLenght, availableSize.Height));
+                }
+                else child.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            }
 
             double up = 0;
             double down = 0;
             double left = 0;
             double right = 0;
 
-            if (_topSideContent.Model != null)
+            if (_topSideContent.HasContent)
             {
-                if (YDockHelper.IsSizeEmpty(_topSideContent.Model.ActualWidth, _topSideContent.Model.ActualHeight))
-                {
-                    (_topSideContent.Model as LayoutElement).ActualWidth = availableSize.Width;
-                    (_topSideContent.Model as LayoutElement).ActualHeight = Math.Max(_topSideContent.DesiredSize.Height, SideWidth);
-                }
-                up += (_topSideContent.Model as LayoutElement).ActualHeight;
-                up += SplitterWidth;
+                up += _topSideContent.ContentSideLenght;
+                up += Constants.SplitterSpan;
             }
 
-            if (_bottomSideContent.Model != null)
+            if (_bottomSideContent.HasContent)
             {
-                if (YDockHelper.IsSizeEmpty(_bottomSideContent.Model.ActualWidth, _bottomSideContent.Model.ActualHeight))
-                {
-                    (_bottomSideContent.Model as LayoutElement).ActualWidth = availableSize.Width;
-                    (_bottomSideContent.Model as LayoutElement).ActualHeight = Math.Max(_bottomSideContent.DesiredSize.Height, SideWidth);
-                }
-                down += (_bottomSideContent.Model as LayoutElement).ActualHeight;
-                down += SplitterWidth;
+                down += _bottomSideContent.ContentSideLenght;
+                down += Constants.SplitterSpan;
             }
 
-            if (up + down + SideWidth > availableSize.Height)
+            if (up + down + Constants.SideLength > availableSize.Height)
             {
-                double delta = up + down + SideWidth - availableSize.Height;
+                double delta = up + down + Constants.SideLength - availableSize.Height;
                 if (up > 0)
                 {
-                    if (up - delta >= SideWidth + SplitterWidth)
+                    if (up - delta >= Constants.SideLength + Constants.SplitterSpan)
                     {
                         up = up - delta;
                         delta = 0;
                     }
                     else
                     {
-                        delta -= up - (SideWidth + SplitterWidth);
-                        up = SideWidth + SplitterWidth;
+                        delta -= up - (Constants.SideLength + Constants.SplitterSpan);
+                        up = Constants.SideLength + Constants.SplitterSpan;
                     }
                 }
                 if (delta > 0 && down > 0)
                 {
-                    if (down - delta >= SideWidth + SplitterWidth)
+                    if (down - delta >= Constants.SideLength + Constants.SplitterSpan)
                     {
                         down = down - delta;
                         delta = 0;
                     }
                     else
                     {
-                        delta -= down - (SideWidth + SplitterWidth);
-                        down = SideWidth + SplitterWidth;
+                        delta -= down - (Constants.SideLength + Constants.SplitterSpan);
+                        down = Constants.SideLength + Constants.SplitterSpan;
                     }
                 }
             }
 
             if (up > 0)
             {
-                _topSideContent.Measure(new Size(availableSize.Width, up - SplitterWidth));
-                _topSplitter.Measure(new Size(availableSize.Width, SplitterWidth));
+                _topSideContent.Measure(new Size(availableSize.Width, up - Constants.SplitterSpan));
+                _topSplitter.Measure(new Size(availableSize.Width, Constants.SplitterSpan));
             }
             else
             {
@@ -358,8 +355,8 @@ namespace YDock.View
             }
             if (down > 0)
             {
-                _bottomSideContent.Measure(new Size(availableSize.Width, down - SplitterWidth));
-                _bottomSplitter.Measure(new Size(availableSize.Width, SplitterWidth));
+                _bottomSideContent.Measure(new Size(availableSize.Width, down - Constants.SplitterSpan));
+                _bottomSplitter.Measure(new Size(availableSize.Width, Constants.SplitterSpan));
             }
             else
             {
@@ -368,63 +365,53 @@ namespace YDock.View
             }
 
 
-            if (_leftSideContent.Model != null)
+            if (_leftSideContent.HasContent)
             {
-                if (YDockHelper.IsSizeEmpty(_leftSideContent.Model.ActualWidth, _leftSideContent.Model.ActualHeight))
-                {
-                    (_leftSideContent.Model as LayoutElement).ActualWidth = Math.Max(_leftSideContent.DesiredSize.Width, SideWidth);
-                    (_leftSideContent.Model as LayoutElement).ActualHeight = Math.Max(availableSize.Height - up - down, 0);
-                }
-                left += (_leftSideContent.Model as LayoutElement).ActualWidth;
-                left += SplitterWidth;
+                left += _leftSideContent.ContentSideLenght;
+                left += Constants.SplitterSpan;
             }
 
-            if (_rightSideContent.Model != null)
+            if (_rightSideContent.HasContent)
             {
-                if (YDockHelper.IsSizeEmpty(_rightSideContent.Model.ActualWidth, _rightSideContent.Model.ActualHeight))
-                {
-                    (_rightSideContent.Model as LayoutElement).ActualWidth = Math.Max(_rightSideContent.DesiredSize.Width, SideWidth);
-                    (_rightSideContent.Model as LayoutElement).ActualHeight = Math.Max(availableSize.Height - up - down, 0);
-                }
-                right += (_rightSideContent.Model as LayoutElement).ActualWidth;
-                right += SplitterWidth;
+                right += _rightSideContent.ContentSideLenght;
+                right += Constants.SplitterSpan;
             }
 
-            if (left + right + SideWidth > availableSize.Width)
+            if (left + right + Constants.SideLength > availableSize.Width)
             {
-                double delta = left + right + SideWidth - availableSize.Width;
+                double delta = left + right + Constants.SideLength - availableSize.Width;
                 if (left > 0)
                 {
-                    if (left - delta >= SideWidth + SplitterWidth)
+                    if (left - delta >= Constants.SideLength + Constants.SplitterSpan)
                     {
                         left = left - delta;
                         delta = 0;
                     }
                     else
                     {
-                        delta -= left - (SideWidth + SplitterWidth);
-                        left = SideWidth + SplitterWidth;
+                        delta -= left - (Constants.SideLength + Constants.SplitterSpan);
+                        left = Constants.SideLength + Constants.SplitterSpan;
                     }
                 }
                 if (delta > 0 && right > 0)
                 {
-                    if (right - delta >= SideWidth + SplitterWidth)
+                    if (right - delta >= Constants.SideLength + Constants.SplitterSpan)
                     {
                         right = right - delta;
                         delta = 0;
                     }
                     else
                     {
-                        delta -= right - (SideWidth + SplitterWidth);
-                        right = SideWidth + SplitterWidth;
+                        delta -= right - (Constants.SideLength + Constants.SplitterSpan);
+                        right = Constants.SideLength + Constants.SplitterSpan;
                     }
                 }
             }
 
             if (left > 0)
             {
-                _leftSideContent.Measure(new Size(left - SplitterWidth, Math.Max(availableSize.Height - up - down, 0)));
-                _leftSplitter.Measure(new Size(SplitterWidth, Math.Max(availableSize.Height - up - down, 0)));
+                _leftSideContent.Measure(new Size(left - Constants.SplitterSpan, Math.Max(availableSize.Height - up - down, 0)));
+                _leftSplitter.Measure(new Size(Constants.SplitterSpan, Math.Max(availableSize.Height - up - down, 0)));
             }
             else
             {
@@ -433,8 +420,8 @@ namespace YDock.View
             }
             if (right > 0)
             {
-                _rightSideContent.Measure(new Size(right - SplitterWidth, Math.Max(availableSize.Height - up - down, 0)));
-                _rightSplitter.Measure(new Size(SplitterWidth, Math.Max(availableSize.Height - up - down, 0)));
+                _rightSideContent.Measure(new Size(right - Constants.SplitterSpan, Math.Max(availableSize.Height - up - down, 0)));
+                _rightSplitter.Measure(new Size(Constants.SplitterSpan, Math.Max(availableSize.Height - up - down, 0)));
             }
             else
             {
@@ -456,53 +443,53 @@ namespace YDock.View
             double left = 0;
             double right = 0;
 
-            if (_topSideContent.Model != null)
+            if (_topSideContent.HasContent)
             {
-                up += (_topSideContent.Model as LayoutElement).ActualHeight;
-                up += SplitterWidth;
+                up += _topSideContent.ContentSideLenght;
+                up += Constants.SplitterSpan;
             }
 
-            if (_bottomSideContent.Model != null)
+            if (_bottomSideContent.HasContent)
             {
-                down += (_bottomSideContent.Model as LayoutElement).ActualHeight;
-                down += SplitterWidth;
+                down += _bottomSideContent.ContentSideLenght;
+                down += Constants.SplitterSpan;
             }
 
-            if (up + down + SideWidth > finalSize.Height)
+            if (up + down + Constants.SideLength > finalSize.Height)
             {
-                double delta = up + down + SideWidth - finalSize.Height;
+                double delta = up + down + Constants.SideLength - finalSize.Height;
                 if (up > 0)
                 {
-                    if (up - delta >= SideWidth + SplitterWidth)
+                    if (up - delta >= Constants.SideLength + Constants.SplitterSpan)
                     {
                         up = up - delta;
                         delta = 0;
                     }
                     else
                     {
-                        delta -= up - (SideWidth + SplitterWidth);
-                        up = SideWidth + SplitterWidth;
+                        delta -= up - (Constants.SideLength + Constants.SplitterSpan);
+                        up = Constants.SideLength + Constants.SplitterSpan;
                     }
                 }
                 if (delta > 0 && down > 0)
                 {
-                    if (down - delta >= SideWidth + SplitterWidth)
+                    if (down - delta >= Constants.SideLength + Constants.SplitterSpan)
                     {
                         down = down - delta;
                         delta = 0;
                     }
                     else
                     {
-                        delta -= down - (SideWidth + SplitterWidth);
-                        down = SideWidth + SplitterWidth;
+                        delta -= down - (Constants.SideLength + Constants.SplitterSpan);
+                        down = Constants.SideLength + Constants.SplitterSpan;
                     }
                 }
             }
 
             if (up > 0)
             {
-                _topSideContent.Arrange(new Rect(0, 0, finalSize.Width, up - SplitterWidth));
-                _topSplitter.Arrange(new Rect(0, up - SplitterWidth, finalSize.Width, SplitterWidth));
+                _topSideContent.Arrange(new Rect(0, 0, finalSize.Width, up - Constants.SplitterSpan));
+                _topSplitter.Arrange(new Rect(0, up - Constants.SplitterSpan, finalSize.Width, Constants.SplitterSpan));
             }
             else
             {
@@ -513,13 +500,13 @@ namespace YDock.View
             {
                 if (up + down > finalSize.Height)
                 {
-                    _bottomSideContent.Arrange(new Rect(0, up + SplitterWidth, finalSize.Width, down - SplitterWidth));
-                    _bottomSplitter.Arrange(new Rect(0, up, finalSize.Width, SplitterWidth));
+                    _bottomSideContent.Arrange(new Rect(0, up + Constants.SplitterSpan, finalSize.Width, down - Constants.SplitterSpan));
+                    _bottomSplitter.Arrange(new Rect(0, up, finalSize.Width, Constants.SplitterSpan));
                 }
                 else
                 {
-                    _bottomSideContent.Arrange(new Rect(0, finalSize.Height - (down - SplitterWidth), finalSize.Width, down - SplitterWidth));
-                    _bottomSplitter.Arrange(new Rect(0, finalSize.Height - down, finalSize.Width, SplitterWidth));
+                    _bottomSideContent.Arrange(new Rect(0, finalSize.Height - (down - Constants.SplitterSpan), finalSize.Width, down - Constants.SplitterSpan));
+                    _bottomSplitter.Arrange(new Rect(0, finalSize.Height - down, finalSize.Width, Constants.SplitterSpan));
                 }
             }
             else
@@ -530,45 +517,45 @@ namespace YDock.View
 
 
 
-            if (_leftSideContent.Model != null)
+            if (_leftSideContent.HasContent)
             {
-                left += (_leftSideContent.Model as LayoutElement).ActualWidth;
-                left += SplitterWidth;
+                left += _leftSideContent.ContentSideLenght;
+                left += Constants.SplitterSpan;
             }
 
-            if (_rightSideContent.Model != null)
+            if (_rightSideContent.HasContent)
             {
-                right += (_rightSideContent.Model as LayoutElement).ActualWidth;
-                right += SplitterWidth;
+                right += _rightSideContent.ContentSideLenght;
+                right += Constants.SplitterSpan;
             }
 
-            if (left + right + SideWidth > finalSize.Width)
+            if (left + right + Constants.SideLength > finalSize.Width)
             {
-                double delta = left + right + SideWidth - finalSize.Width;
+                double delta = left + right + Constants.SideLength - finalSize.Width;
                 if (left > 0)
                 {
-                    if (left - delta >= SideWidth + SplitterWidth)
+                    if (left - delta >= Constants.SideLength + Constants.SplitterSpan)
                     {
                         left = left - delta;
                         delta = 0;
                     }
                     else
                     {
-                        delta -= left - (SideWidth + SplitterWidth);
-                        left = SideWidth + SplitterWidth;
+                        delta -= left - (Constants.SideLength + Constants.SplitterSpan);
+                        left = Constants.SideLength + Constants.SplitterSpan;
                     }
                 }
                 if (delta > 0 && right > 0)
                 {
-                    if (right - delta >= SideWidth + SplitterWidth)
+                    if (right - delta >= Constants.SideLength + Constants.SplitterSpan)
                     {
                         right = right - delta;
                         delta = 0;
                     }
                     else
                     {
-                        delta -= right - (SideWidth + SplitterWidth);
-                        right = SideWidth + SplitterWidth;
+                        delta -= right - (Constants.SideLength + Constants.SplitterSpan);
+                        right = Constants.SideLength + Constants.SplitterSpan;
                     }
                 }
             }
@@ -576,8 +563,8 @@ namespace YDock.View
             double height = Math.Max(finalSize.Height - up - down, 0);
             if (left > 0)
             {
-                _leftSideContent.Arrange(new Rect(0, up, left - SplitterWidth, height));
-                _leftSplitter.Arrange(new Rect(left - SplitterWidth, up, SplitterWidth, height));
+                _leftSideContent.Arrange(new Rect(0, up, left - Constants.SplitterSpan, height));
+                _leftSplitter.Arrange(new Rect(left - Constants.SplitterSpan, up, Constants.SplitterSpan, height));
             }
             else
             {
@@ -588,13 +575,13 @@ namespace YDock.View
             {
                 if (left + right > finalSize.Width)
                 {
-                    _rightSideContent.Arrange(new Rect(left + SplitterWidth, up, right - SplitterWidth, height));
-                    _rightSplitter.Arrange(new Rect(left, up, SplitterWidth, height));
+                    _rightSideContent.Arrange(new Rect(left + Constants.SplitterSpan, up, right - Constants.SplitterSpan, height));
+                    _rightSplitter.Arrange(new Rect(left, up, Constants.SplitterSpan, height));
                 }
                 else
                 {
-                    _rightSideContent.Arrange(new Rect(finalSize.Width - (right - SplitterWidth), up, right - SplitterWidth, height));
-                    _rightSplitter.Arrange(new Rect(finalSize.Width - right, up, SplitterWidth, height));
+                    _rightSideContent.Arrange(new Rect(finalSize.Width - (right - Constants.SplitterSpan), up, right - Constants.SplitterSpan, height));
+                    _rightSplitter.Arrange(new Rect(finalSize.Width - right, up, Constants.SplitterSpan, height));
                 }
             }
             else

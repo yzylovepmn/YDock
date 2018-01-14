@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows.Markup;
@@ -21,12 +22,22 @@ namespace YDock.Model
         {
             if (e.OldItems != null)
                 foreach (ILayoutElement item in e.OldItems)
+                {
+                    item.PropertyChanged -= OnChildrenPropertyChanged;
                     item.Container = null;
+                }
             if (e.NewItems != null)
                 foreach (ILayoutElement item in e.NewItems)
+                {
                     item.Container = this;
+                    item.PropertyChanged += OnChildrenPropertyChanged;
+                }
         }
-
+        private void OnChildrenPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "CanSelect")
+                PropertyChanged(this, new PropertyChangedEventArgs("Children_CanSelect"));
+        }
 
         #region Root
         private YDockRoot _root;
@@ -66,6 +77,8 @@ namespace YDock.Model
             }
         }
         #endregion
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
 
         ObservableCollection<LayoutElement> _children = new ObservableCollection<LayoutElement>();
         public ObservableCollection<LayoutElement> Children
@@ -73,6 +86,15 @@ namespace YDock.Model
             get { return _children; }
         }
 
+        public IEnumerable<LayoutElement> Children_CanSelect
+        {
+            get
+            {
+                foreach (var child in _children)
+                    if (child.CanSelect)
+                        yield return child;
+            }
+        }
 
         IEnumerable<ILayoutElement> ILayoutContainer.Children
         {

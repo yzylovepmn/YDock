@@ -38,6 +38,7 @@ namespace YDock.View
                     if (_model != null)
                     {
                         (_model as LayoutElement).IsVisible = false;
+                        (_model as LayoutElement).PropertyChanged -= OnModelPropertyChanged;
                         _model = null;
                         Width = double.NaN;
                         Height = double.NaN;
@@ -48,10 +49,17 @@ namespace YDock.View
                         Width = double.NaN;
                         Height = double.NaN;
                         (_model as LayoutElement).IsVisible = true;
+                        (_model as LayoutElement).PropertyChanged += OnModelPropertyChanged;
                     }
                     PropertyChanged(this, new PropertyChangedEventArgs("Model"));
                 }
             }
+        }
+
+        private void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "CanSelect")
+                Model = null;
         }
     }
 }

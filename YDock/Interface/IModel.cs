@@ -23,7 +23,7 @@ namespace YDock.Interface
     public interface ILayoutElement : INotifyPropertyChanged
     {
         ILayoutContainer Container { get; set; }
-        double ActualWidth { get; }
-        double ActualHeight { get; }
+        double Width { get; }
+        double Height { get; }
     }
 }

@@ -32,6 +32,17 @@ namespace YDock.Model
         }
         #endregion
 
+        #region IsSplitMode
+        public static readonly DependencyProperty IsSplitModeProperty =
+            DependencyProperty.Register("IsSplitMode", typeof(bool), typeof(LayoutElement));
+
+        public bool IsSplitMode
+        {
+            set { SetValue(IsSplitModeProperty, value); }
+            get { return (bool)GetValue(IsSplitModeProperty); }
+        }
+        #endregion
+
         #region Title
         public static readonly DependencyProperty TitleProperty = 
             DependencyProperty.Register("Title", typeof(string), typeof(LayoutElement));
@@ -86,6 +97,22 @@ namespace YDock.Model
         }
         #endregion
 
+        #region CanSelect
+        private bool _canSelect = true;
+        public bool CanSelect
+        {
+            internal set
+            {
+                if (_canSelect != value)
+                {
+                    _canSelect = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs("CanSelect"));
+                }
+            }
+            get { return _canSelect; }
+        }
+        #endregion
+
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         private ILayoutContainer _container;
@@ -103,7 +130,7 @@ namespace YDock.Model
         }
 
         private double _actualWidth;
-        public double ActualWidth
+        public double Width
         {
             get
             {
@@ -116,7 +143,7 @@ namespace YDock.Model
         }
 
         private double _actualHeight;
-        public double ActualHeight
+        public double Height
         {
             get
             {

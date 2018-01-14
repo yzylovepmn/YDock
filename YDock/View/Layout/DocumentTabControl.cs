@@ -21,7 +21,7 @@ namespace YDock.View
         internal DocumentTabControl(DocumentTab model)
         {
             Model = model;
-            SetBinding(ItemsSourceProperty, new Binding("Model.Children") { Source = this });
+            SetBinding(ItemsSourceProperty, new Binding("Model.Children_CanSelect") { Source = this });
         }
 
         private IModel _model;

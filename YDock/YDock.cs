@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
+using YDock.Interface;
 using YDock.Model;
 using YDock.View;
 
@@ -141,30 +142,6 @@ namespace YDock
                 AddLogicalChild(e.NewValue);
         }
 
-        //public static readonly DependencyProperty CenterGirdProperty =
-        //    DependencyProperty.Register("CenterGird", typeof(RootGirdControl), typeof(YDock),
-        //        new FrameworkPropertyMetadata(null,
-        //            new PropertyChangedCallback(OnCenterGirdChanged)));
-
-        //public RootGirdControl CenterGird
-        //{
-        //    get { return (RootGirdControl)GetValue(CenterGirdProperty); }
-        //    set { SetValue(CenterGirdProperty, value); }
-        //}
-
-        //private static void OnCenterGirdChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        //{
-        //    ((YDock)d).OnCenterGirdChanged(e);
-        //}
-
-        //protected virtual void OnCenterGirdChanged(DependencyPropertyChangedEventArgs e)
-        //{
-        //    if (e.OldValue != null)
-        //        RemoveLogicalChild(e.OldValue);
-        //    if (e.NewValue != null)
-        //        AddLogicalChild(e.NewValue);
-        //}
-
         public static readonly DependencyProperty LayoutRootPanelProperty =
             DependencyProperty.Register("LayoutRootPanel", typeof(LayoutRootPanel), typeof(YDock),
                 new FrameworkPropertyMetadata(null,
@@ -196,12 +173,73 @@ namespace YDock
 
             if (_root.DockManager == this)
             {
-                //CenterGird = new RootGirdControl(_root.RootGrid);
                 LayoutRootPanel = new LayoutRootPanel(_root.RootPanel);
                 LeftSide = new YDockSideControl(_root.LeftSide);
                 RightSide = new YDockSideControl(_root.RightSide);
                 BottomSide = new YDockSideControl(_root.BottomSide);
                 TopSide = new YDockSideControl(_root.TopSide);
+            }
+        }
+
+        public IEnumerable<ILayoutElement> Documents
+        {
+            get
+            {
+                foreach (var item in Root.RootPanel.Tab.Children)
+                    yield return item;
+            }
+        }
+
+        public IEnumerable<ILayoutElement> LeftChildren
+        {
+            get
+            {
+                foreach (var item in Root.LeftSide.Children)
+                    yield return item;
+            }
+        }
+
+        public IEnumerable<ILayoutElement> TopChildren
+        {
+            get
+            {
+                foreach (var item in Root.TopSide.Children)
+                    yield return item;
+            }
+        }
+
+        public IEnumerable<ILayoutElement> RightChildren
+        {
+            get
+            {
+                foreach (var item in Root.RightSide.Children)
+                    yield return item;
+            }
+        }
+
+        public IEnumerable<ILayoutElement> BottomChildren
+        {
+            get
+            {
+                foreach (var item in Root.BottomSide.Children)
+                    yield return item;
+            }
+        }
+
+        public IEnumerable<ILayoutElement> Children
+        {
+            get
+            {
+                foreach (var item in Documents)
+                    yield return item;
+                foreach (var item in LeftChildren)
+                    yield return item;
+                foreach (var item in TopChildren)
+                    yield return item;
+                foreach (var item in RightChildren)
+                    yield return item;
+                foreach (var item in BottomChildren)
+                    yield return item;
             }
         }
     }

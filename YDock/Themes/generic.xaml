@@ -7,7 +7,13 @@
     <converters:SideToAngleConverter x:Key="SideToAngleConverter"/>
     <converters:SideToFlowDirectionConverter x:Key="SideToFlowDirectionConverter"/>
 
+    <SolidColorBrush x:Key="WindowBackground" Color="#FFF6F6F6"/>
+    <SolidColorBrush x:Key="MouseOnBackground" Color="#FFE2E3E4"/>
+    <SolidColorBrush x:Key="SelectedBackground" Color="#FFD4D4D4"/>
+    <SolidColorBrush x:Key="BorderBrush" Color="#FF9B9B9B"/>
+
     <Style TargetType="{x:Type ydock:YDock}">
+        <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ydock:YDock}">
@@ -79,12 +85,13 @@
     </Style>
 
     <Style TargetType="{x:Type view:AnchorDocumentControl}">
-        <Setter Property="BorderThickness" Value="0.6"/>
-        <Setter Property="BorderBrush" Value="LightGray"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+        <Setter Property="Background" Value="WhiteSmoke"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:AnchorDocumentControl}">
-                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                    <Border ClipToBounds="true" SnapsToDevicePixels="true" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}">
                         <Grid ClipToBounds="true"
                           SnapsToDevicePixels="true"
@@ -93,7 +100,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Title}"/>
+                            <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Title}" TextTrimming="CharacterEllipsis"/>
                             <ContentPresenter Grid.Row="1" Content="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Content}"/>
                         </Grid>
                     </Border>
@@ -118,17 +125,18 @@
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="{x:Type view:DockSideItemControl}">
+                    <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type view:DockSideItemControl}">
-                                <Border x:Name="Border" Background="White">
+                                <Border x:Name="Border" Background="{TemplateBinding Background}" Height="20">
                                     <Grid Margin="5,0,5,0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
-                                        <Image Source="{Binding Path=ImageSource,Converter={StaticResource NullToDoNothingConverter}}" Stretch="Uniform"/>
-                                        <TextBlock x:Name="title" Margin="4,0,0,0" Text="{Binding Path=Title}" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
+                                        <Image VerticalAlignment="Center" Source="{Binding Path=ImageSource,Converter={StaticResource NullToDoNothingConverter}}" Stretch="Uniform"/>
+                                        <TextBlock x:Name="title" VerticalAlignment="Center" Margin="4,0,0,0" Text="{Binding Path=Title}" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
                                     </Grid>
                                 </Border>
                                 <ControlTemplate.Triggers>
@@ -136,8 +144,11 @@
                                         <Setter Property="Margin" Value="0" TargetName="title"/>
                                     </DataTrigger>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="Border" Property="Background" Value="#FF7A95E0"/>
+                                        <Setter Property="Background" Value="{StaticResource MouseOnBackground}"/>
                                     </Trigger>
+                                    <DataTrigger Binding="{Binding Path=IsVisible}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource SelectedBackground}"/>
+                                    </DataTrigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
                         </Setter.Value>
@@ -148,8 +159,9 @@
     </Style>
 
     <Style TargetType="{x:Type view:DocumentTabControl}">
-        <Setter Property="BorderThickness" Value="0.6"/>
-        <Setter Property="BorderBrush" Value="LightGray"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+        <Setter Property="Background" Value="White"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:DocumentTabControl}">
@@ -159,13 +171,20 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Border Background="Transparent" Grid.RowSpan="2"/>
-                        <Grid Panel.ZIndex="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <view:DocumentPanel IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
-                        </Grid>
+                        <Border x:Name="Border" Background="White" BorderThickness="1,1,1,0" BorderBrush="{TemplateBinding BorderBrush}">
+                            <Grid Panel.ZIndex="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="2.5"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.ColumnSpan="2" Background="{StaticResource WindowBackground}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0,0,0,1"/>
+                                <view:DocumentPanel IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
+                            </Grid>
+                        </Border>
                         <Border x:Name="ContentPanel"
                                 VerticalAlignment="Stretch"
                                 HorizontalAlignment="Stretch"
@@ -182,6 +201,11 @@
                                               SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </Border>
                     </Grid>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self},Path=Items.Count}" Value="0">
+                            <Setter TargetName="Border" Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -189,10 +213,13 @@
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="{x:Type TabItem}">
+                    <Setter Property="Background" Value="{StaticResource SelectedBackground}"/>
+                    <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type TabItem}">
-                                <Border Name="Border" BorderBrush="Black" BorderThickness="1,1,1,0" CornerRadius="5,5,0,0" Background="{TemplateBinding Background}">
+                                <Border Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Height="20" Background="{TemplateBinding Background}">
                                     <ContentPresenter Name="ContentSite" HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <ContentPresenter.ContentTemplate>
                                             <DataTemplate>
@@ -202,8 +229,8 @@
                                                             <ColumnDefinition Width="Auto"/>
                                                             <ColumnDefinition/>
                                                         </Grid.ColumnDefinitions>
-                                                        <Image Source="{Binding Path=ImageSource,Converter={StaticResource NullToDoNothingConverter}}" Stretch="Uniform"/>
-                                                        <TextBlock x:Name="title" Margin="4,0,0,0" Text="{Binding Path=Title}" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
+                                                        <Image VerticalAlignment="Center" Source="{Binding Path=ImageSource,Converter={StaticResource NullToDoNothingConverter}}" Stretch="Uniform"/>
+                                                        <TextBlock x:Name="title" VerticalAlignment="Center" Margin="4,0,0,0" Text="{Binding Path=Title}" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
                                                     </Grid>
                                                 </Border>
                                             </DataTemplate>
@@ -213,12 +240,14 @@
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
-                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
-                    <Setter Property="ToolTip" Value="{Binding ToolTip}"/>
                     <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" Value="LightBlue"/>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{StaticResource MouseOnBackground}"/>
                         </Trigger>
+                        <DataTrigger Binding="{Binding IsVisible}" Value="True">
+                            <Setter Property="Background" Value="White"/>
+                            <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                        </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </Setter.Value>

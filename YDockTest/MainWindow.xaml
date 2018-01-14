@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:YDockTest"
         xmlns:ydock="clr-namespace:YDock;assembly=YDock"
         xmlns:ydockmodel="clr-namespace:YDock.Model;assembly=YDock"
-        mc:Ignorable="d"
+        mc:Ignorable="d" WindowState="Maximized"
         Title="MainWindow" Height="350" Width="525">
     <!--<Grid x:Name="GD" MouseMove="OnMouseMove" MouseLeftButtonDown="OnMouseLeftButtonDown" MouseLeftButtonUp="OnMouseLeftButtonUp">
         <Grid.RowDefinitions>
@@ -70,29 +70,33 @@
                                 <TextBlock Text="heiheihei"/>
                             </ydockmodel:LayoutElement.Content>
                         </ydockmodel:LayoutElement>
-                        <ydockmodel:LayoutElement Title="一sfsdf只"/>
                         <ydockmodel:LayoutElement Title="憨ahdfhfdh憨彭"/>
+                        <ydockmodel:LayoutElement IsSplitMode="True" Title="一sfsdf只"/>
+                        <ydockmodel:LayoutElement IsSplitMode="True" Title="憨ahdfhfdh憨彭"/>
                     </ydockmodel:YDockSide>
                 </ydockmodel:YDockRoot.LeftSide>
                 <ydockmodel:YDockRoot.RightSide>
                     <ydockmodel:YDockSide>
                         <ydockmodel:LayoutElement Title="我是"/>
-                        <ydockmodel:LayoutElement Title="一只"/>
                         <ydockmodel:LayoutElement Title="憨憨彭"/>
+                        <ydockmodel:LayoutElement IsSplitMode="True" Title="一只"/>
+                        <ydockmodel:LayoutElement IsSplitMode="True" Title="憨憨彭"/>
                     </ydockmodel:YDockSide>
                 </ydockmodel:YDockRoot.RightSide>
                 <ydockmodel:YDockRoot.TopSide>
                     <ydockmodel:YDockSide>
                         <ydockmodel:LayoutElement Title="我是"/>
-                        <ydockmodel:LayoutElement Title="一只"/>
                         <ydockmodel:LayoutElement Title="憨憨彭"/>
+                        <ydockmodel:LayoutElement IsSplitMode="True" Title="一只"/>
+                        <ydockmodel:LayoutElement IsSplitMode="True" Title="憨憨彭"/>
                     </ydockmodel:YDockSide>
                 </ydockmodel:YDockRoot.TopSide>
                 <ydockmodel:YDockRoot.BottomSide>
                     <ydockmodel:YDockSide>
                         <ydockmodel:LayoutElement Title="我是"/>
-                        <ydockmodel:LayoutElement Title="一只"/>
                         <ydockmodel:LayoutElement Title="憨憨彭"/>
+                        <ydockmodel:LayoutElement IsSplitMode="True" Title="一只"/>
+                        <ydockmodel:LayoutElement IsSplitMode="True" Title="憨憨彭"/>
                     </ydockmodel:YDockSide>
                 </ydockmodel:YDockRoot.BottomSide>
             </ydockmodel:YDockRoot>
