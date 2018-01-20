@@ -11,7 +11,7 @@ using YDock.Interface;
 namespace YDock.Model
 {
     [ContentProperty("Children")]
-    public class YDockSide : IAnchorModel, ILayoutContainer
+    public class YDockSide : IModel, ILayoutGroup
     {
         public YDockSide()
         {
@@ -21,13 +21,13 @@ namespace YDock.Model
         private void _children_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.OldItems != null)
-                foreach (ILayoutElement item in e.OldItems)
+                foreach (LayoutElement item in e.OldItems)
                 {
                     item.PropertyChanged -= OnChildrenPropertyChanged;
                     item.Container = null;
                 }
             if (e.NewItems != null)
-                foreach (ILayoutElement item in e.NewItems)
+                foreach (LayoutElement item in e.NewItems)
                 {
                     item.Container = this;
                     item.PropertyChanged += OnChildrenPropertyChanged;
@@ -77,6 +77,7 @@ namespace YDock.Model
             }
         }
         #endregion
+
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
 
@@ -96,19 +97,21 @@ namespace YDock.Model
             }
         }
 
-        IEnumerable<ILayoutElement> ILayoutContainer.Children
-        {
-            get
-            {
-                return Children;
-            }
-        }
 
         public YDock DockManager
         {
             get
             {
                 return _root.DockManager;
+            }
+        }
+
+        IEnumerable<ILayoutElement> ILayoutGroup.Children
+        {
+            get
+            {
+                foreach (var child in _children)
+                    yield return child;
             }
         }
     }

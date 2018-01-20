@@ -3,30 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Media;
 
 namespace YDock
 {
     public class YDockHelper
     {
-        private static Point p;
-        private static Size size;
-        private static Rect rect;
-
         public static T GetTemplateChild<T>(FrameworkTemplate template, FrameworkElement templateParent, string name)
         {
             return (T)template.FindName(name, templateParent);
         }
+    }
 
-        public static double GetMaxOrMinValue(double value, double min, double max)
-        {
-            if (value > max) return max;
-            if (value < min) return min;
-            return value;
-        }
+    public static class ResourceManager
+    {
+        public static readonly SolidColorBrush SplitterBrushVertical;
+        public static readonly SolidColorBrush SplitterBrushHorizontal;
 
-        public static bool IsSizeEmpty(Size size)
+        static ResourceManager()
         {
-            return size.Width < 0.1 && size.Height < 0.1;
+            SplitterBrushVertical = new SolidColorBrush(new Color()
+            {
+                R = 0xF6,
+                G = 0xF6,
+                B = 0xF6,
+                A = 0xFF
+            });
+
+            SplitterBrushHorizontal = new SolidColorBrush(new Color()
+            {
+                R = 0xCC,
+                G = 0xCE,
+                B = 0xDB,
+                A = 0xFF
+            });
         }
     }
 }

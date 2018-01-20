@@ -19,34 +19,9 @@ namespace YDock.View
             IsHitTestVisibleProperty.OverrideMetadata(typeof(LayoutGridSplitter), new FrameworkPropertyMetadata(true, null));
         }
 
-        #region BackgroundWhileDragging
-
-
-        public static readonly DependencyProperty BackgroundWhileDraggingProperty =
-            DependencyProperty.Register("BackgroundWhileDragging", typeof(Brush), typeof(LayoutGridSplitter),
-                new FrameworkPropertyMetadata(Brushes.Black));
-
-
-        public Brush BackgroundWhileDragging
+        public LayoutGridSplitter()
         {
-            get { return (Brush)GetValue(BackgroundWhileDraggingProperty); }
-            set { SetValue(BackgroundWhileDraggingProperty, value); }
+
         }
-
-        #endregion
-
-        #region OpacityWhileDragging
-
-        public static readonly DependencyProperty OpacityWhileDraggingProperty =
-            DependencyProperty.Register("OpacityWhileDragging", typeof(double), typeof(LayoutGridSplitter),
-                new FrameworkPropertyMetadata(0.5));
-
-        public double OpacityWhileDragging
-        {
-            get { return (double)GetValue(OpacityWhileDraggingProperty); }
-            set { SetValue(OpacityWhileDraggingProperty, value); }
-        }
-
-        #endregion
     }
 }

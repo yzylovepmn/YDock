@@ -10,15 +10,15 @@ using YDock.Model;
 
 namespace YDock.View
 {
-    public class DocumentTabControl : TabControl, IView
+    public class LayoutDocumentGroupControl : TabControl, ILayoutGroupControl
     {
-        static DocumentTabControl()
+        static LayoutDocumentGroupControl()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(DocumentTabControl), new FrameworkPropertyMetadata(typeof(DocumentTabControl)));
-            FocusableProperty.OverrideMetadata(typeof(DocumentTabControl), new FrameworkPropertyMetadata(false));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(LayoutDocumentGroupControl), new FrameworkPropertyMetadata(typeof(LayoutDocumentGroupControl)));
+            FocusableProperty.OverrideMetadata(typeof(LayoutDocumentGroupControl), new FrameworkPropertyMetadata(false));
         }
 
-        internal DocumentTabControl(DocumentTab model)
+        internal LayoutDocumentGroupControl(ILayoutGroup model)
         {
             Model = model;
             SetBinding(ItemsSourceProperty, new Binding("Model.Children_CanSelect") { Source = this });
@@ -54,6 +54,34 @@ namespace YDock.View
             if (e.AddedItems != null)
                 foreach (LayoutElement item in e.AddedItems)
                     item.IsVisible = true;
+        }
+
+        private double _desiredWidth;
+        public double DesiredWidth
+        {
+            get
+            {
+                return _desiredWidth;
+            }
+            set
+            {
+                if (_desiredWidth != value)
+                    _desiredWidth = value;
+            }
+        }
+
+        private double _desiredHeight;
+        public double DesiredHeight
+        {
+            get
+            {
+                return _desiredHeight;
+            }
+            set
+            {
+                if (_desiredHeight != value)
+                    _desiredHeight = value;
+            }
         }
     }
 }

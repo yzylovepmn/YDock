@@ -10,7 +10,7 @@
     <SolidColorBrush x:Key="WindowBackground" Color="#FFF6F6F6"/>
     <SolidColorBrush x:Key="MouseOnBackground" Color="#FFE2E3E4"/>
     <SolidColorBrush x:Key="SelectedBackground" Color="#FFD4D4D4"/>
-    <SolidColorBrush x:Key="BorderBrush" Color="#FF9B9B9B"/>
+    <SolidColorBrush x:Key="BorderBrush" Color="#FFCCCEDB"/>
 
     <Style TargetType="{x:Type ydock:YDock}">
         <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
@@ -41,38 +41,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type view:RootGirdControl}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type view:RootGirdControl}">
-                    <Border BorderThickness="{TemplateBinding BorderThickness}"
-                            BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
-                        <Grid x:Name="PART_Gird">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <ContentPresenter Content="{TemplateBinding TopSideContent}" Grid.ColumnSpan="5"/>
-                            <ContentPresenter Content="{TemplateBinding BottomSideContent}" Grid.Row="4" Grid.ColumnSpan="5"/>
-                            <ContentPresenter Content="{TemplateBinding LeftSideContent}" Grid.Row="2" Grid.Column="0"/>
-                            <ContentPresenter Content="{TemplateBinding RightSideContent}" Grid.Row="2" Grid.Column="4"/>
-                            <ContentPresenter Content="{TemplateBinding DocumentTabs}" Grid.Row="2" Grid.Column="2"/>
-                        </Grid>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
 
     <Style TargetType="{x:Type view:LayoutGridSplitter}">
         <Setter Property="Template">
@@ -110,11 +78,10 @@
     </Style>
 
 
-    <Style TargetType="{x:Type view:YDockSideControl}">
-        <Setter Property="MinWidth" Value="200"/>
+    <Style TargetType="{x:Type view:DockSideGroupControl}">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type view:YDockSideControl}">
+                <ControlTemplate TargetType="{x:Type view:DockSideGroupControl}">
                     <Border Background="{TemplateBinding Background}">
                         <view:DockSidePanel IsItemsHost="True"
                                             FlowDirection="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Side,Converter={StaticResource SideToFlowDirectionConverter}}"/>
@@ -158,13 +125,13 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type view:DocumentTabControl}">
+    <Style TargetType="{x:Type view:LayoutDocumentGroupControl}">
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
         <Setter Property="Background" Value="White"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type view:DocumentTabControl}">
+                <ControlTemplate TargetType="{x:Type view:LayoutDocumentGroupControl}">
                     <Grid ClipToBounds="true" SnapsToDevicePixels="true" KeyboardNavigation.TabNavigation="Local">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -215,6 +182,97 @@
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="Background" Value="{StaticResource SelectedBackground}"/>
                     <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type TabItem}">
+                                <Border Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Height="20" Background="{TemplateBinding Background}">
+                                    <ContentPresenter Name="ContentSite" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <ContentPresenter.ContentTemplate>
+                                            <DataTemplate>
+                                                <Border x:Name="Border">
+                                                    <Grid Margin="5,0,5,0">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Image VerticalAlignment="Center" Source="{Binding Path=ImageSource,Converter={StaticResource NullToDoNothingConverter}}" Stretch="Uniform"/>
+                                                        <TextBlock x:Name="title" VerticalAlignment="Center" Margin="4,0,0,0" Text="{Binding Path=Title}" TextTrimming="CharacterEllipsis" Grid.Column="1"/>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ContentPresenter.ContentTemplate>
+                                    </ContentPresenter>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{StaticResource MouseOnBackground}"/>
+                        </Trigger>
+                        <DataTrigger Binding="{Binding IsVisible}" Value="True">
+                            <Setter Property="Background" Value="White"/>
+                            <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Border>
+                        <ContentPresenter Content="{Binding Content}"/>
+                    </Border>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type view:AnchorSideGroupControl}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type view:AnchorSideGroupControl}">
+                    <Grid ClipToBounds="true" SnapsToDevicePixels="true" KeyboardNavigation.TabNavigation="Local">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Border Background="Transparent" Grid.RowSpan="3" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"/>
+                        <Border Grid.Row="1" x:Name="Border" Background="White" BorderThickness="1,0,1,1" BorderBrush="{TemplateBinding BorderBrush}">
+                            <view:DockSidePanel IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
+                        </Border>
+                        <Border x:Name="ContentPanel"
+                                VerticalAlignment="Stretch"
+                                HorizontalAlignment="Stretch"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}"
+                                KeyboardNavigation.DirectionalNavigation="Contained"
+                                KeyboardNavigation.TabIndex="2"
+                                KeyboardNavigation.TabNavigation="Cycle">
+                            <ContentPresenter x:Name="PART_SelectedContentHost" 
+                                              ContentSource="SelectedContent"
+                                              Margin="{TemplateBinding Padding}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self},Path=Items.Count}" Value="0">
+                            <Setter TargetName="Border" Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="{x:Type TabItem}">
+                    <Setter Property="Background" Value="{StaticResource SelectedBackground}"/>
+                    <Setter Property="BorderThickness" Value="0,1,1,0"/>
                     <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
                     <Setter Property="Template">
                         <Setter.Value>

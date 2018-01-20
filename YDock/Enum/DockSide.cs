@@ -10,6 +10,7 @@ namespace YDock.Enum
         Left,
         Right,
         Top,
-        Bottom
+        Bottom,
+        None
     }
 }

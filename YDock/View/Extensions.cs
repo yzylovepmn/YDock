@@ -10,6 +10,21 @@ namespace YDock.View
 {
     internal static class Extensions
     {
+        //public static T Min<T>(this IEnumerable<T> list) where T :IComparable<T>
+        //{
+        //    if (list.Count() > 0)
+        //    {
+        //        T min = list.First();
+        //        foreach (var item in list)
+        //        {
+        //            if (item.CompareTo(min) < 0)
+        //                min = item;
+        //        }
+        //        return min;
+        //    }
+        //    else return default(T);
+        //}
+
         public static Point PointToScreenDPI(this Visual visual, Point pt)
         {
             Point resultPt = visual.PointToScreen(pt);

@@ -8,32 +8,33 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
 
 namespace YDock.View
 {
-    public class YDockSideControl : ItemsControl, IView, ILayoutContainer
+    public class DockSideGroupControl : ItemsControl, IView
     {
-        static YDockSideControl()
+        static DockSideGroupControl()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(YDockSideControl), new FrameworkPropertyMetadata(typeof(YDockSideControl)));
-            FocusableProperty.OverrideMetadata(typeof(YDockSideControl), new FrameworkPropertyMetadata(false));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(DockSideGroupControl), new FrameworkPropertyMetadata(typeof(DockSideGroupControl)));
+            FocusableProperty.OverrideMetadata(typeof(DockSideGroupControl), new FrameworkPropertyMetadata(false));
         }
 
-        public YDockSideControl(IAnchorModel model)
+        public DockSideGroupControl(ILayoutGroup model)
         {
             Model = model;
 
             SetBinding(ItemsSourceProperty, new Binding("Model.Children_CanSelect") { Source = this });
 
             var transform = new RotateTransform();
-            switch (Model.Side)
+            switch ((Model as ILayout).Side)
             {
-                case Enum.DockSide.Left:
+                case DockSide.Left:
                     transform.Angle = 270;
                     break;
-                case Enum.DockSide.Right:
+                case DockSide.Right:
                     transform.Angle = 90;
                     break;
             }
@@ -41,25 +42,12 @@ namespace YDock.View
         }
 
 
-        private IAnchorModel _model;
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
-        public IAnchorModel Model
-        {
-            get { return _model; }
-            set
-            {
-                if (_model != null) _model.View = null;
-                if (_model != value)
-                {
-                    _model = value;
-                    _model.View = this;
-                }
-            }
-        }
+        private ILayoutGroup _model;
 
-        IModel IView.Model
+        public IModel Model
         {
             get
             {
@@ -70,7 +58,7 @@ namespace YDock.View
                 if (_model != null) _model.View = null;
                 if (_model != value)
                 {
-                    _model = (IAnchorModel)value;
+                    _model = value as ILayoutGroup;
                     _model.View = this;
                 }
             }
@@ -84,9 +72,25 @@ namespace YDock.View
             }
         }
 
+        public DockSide Side
+        {
+            get
+            {
+                return _model.Side;
+            }
+        }
+
+        public YDock DockManager
+        {
+            get
+            {
+                return _model.DockManager;
+            }
+        }
+
         protected override DependencyObject GetContainerForItemOverride()
         {
-            return new DockSideItemControl(this);
+            return new DockSideItemControl(this._model);
         }
     }
 }

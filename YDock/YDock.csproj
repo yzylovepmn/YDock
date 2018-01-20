@@ -58,12 +58,11 @@
     <Compile Include="Converters\SideToFlowDirectionConverter.cs" />
     <Compile Include="Enum\Direction.cs" />
     <Compile Include="Enum\DockSide.cs" />
-    <Compile Include="Interface\ILayoutContainer.cs" />
+    <Compile Include="Interface\ILayout.cs" />
     <Compile Include="Interface\IModel.cs" />
     <Compile Include="Interface\IView.cs" />
     <Compile Include="Model\Element\LayoutElement.cs" />
-    <Compile Include="Model\Layout\DocumentTab.cs" />
-    <Compile Include="Model\Layout\RootPanel.cs" />
+    <Compile Include="Model\Layout\LayoutGroup.cs" />
     <Compile Include="Model\Layout\YDockSide.cs" />
     <Compile Include="Model\YDockRoot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -79,16 +78,31 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Shell\Standard\ComGuids.cs" />
+    <Compile Include="Shell\Standard\Debug.cs" />
+    <Compile Include="Shell\Standard\DoubleUtil.cs" />
+    <Compile Include="Shell\Standard\DpiHelper.cs" />
+    <Compile Include="Shell\Standard\ErrorCodes.cs" />
+    <Compile Include="Shell\Standard\MessageWindow.cs" />
+    <Compile Include="Shell\Standard\NativeMethods.cs" />
+    <Compile Include="Shell\Standard\ShellProvider.cs" />
+    <Compile Include="Shell\Standard\StreamHelper.cs" />
+    <Compile Include="Shell\Standard\Utilities.cs" />
+    <Compile Include="Shell\Standard\Verify.cs" />
+    <Compile Include="Shell\SystemCommands.cs" />
+    <Compile Include="Shell\SystemParameters2.cs" />
+    <Compile Include="Shell\WindowChrome.cs" />
+    <Compile Include="Shell\WindowChromeWorker.cs" />
     <Compile Include="View\Element\AnchorDocumentControl.cs" />
     <Compile Include="View\Element\DockSideItemControl.cs" />
-    <Compile Include="View\Layout\AnchorSidePanel.cs" />
+    <Compile Include="View\Control\AnchorSideGroupControl.cs" />
     <Compile Include="View\Layout\DockSidePanel.cs" />
     <Compile Include="View\Layout\DocumentPanel.cs" />
-    <Compile Include="View\Layout\DocumentTabControl.cs" />
+    <Compile Include="View\Control\LayoutDocumentGroupControl.cs" />
     <Compile Include="View\Layout\LayoutGridSplitter.cs" />
+    <Compile Include="View\Layout\LayoutGroupPanel.cs" />
     <Compile Include="View\Layout\LayoutRootPanel.cs" />
-    <Compile Include="View\Layout\RootGirdControl.cs" />
-    <Compile Include="View\Layout\YDockSideControl.cs" />
+    <Compile Include="View\Control\DockSideGroupControl.cs" />
     <Compile Include="View\Extensions.cs" />
     <Compile Include="YDock.cs" />
     <Compile Include="YDockHelper.cs" />

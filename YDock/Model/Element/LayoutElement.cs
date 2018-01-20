@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using YDock.Enum;
 using YDock.Interface;
 
 namespace YDock.Model
@@ -32,16 +33,7 @@ namespace YDock.Model
         }
         #endregion
 
-        #region IsSplitMode
-        public static readonly DependencyProperty IsSplitModeProperty =
-            DependencyProperty.Register("IsSplitMode", typeof(bool), typeof(LayoutElement));
 
-        public bool IsSplitMode
-        {
-            set { SetValue(IsSplitModeProperty, value); }
-            get { return (bool)GetValue(IsSplitModeProperty); }
-        }
-        #endregion
 
         #region Title
         public static readonly DependencyProperty TitleProperty = 
@@ -62,6 +54,17 @@ namespace YDock.Model
         {
             set { SetValue(ImageSourceProperty, value); }
             get { return (ImageSource)GetValue(ImageSourceProperty); }
+        }
+        #endregion
+
+        #region DockSide
+        public static readonly DependencyProperty SideProperty =
+            DependencyProperty.Register("Side", typeof(DockSide), typeof(LayoutElement));
+
+        public DockSide Side
+        {
+            set { SetValue(SideProperty, value); }
+            get { return (DockSide)GetValue(SideProperty); }
         }
         #endregion
 
@@ -115,8 +118,8 @@ namespace YDock.Model
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
-        private ILayoutContainer _container;
-        public ILayoutContainer Container
+        private ILayoutGroup _container;
+        public ILayoutGroup Container
         {
             get
             {
@@ -129,29 +132,29 @@ namespace YDock.Model
             }
         }
 
-        private double _actualWidth;
-        public double Width
+        private double _desiredWidth;
+        public double DesiredWidth
         {
             get
             {
-                return _actualWidth;
+                return _desiredWidth;
             }
-            internal set
+            set
             {
-                _actualWidth = value;
+                _desiredWidth = value;
             }
         }
 
-        private double _actualHeight;
-        public double Height
+        private double _desiredHeight;
+        public double DesiredHeight
         {
             get
             {
-                return _actualHeight;
+                return _desiredHeight;
             }
-            internal set
+            set
             {
-                _actualHeight = value;
+                _desiredHeight = value;
             }
         }
 
@@ -177,19 +180,13 @@ namespace YDock.Model
             }
         }
 
-        public bool IsDock
-        {
-            get
-            {
-                return _container != null && _container is YDockSide;
-            }
-        }
 
-        public bool IsDocument
+
+        public YDock DockManager
         {
             get
             {
-                return _container != null && _container is DocumentTab;
+                return _container?.DockManager;
             }
         }
     }

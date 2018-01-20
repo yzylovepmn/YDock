@@ -6,19 +6,55 @@ using System.Text;
 using System.Windows;
 using System.Windows.Markup;
 using YDock.Enum;
+using YDock.Interface;
 
 namespace YDock.Model
 {
-    [ContentProperty("RootPanel")]
-    public class YDockRoot : DependencyObject, INotifyPropertyChanged
+    public class YDockRoot : DependencyObject, INotifyPropertyChanged, IModel
     {
         public YDockRoot()
         {
-            RootPanel = new RootPanel();
+            _InitSide();
+        }
+
+        private void _InitSide()
+        {
             LeftSide = new YDockSide();
             RightSide = new YDockSide();
             TopSide = new YDockSide();
             BottomSide = new YDockSide();
+            LeftSide.Children.CollectionChanged += OnSideChildrenChanged;
+            RightSide.Children.CollectionChanged += OnSideChildrenChanged;
+            TopSide.Children.CollectionChanged += OnSideChildrenChanged;
+            BottomSide.Children.CollectionChanged += OnSideChildrenChanged;
+        }
+
+        private void OnSideChildrenChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            IList<ILayoutElement> children = default(IList<ILayoutElement>);
+            switch ((sender as YDockSide).Side)
+            {
+                case DockSide.Left:
+                    children = _dockManager.LeftChildren as IList<ILayoutElement>;
+                    break;
+                case DockSide.Right:
+                    children = _dockManager.RightChildren as IList<ILayoutElement>;
+                    break;
+                case DockSide.Top:
+                    children = _dockManager.TopChildren as IList<ILayoutElement>;
+                    break;
+                case DockSide.Bottom:
+                    children = _dockManager.BottomChildren as IList<ILayoutElement>;
+                    break;
+            }
+
+            if (e.OldItems?.Count > 0)
+                foreach (ILayoutElement item in e.OldItems)
+                    children.Remove(item);
+
+            if (e.NewItems?.Count > 0)
+                foreach (ILayoutElement item in e.NewItems)
+                    children.Add(item);
         }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
@@ -33,25 +69,6 @@ namespace YDock.Model
 
         #endregion
 
-        #region RootPanel
-
-        private RootPanel _rootPanel;
-        public RootPanel RootPanel
-        {
-            get { return _rootPanel; }
-            set
-            {
-                if (_rootPanel != value)
-                {
-                    _rootPanel = value;
-                    if (_rootPanel != null)
-                        _rootPanel.Root = this;
-                    PropertyChanged(this, new PropertyChangedEventArgs("RootGrid"));
-                }
-            }
-        }
-
-        #endregion
 
         #region DockSide
 
@@ -128,6 +145,20 @@ namespace YDock.Model
                     }
                     PropertyChanged(this, new PropertyChangedEventArgs("BottomSide"));
                 }
+            }
+        }
+
+        private IView _view;
+        public IView View
+        {
+            get
+            {
+                return _view;
+            }
+            set
+            {
+                if (_view != value)
+                    _view = value;
             }
         }
 

@@ -7,23 +7,13 @@ using YDock.Enum;
 
 namespace YDock.Interface
 {
-    public interface ILayoutModel
-    {
-        YDock DockManager { get; }
-    }
-    public interface IModel: ILayoutModel
+    public interface IModel
     {
         IView View { get; set; }
     }
-    public interface IAnchorModel : IModel
-    {
-        DockSide Side { get; }
-    }
 
-    public interface ILayoutElement : INotifyPropertyChanged
+    public interface ILayoutElement : INotifyPropertyChanged, ILayout, ILayoutSize
     {
-        ILayoutContainer Container { get; set; }
-        double Width { get; }
-        double Height { get; }
+        ILayoutGroup Container { get; }
     }
 }

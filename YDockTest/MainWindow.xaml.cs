@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using YDock.Enum;
 using YDock.Model;
 using YDock.View;
 
@@ -27,6 +28,18 @@ namespace YDockTest
         public MainWindow()
         {
             InitializeComponent();
+            Loaded += MainWindow_Loaded;
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            DockManager.AddDocument(new LayoutElement() { Side = DockSide.None, Title = "Document", DesiredWidth = 10 });
+            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Left, Title = "Document_Left", DesiredWidth = 200 });
+            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Left, Title = "Document_Left", DesiredWidth = 200 });
+            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Top, Title = "Document_Top", DesiredHeight = 180 });
+            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Right, Title = "Document_Right", DesiredWidth = 200 });
+            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Bottom, Title = "Document_Bottom", DesiredHeight = 180 });
+            DockManager.AddSidePanel(DockSide.Left);
         }
 
         //private Window wnd;
