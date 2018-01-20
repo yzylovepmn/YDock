@@ -928,6 +928,7 @@ namespace YDock.View
                 if (e.HorizontalChange != 0)
                 {
                     double newPos = pToScreen.X + e.HorizontalChange;
+                    if (_dragBound1 + Constants.SideLength >= _dragBound2 - Constants.SideLength) return;
                     if ((newPos >= _dragBound1 + Constants.SideLength) && (newPos <= _dragBound2 - Constants.SideLength))
                         _dragPopup.HorizontalOffset = newPos;
                     else
@@ -943,6 +944,7 @@ namespace YDock.View
                 if (e.VerticalChange != 0)
                 {
                     double newPos = pToScreen.Y + e.VerticalChange;
+                    if (_dragBound1 + Constants.SideLength >= _dragBound2 - Constants.SideLength) return;
                     if ((newPos >= _dragBound1 + Constants.SideLength) && (newPos <= _dragBound2 - Constants.SideLength))
                         _dragPopup.VerticalOffset = newPos;
                     else
@@ -1070,6 +1072,19 @@ namespace YDock.View
             var _pToInterPanel = transfrom.Transform(new Point(0, 0));
             pToScreen.X += _pToInterPanel.X;
             pToScreen.Y += _pToInterPanel.Y;
+
+            int index = Children.IndexOf(splitter);
+            switch (Direction)
+            {
+                case Direction.LeftToRight:
+                    (Children[index - 1] as ILayoutSize).DesiredWidth = (Children[index - 1] as FrameworkElement).ActualWidth;
+                    (Children[index + 1] as ILayoutSize).DesiredWidth = (Children[index + 1] as FrameworkElement).ActualWidth;
+                    break;
+                case Direction.UpToDown:
+                    (Children[index - 1] as ILayoutSize).DesiredHeight = (Children[index - 1] as FrameworkElement).ActualHeight;
+                    (Children[index + 1] as ILayoutSize).DesiredHeight = (Children[index + 1] as FrameworkElement).ActualHeight;
+                    break;
+            }
 
             _dragPopup = new Popup()
             {

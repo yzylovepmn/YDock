@@ -30,6 +30,7 @@ namespace YDock.Model
                 foreach (LayoutElement item in e.NewItems)
                 {
                     item.Container = this;
+                    item.Side = _side;
                     item.PropertyChanged += OnChildrenPropertyChanged;
                 }
         }
@@ -60,7 +61,11 @@ namespace YDock.Model
             set
             {
                 if (_side != value)
+                {
                     _side = value;
+                    foreach (var child in Children)
+                        child.Side = value;
+                }
             }
         }
         private IView _view;

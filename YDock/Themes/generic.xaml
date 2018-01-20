@@ -52,13 +52,13 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type view:AnchorDocumentControl}">
+    <Style TargetType="{x:Type view:LayoutContentControl}">
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
         <Setter Property="Background" Value="WhiteSmoke"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type view:AnchorDocumentControl}">
+                <ControlTemplate TargetType="{x:Type view:LayoutContentControl}">
                     <Border ClipToBounds="true" SnapsToDevicePixels="true" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}">
                         <Grid ClipToBounds="true"

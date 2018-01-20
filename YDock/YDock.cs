@@ -189,6 +189,20 @@ namespace YDock
             }
         }
 
+        /// <summary>
+        /// 自动隐藏窗口的Model
+        /// </summary>
+        public ILayoutElement AutoHideElement
+        {
+            get { return LayoutRootPanel.AHWindow.Model; }
+            set
+            {
+                if (LayoutRootPanel.AHWindow.Model != value)
+                    LayoutRootPanel.AHWindow.Model = value as LayoutElement;
+                else LayoutRootPanel.AHWindow.Model = null;
+            }
+        }
+
         private IList<ILayoutElement> _documents;
         public IEnumerable<ILayoutElement> Documents
         {
