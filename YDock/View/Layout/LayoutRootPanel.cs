@@ -31,8 +31,6 @@ namespace YDock.View
             AHWindow = new AutoHideWindow();
         }
 
-        private bool _upDateRootPanel = true;
-
         private LayoutGroupPanel _rootGroupPanel;
         public LayoutGroupPanel RootGroupPanel
         {
@@ -59,14 +57,10 @@ namespace YDock.View
                 if (_ahWindow != value)
                 {
                     if (_ahWindow != null)
-                    {
-                        _upDateRootPanel = false;
                         Children.Remove(_ahWindow);
-                    }
                     _ahWindow = value;
                     if (_ahWindow != null)
                     {
-                        _upDateRootPanel = false;
                         Children.Add(_ahWindow);
                         SetZIndex(_ahWindow, 2);
                     }
@@ -76,17 +70,14 @@ namespace YDock.View
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            if (_upDateRootPanel)
-                _rootGroupPanel.Measure(availableSize);
+            _rootGroupPanel.Measure(availableSize);
             _ahWindow.Measure(availableSize);
             return availableSize;
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            if (_upDateRootPanel)
-                _rootGroupPanel.Arrange(new Rect(new Point(), finalSize));
-            else _upDateRootPanel = true;
+            _rootGroupPanel.Arrange(new Rect(new Point(), finalSize));
             switch (_ahWindow.Side)
             {
                 case DockSide.Left:
@@ -100,6 +91,9 @@ namespace YDock.View
                     break;
                 case DockSide.Bottom:
                     _ahWindow.Arrange(new Rect(new Point(0, finalSize.Height - _ahWindow.DesiredSize.Height), new Size(finalSize.Width, _ahWindow.DesiredSize.Height)));
+                    break;
+                case DockSide.None:
+                    _ahWindow.Arrange(new Rect());
                     break;
             }
             return finalSize;
