@@ -52,10 +52,33 @@
         </Setter>
     </Style>
 
+    <Style x:Key="LayoutHeaderControlStyle" TargetType="{x:Type view:LayoutHeaderControl}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type view:LayoutHeaderControl}">
+                    <Border Background="{TemplateBinding Background}" Padding="2">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Text="{Binding Title}"/>
+                            <view:TexturePanel Grid.Column="1" Margin="10,0,10,0"/>
+                            <StackPanel Grid.Column="2">
+
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="{x:Type view:LayoutContentControl}">
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
-        <Setter Property="Background" Value="WhiteSmoke"/>
+        <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:LayoutContentControl}">
@@ -68,7 +91,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Title}" TextTrimming="CharacterEllipsis"/>
+                            <view:LayoutHeaderControl DataContext="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model}" Style="{StaticResource LayoutHeaderControlStyle}"/>
                             <ContentPresenter Grid.Row="1" Content="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Content}"/>
                         </Grid>
                     </Border>
@@ -162,8 +185,7 @@
                                 Grid.Row="1"
                                 KeyboardNavigation.TabIndex="2"
                                 KeyboardNavigation.TabNavigation="Cycle">
-                            <ContentPresenter x:Name="PART_SelectedContentHost" 
-                                              ContentSource="SelectedContent"
+                            <ContentPresenter ContentSource="SelectedContent"
                                               Margin="{TemplateBinding Padding}"
                                               SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </Border>
@@ -179,13 +201,13 @@
 
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
-                <Style TargetType="{x:Type TabItem}">
+                <Style TargetType="{x:Type view:DragTabItem}">
                     <Setter Property="Background" Value="{StaticResource SelectedBackground}"/>
                     <Setter Property="BorderThickness" Value="0,0,1,1"/>
                     <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
                     <Setter Property="Template">
                         <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type TabItem}">
+                            <ControlTemplate TargetType="{x:Type view:DragTabItem}">
                                 <Border Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Height="20" Background="{TemplateBinding Background}">
                                     <ContentPresenter Name="ContentSite" HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <ContentPresenter.ContentTemplate>
@@ -223,9 +245,7 @@
         <Setter Property="ContentTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <Border>
-                        <ContentPresenter Content="{Binding Content}"/>
-                    </Border>
+                    <ContentPresenter Content="{Binding Content}"/>
                 </DataTemplate>
             </Setter.Value>
         </Setter>
@@ -240,10 +260,7 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <Border Background="Transparent" Grid.RowSpan="3" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"/>
-                        <Border Grid.Row="1" x:Name="Border" Background="White" BorderThickness="1,0,1,1" BorderBrush="{TemplateBinding BorderBrush}">
-                            <view:DockSidePanel IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
-                        </Border>
+                        <Border Background="Transparent" Grid.RowSpan="2" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"/>
                         <Border x:Name="ContentPanel"
                                 VerticalAlignment="Stretch"
                                 HorizontalAlignment="Stretch"
@@ -253,15 +270,17 @@
                                 KeyboardNavigation.DirectionalNavigation="Contained"
                                 KeyboardNavigation.TabIndex="2"
                                 KeyboardNavigation.TabNavigation="Cycle">
-                            <ContentPresenter x:Name="PART_SelectedContentHost" 
-                                              ContentSource="SelectedContent"
+                            <ContentPresenter ContentSource="SelectedContent"
                                               Margin="{TemplateBinding Padding}"
                                               SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </Border>
+                        <Border Grid.Row="1" x:Name="Border" Background="White" BorderThickness="1,0,1,1" BorderBrush="{TemplateBinding BorderBrush}">
+                            <view:DockSidePanel IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
+                        </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self},Path=Items.Count}" Value="0">
-                            <Setter TargetName="Border" Property="Visibility" Value="Collapsed"/>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self},Path=Items.Count}" Value="1">
+                            <Setter TargetName="Border" Property="Height" Value="0"/>
                         </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -270,13 +289,13 @@
 
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
-                <Style TargetType="{x:Type TabItem}">
+                <Style TargetType="{x:Type view:DragTabItem}">
                     <Setter Property="Background" Value="{StaticResource SelectedBackground}"/>
                     <Setter Property="BorderThickness" Value="0,1,1,0"/>
                     <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
                     <Setter Property="Template">
                         <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type TabItem}">
+                            <ControlTemplate TargetType="{x:Type view:DragTabItem}">
                                 <Border Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Height="20" Background="{TemplateBinding Background}">
                                     <ContentPresenter Name="ContentSite" HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <ContentPresenter.ContentTemplate>
@@ -314,9 +333,7 @@
         <Setter Property="ContentTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <Border>
-                        <ContentPresenter Content="{Binding Content}"/>
-                    </Border>
+                    <view:LayoutContentControl Model="{Binding}"/>
                 </DataTemplate>
             </Setter.Value>
         </Setter>

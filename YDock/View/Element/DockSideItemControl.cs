@@ -13,12 +13,11 @@ using YDock.Model;
 
 namespace YDock.View
 {
-    public class DockSideItemControl : ContentControl
+    public class DockSideItemControl : ContentControl, IDisposable
     {
         static DockSideItemControl()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(DockSideItemControl), new FrameworkPropertyMetadata(typeof(DockSideItemControl)));
-            FocusableProperty.OverrideMetadata(typeof(DockSideItemControl), new FrameworkPropertyMetadata(false));
         }
 
         public DockSideItemControl(ILayoutGroup container)
@@ -41,13 +40,25 @@ namespace YDock.View
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
-
-
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
-            _container.DockManager.AutoHideElement = Content as ILayoutElement;
+            var ele = Content as LayoutElement;
+            if (ele == _container.DockManager.AutoHideElement)
+            {
+                _container.DockManager.ActiveElement = null;
+                _container.DockManager.AutoHideElement = null;
+            }
+            else
+            {
+                _container.DockManager.ActiveElement = ele;
+                _container.DockManager.AutoHideElement = ele;
+            }
             base.OnMouseLeftButtonDown(e);
+        }
+
+        public void Dispose()
+        {
+            _container = null;
         }
     }
 }

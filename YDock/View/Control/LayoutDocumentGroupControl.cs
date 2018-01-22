@@ -10,7 +10,7 @@ using YDock.Model;
 
 namespace YDock.View
 {
-    public class LayoutDocumentGroupControl : TabControl, ILayoutGroupControl
+    public class LayoutDocumentGroupControl : BaseGroupControl
     {
         static LayoutDocumentGroupControl()
         {
@@ -18,70 +18,9 @@ namespace YDock.View
             FocusableProperty.OverrideMetadata(typeof(LayoutDocumentGroupControl), new FrameworkPropertyMetadata(false));
         }
 
-        internal LayoutDocumentGroupControl(ILayoutGroup model)
-        {
-            Model = model;
-            SetBinding(ItemsSourceProperty, new Binding("Model.Children_CanSelect") { Source = this });
-        }
 
-        private IModel _model;
-        public IModel Model
+        internal LayoutDocumentGroupControl(ILayoutGroup model) : base(model)
         {
-            get
-            {
-                return _model;
-            }
-            set
-            {
-                if (_model != value)
-                {
-                    if (_model != null)
-                        _model.View = null;
-                    _model = value;
-                    if (_model != null)
-                        _model.View = this;
-                }
-            }
-        }
-
-        protected override void OnSelectionChanged(SelectionChangedEventArgs e)
-        {
-            base.OnSelectionChanged(e);
-            if (e.RemovedItems != null)
-                foreach (LayoutElement item in e.RemovedItems)
-                    item.IsVisible = false;
-
-            if (e.AddedItems != null)
-                foreach (LayoutElement item in e.AddedItems)
-                    item.IsVisible = true;
-        }
-
-        private double _desiredWidth;
-        public double DesiredWidth
-        {
-            get
-            {
-                return _desiredWidth;
-            }
-            set
-            {
-                if (_desiredWidth != value)
-                    _desiredWidth = value;
-            }
-        }
-
-        private double _desiredHeight;
-        public double DesiredHeight
-        {
-            get
-            {
-                return _desiredHeight;
-            }
-            set
-            {
-                if (_desiredHeight != value)
-                    _desiredHeight = value;
-            }
         }
     }
 }

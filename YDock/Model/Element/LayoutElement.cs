@@ -10,7 +10,7 @@ using YDock.Interface;
 
 namespace YDock.Model
 {
-    public class LayoutElement : DependencyObject, ILayoutElement
+    public class LayoutElement : DependencyObject, ILayoutElement, IComparable<LayoutElement>
     {
         public LayoutElement()
         {
@@ -37,7 +37,8 @@ namespace YDock.Model
 
         #region Title
         public static readonly DependencyProperty TitleProperty = 
-            DependencyProperty.Register("Title", typeof(string), typeof(LayoutElement));
+            DependencyProperty.Register("Title", typeof(string), typeof(LayoutElement),
+                new FrameworkPropertyMetadata(string.Empty));
 
         public string Title
         {
@@ -85,18 +86,18 @@ namespace YDock.Model
         #endregion
 
         #region IsActive
-        private bool isActive = false;
+        private bool _isActive = false;
         public bool IsActive
         {
             internal set
             {
-                if (isActive != value)
+                if (_isActive != value)
                 {
-                    isActive = value;
+                    _isActive = value;
                     PropertyChanged(this, new PropertyChangedEventArgs("IsActive"));
                 }
             }
-            get { return isActive; }
+            get { return _isActive; }
         }
         #endregion
 
@@ -188,6 +189,11 @@ namespace YDock.Model
             {
                 return _container?.DockManager;
             }
+        }
+
+        public int CompareTo(LayoutElement other)
+        {
+            return Title.CompareTo(other.Title);
         }
     }
 }

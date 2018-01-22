@@ -121,5 +121,15 @@ namespace YDock.View
 
             return result;
         }
+
+        public static int FindIndex(this IList<Rect> bounds, Point p)
+        {
+            for (int i = 0; i < bounds.Count; i++)
+            {
+                if (bounds[i].Contains(p))
+                    return i;
+            }
+            return -1;
+        }
     }
 }

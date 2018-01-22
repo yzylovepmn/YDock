@@ -25,23 +25,21 @@ namespace YDock.View
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
 
-        protected LayoutElement _model;
+        public static readonly DependencyProperty ModelProperty =
+            DependencyProperty.Register("Model", typeof(LayoutElement), typeof(LayoutContentControl));
+
         public LayoutElement Model
         {
-            get { return _model; }
+            get { return (LayoutElement)GetValue(ModelProperty); }
             set
             {
-                if (_model != value)
-                {
-                    _model = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs("Model"));
-                }
+                SetValue(ModelProperty, value);
             }
         }
 
         public void Dispose()
         {
-            _model = null;
+            Model = null;
             DataContext = null;
         }
     }

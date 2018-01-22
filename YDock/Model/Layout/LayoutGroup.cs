@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using YDock.Enum;
@@ -14,6 +16,45 @@ namespace YDock.Model
         {
             _side = side;
             _dockManager = dockManager;
+            _children.CollectionChanged += OnChildrenCollectionChanged;
+        }
+
+        protected virtual void OnChildrenCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems != null)
+                foreach (LayoutElement item in e.OldItems)
+                {
+                    item.PropertyChanged -= OnChildrenPropertyChanged;
+                    item.Container = null;
+                }
+            if (e.NewItems != null)
+                foreach (LayoutElement item in e.NewItems)
+                {
+                    item.Container = this;
+                    item.Side = _side;
+                    item.PropertyChanged += OnChildrenPropertyChanged;
+                }
+            PropertyChanged(this, new PropertyChangedEventArgs("Children_CanSelect"));
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
+        private void OnChildrenPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "CanSelect")
+            {
+                if (!(sender as LayoutElement).CanSelect)
+                {
+                    _children.Remove(sender as LayoutElement);
+                    _children.Add(sender as LayoutElement);
+                }
+                PropertyChanged(this, new PropertyChangedEventArgs("Children_CanSelect"));
+            }
+        }
+
+        public void RaisePropertyChanged(string propertyName)
+        {
+            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private DockSide _side;
@@ -29,9 +70,34 @@ namespace YDock.Model
         {
             get
             {
-                foreach (var child in _children)
-                    yield return child;
+                return _children;
             }
+        }
+
+        public IEnumerable<LayoutElement> Children_CanSelect
+        {
+            get
+            {
+                foreach (LayoutElement child in _children)
+                    if (child.CanSelect)
+                        yield return child;
+            }
+        }
+
+        public void MoveTo(int src, int des)
+        {
+            if (src < Children.Count && src >= 0
+                && des < Children.Count && des >= 0)
+            {
+                var child = Children[src];
+                Children.RemoveAt(src);
+                Children.Insert(des, child);
+            }
+        }
+
+        public int IndexOf(ILayoutElement child)
+        {
+            return Children.IndexOf(child as LayoutElement);
         }
 
         private YDock _dockManager;
@@ -72,14 +138,10 @@ namespace YDock.Model
 
         }
 
-        public IEnumerable<LayoutElement> Children_CanSelect
+        protected override void OnChildrenCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            get
-            {
-                foreach (LayoutElement child in _children)
-                    if (child.CanSelect)
-                        yield return child;
-            }
+            base.OnChildrenCollectionChanged(sender, e);
+            RaisePropertyChanged("ChildrenSorted");
         }
 
         public IEnumerable<ILayoutElement> ChildrenSorted

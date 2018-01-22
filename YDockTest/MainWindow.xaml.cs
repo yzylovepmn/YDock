@@ -33,12 +33,12 @@ namespace YDockTest
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            DockManager.AddDocument(new LayoutElement() { Side = DockSide.None, Title = "Document", DesiredWidth = 10 });
-            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Left, Title = "Document_Left", DesiredWidth = 200 });
-            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Left, Title = "Document_Left", DesiredWidth = 200 });
-            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Top, Title = "Document_Top", DesiredHeight = 180 });
-            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Right, Title = "Document_Right", DesiredWidth = 200 });
-            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Bottom, Title = "Document_Bottom", DesiredHeight = 180 });
+            DockManager.AddDocument(new LayoutElement() { Side = DockSide.None, Title = "Document", DesiredWidth = 10, Content = new TextBlock() { Text = "Content", VerticalAlignment = VerticalAlignment.Center } });
+            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Left, Title = "Document_Left", DesiredWidth = 200, Content = new TextBlock() { Text = "Content", VerticalAlignment = VerticalAlignment.Center } });
+            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Left, Title = "Document_Left", DesiredWidth = 200, Content = new TextBlock() { Text = "Content", VerticalAlignment = VerticalAlignment.Center } });
+            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Top, Title = "Document_Top", DesiredHeight = 180, Content = new TextBlock() { Text = "Content", VerticalAlignment = VerticalAlignment.Center } });
+            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Right, Title = "Document_Right", DesiredWidth = 200, Content = new TextBlock() { Text = "Content", VerticalAlignment = VerticalAlignment.Center } });
+            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Bottom, Title = "Document_Bottom", DesiredHeight = 180, Content = new TextBlock() { Text = "Content", VerticalAlignment = VerticalAlignment.Center } });
             DockManager.AddSidePanel(DockSide.Left);
         }
 

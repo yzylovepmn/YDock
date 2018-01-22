@@ -198,8 +198,33 @@ namespace YDock
             set
             {
                 if (LayoutRootPanel.AHWindow.Model != value)
+                {
+                    if(LayoutRootPanel.AHWindow.Model != null)
+                        LayoutRootPanel.AHWindow.Model.IsVisible = false;
                     LayoutRootPanel.AHWindow.Model = value as LayoutElement;
-                else LayoutRootPanel.AHWindow.Model = null;
+                    if (LayoutRootPanel.AHWindow.Model != null)
+                        LayoutRootPanel.AHWindow.Model.IsVisible = true;
+                }
+            }
+        }
+
+        private LayoutElement _activeElement;
+        public LayoutElement ActiveElement
+        {
+            get { return _activeElement; }
+            set
+            {
+                if (_activeElement != value)
+                {
+                    if (_activeElement != null)
+                        _activeElement.IsActive = false;
+                    _activeElement = value;
+                    if (_activeElement != null)
+                    {
+                        _activeElement.IsActive = true;
+                        AutoHideElement = null;
+                    }
+                }
             }
         }
 
@@ -255,6 +280,9 @@ namespace YDock
             LayoutRootPanel.RootGroupPanel.ContainDocument = true;
             var group = new LayoutDocumentGroup(this);
             group.Children.Add(document);
+            group.Children.Add(new LayoutElement() { Side = DockSide.None, Title = "Document_1", DesiredWidth = 10 });
+            group.Children.Add(new LayoutElement() { Side = DockSide.None, Title = "Document_2", DesiredWidth = 10 });
+            group.Children.Add(new LayoutElement() { Side = DockSide.None, Title = "Document_3", DesiredWidth = 10 });
             if (LayoutRootPanel.RootGroupPanel.IsEmpty)
                 LayoutRootPanel.RootGroupPanel.AddDocumentChild(new LayoutDocumentGroupControl(group) { DesiredHeight = document.DesiredHeight, DesiredWidth = document.DesiredWidth });
             else LayoutRootPanel.RootGroupPanel.AddDocumentChild(new LayoutDocumentGroupControl(group));
@@ -331,6 +359,9 @@ namespace YDock
                     child = new LayoutElement() { Side = DockSide.Left, Title = "Document_Left", DesiredHeight = 120 };
                     group = new LayoutGroup(child.Side, this);
                     group.Children.Add(child);
+                    group.Children.Add(new LayoutElement() { Side = DockSide.None, Title = "group_1", DesiredWidth = 10 });
+                    group.Children.Add(new LayoutElement() { Side = DockSide.None, Title = "group_2", DesiredWidth = 10 });
+                    group.Children.Add(new LayoutElement() { Side = DockSide.None, Title = "group_3", DesiredWidth = 10 });
                     rootPanel.Children.Add(new AnchorSideGroupControl(group) { DesiredHeight = child.DesiredHeight, DesiredWidth = child.DesiredWidth });
 
                     LayoutGroupPanel newrootPanel = new LayoutGroupPanel() { ContainDocument = true, Direction = Direction.LeftToRight };

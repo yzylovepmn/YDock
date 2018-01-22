@@ -93,6 +93,9 @@
     <Compile Include="Shell\SystemParameters2.cs" />
     <Compile Include="Shell\WindowChrome.cs" />
     <Compile Include="Shell\WindowChromeWorker.cs" />
+    <Compile Include="View\Control\BaseGroupControl.cs" />
+    <Compile Include="View\Control\DragTabItem.cs" />
+    <Compile Include="View\Control\LayoutHeaderControl.cs" />
     <Compile Include="View\Control\PopupNotTop.cs" />
     <Compile Include="View\Element\LayoutContentControl.cs" />
     <Compile Include="View\Element\DockSideItemControl.cs" />
@@ -105,6 +108,9 @@
     <Compile Include="View\Layout\LayoutRootPanel.cs" />
     <Compile Include="View\Control\DockSideGroupControl.cs" />
     <Compile Include="View\Extensions.cs" />
+    <Compile Include="View\Render\BaseVisual.cs" />
+    <Compile Include="View\Render\BaseRenderPanel.cs" />
+    <Compile Include="View\Render\TextureHeaderVisual.cs" />
     <Compile Include="View\Window\AutoHideWindow.cs" />
     <Compile Include="YDock.cs" />
     <Compile Include="YDockHelper.cs" />

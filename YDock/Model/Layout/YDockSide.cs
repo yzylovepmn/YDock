@@ -33,11 +33,41 @@ namespace YDock.Model
                     item.Side = _side;
                     item.PropertyChanged += OnChildrenPropertyChanged;
                 }
+            PropertyChanged(this, new PropertyChangedEventArgs("Children_CanSelect"));
         }
-        private void OnChildrenPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+
+        private void OnChildrenPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "CanSelect")
+            {
+                if (!(sender as LayoutElement).CanSelect)
+                {
+                    _children.Remove(sender as LayoutElement);
+                    _children.Add(sender as LayoutElement);
+                }
                 PropertyChanged(this, new PropertyChangedEventArgs("Children_CanSelect"));
+            }
+        }
+
+        public void RaisePropertyChanged(string propertyName)
+        {
+            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void MoveTo(int src, int des)
+        {
+            if (src < Children.Count && src >= 0
+                && des < Children.Count && des >= 0)
+            {
+                var child = Children[src];
+                Children.RemoveAt(src);
+                Children.Insert(des, child);
+            }
+        }
+
+        public int IndexOf(ILayoutElement child)
+        {
+            return Children.IndexOf(child as LayoutElement);
         }
 
         #region Root

@@ -19,6 +19,7 @@ namespace YDock
     {
         public static readonly SolidColorBrush SplitterBrushVertical;
         public static readonly SolidColorBrush SplitterBrushHorizontal;
+        public static readonly Pen DashPen;
 
         static ResourceManager()
         {
@@ -37,6 +38,14 @@ namespace YDock
                 B = 0xDB,
                 A = 0xFF
             });
+
+            DashPen = new Pen()
+            {
+                Brush = Brushes.Black,
+                Thickness = 0.8,
+                DashCap = PenLineCap.Flat,
+                DashStyle = new DashStyle(new List<double>() { 1, 4 }, 0)
+            };
         }
     }
 }
