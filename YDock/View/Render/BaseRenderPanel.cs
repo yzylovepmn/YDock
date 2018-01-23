@@ -4,14 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using YDock.Interface;
 
 namespace YDock.View
 {
-    public class BaseRenderPanel : FrameworkElement
+    public class BaseRenderPanel : FrameworkElement, IDisposable
     {
         public BaseRenderPanel()
         {
             _children = new List<BaseVisual>();
+            DataContextChanged += OnDataContextChanged;
+        }
+
+        protected virtual void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            
         }
 
         private IList<BaseVisual> _children;
@@ -53,6 +60,19 @@ namespace YDock.View
             RemoveLogicalChild(child);
             RemoveVisualChild(child);
         }
+
+        public virtual void UpdateChildren()
+        {
+            foreach (var child in _children)
+                child.Update(new Size(ActualWidth, ActualHeight));
+        }
+
+        public virtual void Dispose()
+        {
+            DataContext = null;
+            _children.Clear();
+            _children = null;
+        }
     }
 
     public class TexturePanel : BaseRenderPanel
@@ -60,6 +80,21 @@ namespace YDock.View
         public TexturePanel()
         {
             AddChild(new TextureHeaderVisual());
+        }
+
+        protected override void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            base.OnDataContextChanged(sender, e);
+            if (e.OldValue != null && e.OldValue is ILayoutElement)
+                (e.OldValue as ILayoutElement).PropertyChanged -= OnModelPropertyChanged;
+            if (e.NewValue != null && e.NewValue is ILayoutElement)
+                (e.NewValue as ILayoutElement).PropertyChanged += OnModelPropertyChanged;
+        }
+
+        private void OnModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "IsActive")
+                UpdateChildren();
         }
     }
 }

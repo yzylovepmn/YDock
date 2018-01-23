@@ -32,8 +32,6 @@ namespace YDock.View
             switch ((Model as ILayout).Side)
             {
                 case DockSide.Left:
-                    transform.Angle = 270;
-                    break;
                 case DockSide.Right:
                     transform.Angle = 90;
                     break;

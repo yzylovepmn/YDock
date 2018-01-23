@@ -52,12 +52,16 @@ namespace YDock.View
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
+            if (VisualParent == null) return;
             if (!IsMouseCaptured)
                 CaptureMouse();
             _dragItem = Content as ILayoutElement;
+
             UpdateChildrenBounds(VisualParent as Panel);
 
             base.OnMouseLeftButtonDown(e);
+            //在基类事件处理后再设置
+            _dragItem.DockManager.ActiveElement = _dragItem as LayoutElement;
         }
 
         protected override void OnMouseMove(MouseEventArgs e)

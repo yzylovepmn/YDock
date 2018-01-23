@@ -15,10 +15,10 @@ namespace YDock.Model
     {
         public YDockSide()
         {
-            _children.CollectionChanged += _children_CollectionChanged;
+            _children.CollectionChanged += OnChildrenChanged;
         }
 
-        private void _children_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void OnChildrenChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.OldItems != null)
                 foreach (LayoutElement item in e.OldItems)
@@ -42,10 +42,18 @@ namespace YDock.Model
             {
                 if (!(sender as LayoutElement).CanSelect)
                 {
+                    //移出的元素排到最后一个
                     _children.Remove(sender as LayoutElement);
                     _children.Add(sender as LayoutElement);
                 }
-                PropertyChanged(this, new PropertyChangedEventArgs("Children_CanSelect"));
+                else
+                {
+                    //重新进入的元素排到第一个
+                    _children.Remove(sender as LayoutElement);
+                    _children.Insert(0, sender as LayoutElement);
+                }
+                //OnChildrenChanged方法一定会触发下面的事件，故这里不用重复触发
+                //PropertyChanged(this, new PropertyChangedEventArgs("Children_CanSelect"));
             }
         }
 

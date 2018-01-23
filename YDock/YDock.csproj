@@ -55,7 +55,6 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Converters\NullBindingConverter.cs" />
     <Compile Include="Converters\SideToAngleConverter.cs" />
-    <Compile Include="Converters\SideToFlowDirectionConverter.cs" />
     <Compile Include="Enum\Direction.cs" />
     <Compile Include="Enum\DockSide.cs" />
     <Compile Include="Interface\ILayout.cs" />
@@ -100,7 +99,7 @@
     <Compile Include="View\Element\LayoutContentControl.cs" />
     <Compile Include="View\Element\DockSideItemControl.cs" />
     <Compile Include="View\Control\AnchorSideGroupControl.cs" />
-    <Compile Include="View\Layout\DockSidePanel.cs" />
+    <Compile Include="View\Layout\AnchorSidePanel.cs" />
     <Compile Include="View\Layout\DocumentPanel.cs" />
     <Compile Include="View\Control\LayoutDocumentGroupControl.cs" />
     <Compile Include="View\Layout\LayoutGridSplitter.cs" />
@@ -108,6 +107,7 @@
     <Compile Include="View\Layout\LayoutRootPanel.cs" />
     <Compile Include="View\Control\DockSideGroupControl.cs" />
     <Compile Include="View\Extensions.cs" />
+    <Compile Include="View\Layout\SingelLinePanel.cs" />
     <Compile Include="View\Render\BaseVisual.cs" />
     <Compile Include="View\Render\BaseRenderPanel.cs" />
     <Compile Include="View\Render\TextureHeaderVisual.cs" />

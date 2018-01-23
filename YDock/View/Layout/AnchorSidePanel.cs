@@ -8,11 +8,11 @@ using YDock.Model;
 
 namespace YDock.View
 {
-    public class DockSidePanel : Panel
+    public class AnchorSidePanel : Panel
     {
         protected override Size MeasureOverride(Size availableSize)
         {
-            var visibleChildren = InternalChildren.Cast<FrameworkElement>().Where(ele => ele.Visibility != System.Windows.Visibility.Collapsed);
+            var visibleChildren = InternalChildren.Cast<FrameworkElement>().Where(ele => ele.Visibility != Visibility.Collapsed);
 
             double height = 0.0;
             double width = 0.0;
