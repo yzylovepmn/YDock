@@ -23,8 +23,8 @@ namespace YDock.View
 
         private void _InitChildren()
         {
-            _layoutContent = new LayoutContentControl() { HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch };
-            _splitter = new LayoutGridSplitter();
+            _layoutContent = new LayoutContentControl() { HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch, BorderThickness = new Thickness(1) ,BorderBrush = new SolidColorBrush(new Color() { A = 0xFF, R = 0xCC,G = 0xCE, B = 0xDB })};
+            _splitter = new LayoutDragSplitter();
             _splitter.DragStarted += OnDragStarted;
             _splitter.DragDelta += OnDragDelta;
             _splitter.DragCompleted += OnDragCompleted;
@@ -40,8 +40,8 @@ namespace YDock.View
 
         private void OnDragStarted(object sender, DragStartedEventArgs e)
         {
-            _ComputeDragBounds(sender as LayoutGridSplitter, ref _dragBound1, ref _dragBound2);
-            _CreateDragPopup(sender as LayoutGridSplitter);
+            _ComputeDragBounds(sender as LayoutDragSplitter, ref _dragBound1, ref _dragBound2);
+            _CreateDragPopup(sender as LayoutDragSplitter);
         }
 
         private void OnDragDelta(object sender, DragDeltaEventArgs e)
@@ -94,7 +94,7 @@ namespace YDock.View
             _DisposeDragPopup();
         }
 
-        private void _CreateDragPopup(LayoutGridSplitter splitter)
+        private void _CreateDragPopup(LayoutDragSplitter splitter)
         {
             pToScreen = this.PointToScreenDPIWithoutFlowDirection(new Point());
             var transfrom = splitter.TransformToAncestor(this);
@@ -145,7 +145,7 @@ namespace YDock.View
         /// <param name="splitter">拖动的对象</param>
         /// <param name="x1">下界</param>
         /// <param name="x2">上界</param>
-        private void _ComputeDragBounds(LayoutGridSplitter splitter, ref double x1, ref double x2)
+        private void _ComputeDragBounds(LayoutDragSplitter splitter, ref double x1, ref double x2)
         {
             var pToScreen = (this.Parent as FrameworkElement).PointToScreenDPIWithoutFlowDirection(new Point());
             switch (Side)
@@ -182,7 +182,7 @@ namespace YDock.View
             }
         }
 
-        private LayoutGridSplitter _splitter;
+        private LayoutDragSplitter _splitter;
 
         public DockSide Side
         {

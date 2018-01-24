@@ -90,7 +90,7 @@ namespace YDock.View
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            _rootGroupPanel.Arrange(new Rect(new Point(5, 5), finalSize));
+            _rootGroupPanel.Arrange(new Rect(new Point(5, 5), new Size(finalSize.Width - 10, finalSize.Height - 10)));
             switch (_ahWindow.Side)
             {
                 case DockSide.Left:

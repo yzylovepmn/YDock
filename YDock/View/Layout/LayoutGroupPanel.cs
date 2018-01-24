@@ -23,7 +23,7 @@ namespace YDock.View
         }
 
         /// <summary>
-        /// 表示该Panel的Children中除了<see cref="LayoutGridSplitter"/>就是<see cref="LayoutDocumentGroupControl"/>
+        /// 表示该Panel的Children中除了<see cref="LayoutDragSplitter"/>就是<see cref="LayoutDocumentGroupControl"/>
         /// </summary>
         public bool IsDocumentPanel
         {
@@ -41,7 +41,7 @@ namespace YDock.View
 
 
         /// <summary>
-        /// 表示该Panel的Children中除了<see cref="LayoutGridSplitter"/>就是<see cref="AnchorSideGroupControl"/>
+        /// 表示该Panel的Children中除了<see cref="LayoutDragSplitter"/>就是<see cref="AnchorSideGroupControl"/>
         /// </summary>
         public bool IsAnchorPanel
         {
@@ -277,7 +277,7 @@ namespace YDock.View
                 case Direction.LeftToRight:
                     foreach (var child in InternalChildren)
                     {
-                        if (child is LayoutGridSplitter)
+                        if (child is LayoutDragSplitter)
                             wholeLength += Constants.SplitterSpan;
                         else
                         {
@@ -292,7 +292,7 @@ namespace YDock.View
                         double useLength = 0;
                         foreach (FrameworkElement child in InternalChildren)
                         {
-                            if (child is LayoutGridSplitter)
+                            if (child is LayoutDragSplitter)
                             {
                                 useLength += Constants.SplitterSpan;
                                 child.Measure(new Size(Constants.SplitterSpan, availableSize.Height));
@@ -324,7 +324,7 @@ namespace YDock.View
                                     child.Measure(new Size(_GetMinLength(child), availableSize.Height));
                                 else
                                 {
-                                    if (child is LayoutGridSplitter)
+                                    if (child is LayoutDragSplitter)
                                         child.Measure(new Size(Constants.SplitterSpan, availableSize.Height));
                                     else
                                     {
@@ -356,7 +356,7 @@ namespace YDock.View
                 case Direction.UpToDown:
                     foreach (var child in InternalChildren)
                     {
-                        if (child is LayoutGridSplitter)
+                        if (child is LayoutDragSplitter)
                             wholeLength += Constants.SplitterSpan;
                         else
                         {
@@ -371,7 +371,7 @@ namespace YDock.View
                         double useLength = 0;
                         foreach (FrameworkElement child in InternalChildren)
                         {
-                            if (child is LayoutGridSplitter)
+                            if (child is LayoutDragSplitter)
                             {
                                 useLength += Constants.SplitterSpan;
                                 child.Measure(new Size(availableSize.Width, Constants.SplitterSpan));
@@ -403,7 +403,7 @@ namespace YDock.View
                                     child.Measure(new Size(availableSize.Width, _GetMinLength(child)));
                                 else
                                 {
-                                    if (child is LayoutGridSplitter)
+                                    if (child is LayoutDragSplitter)
                                         child.Measure(new Size(availableSize.Width, Constants.SplitterSpan));
                                     else
                                     {
@@ -641,7 +641,7 @@ namespace YDock.View
                 case Direction.LeftToRight:
                     foreach (var child in InternalChildren)
                     {
-                        if (child is LayoutGridSplitter)
+                        if (child is LayoutDragSplitter)
                             wholeLength += Constants.SplitterSpan;
                         else
                         {
@@ -669,7 +669,7 @@ namespace YDock.View
                                 }
                                 else
                                 {
-                                    if (child is LayoutGridSplitter)
+                                    if (child is LayoutDragSplitter)
                                     {
                                         child.Arrange(new Rect(new Point(offset, 0), new Size(Constants.SplitterSpan, finalSize.Height)));
                                         offset += Constants.SplitterSpan;
@@ -710,7 +710,7 @@ namespace YDock.View
                 case Direction.UpToDown:
                     foreach (var child in InternalChildren)
                     {
-                        if (child is LayoutGridSplitter)
+                        if (child is LayoutDragSplitter)
                             wholeLength += Constants.SplitterSpan;
                         else
                         {
@@ -738,7 +738,7 @@ namespace YDock.View
                                 }
                                 else
                                 {
-                                    if (child is LayoutGridSplitter)
+                                    if (child is LayoutDragSplitter)
                                     {
                                         child.Arrange(new Rect(new Point(0, offset), new Size(finalSize.Width, Constants.SplitterSpan)));
                                         offset += Constants.SplitterSpan;
@@ -789,7 +789,7 @@ namespace YDock.View
                 case Direction.LeftToRight:
                     foreach (FrameworkElement child in InternalChildren)
                     {
-                        if (child is LayoutGridSplitter)
+                        if (child is LayoutDragSplitter)
                         {
                             child.Arrange(new Rect(new Point(offset, 0), new Size(Constants.SplitterSpan, finalSize.Height)));
                             offset += Constants.SplitterSpan;
@@ -804,7 +804,7 @@ namespace YDock.View
                 case Direction.UpToDown:
                     foreach (FrameworkElement child in InternalChildren)
                     {
-                        if (child is LayoutGridSplitter)
+                        if (child is LayoutDragSplitter)
                         {
                             child.Arrange(new Rect(new Point(0, offset), new Size(finalSize.Width, Constants.SplitterSpan)));
                             offset += Constants.SplitterSpan;
@@ -830,7 +830,7 @@ namespace YDock.View
 
                     foreach (FrameworkElement child in InternalChildren)
                     {
-                        if (child is LayoutGridSplitter)
+                        if (child is LayoutDragSplitter)
                         {
                             if (avaLength >= Constants.SplitterSpan)
                             {
@@ -868,7 +868,7 @@ namespace YDock.View
 
                     foreach (FrameworkElement child in InternalChildren)
                     {
-                        if (child is LayoutGridSplitter)
+                        if (child is LayoutDragSplitter)
                         {
                             if (avaLength >= Constants.SplitterSpan)
                             {
@@ -917,8 +917,8 @@ namespace YDock.View
 
         private void OnDragStarted(object sender, DragStartedEventArgs e)
         {
-            _ComputeDragBounds(sender as LayoutGridSplitter, ref _dragBound1, ref _dragBound2);
-            _CreateDragPopup(sender as LayoutGridSplitter);
+            _ComputeDragBounds(sender as LayoutDragSplitter, ref _dragBound1, ref _dragBound2);
+            _CreateDragPopup(sender as LayoutDragSplitter);
         }
 
         private void OnDragDelta(object sender, DragDeltaEventArgs e)
@@ -1021,7 +1021,7 @@ namespace YDock.View
         /// <param name="splitter">拖动的对象</param>
         /// <param name="x1">下界</param>
         /// <param name="x2">上界</param>
-        private void _ComputeDragBounds(LayoutGridSplitter splitter, ref double x1, ref double x2)
+        private void _ComputeDragBounds(LayoutDragSplitter splitter, ref double x1, ref double x2)
         {
             int index = Children.IndexOf(splitter);
             if (index > 1)
@@ -1065,7 +1065,7 @@ namespace YDock.View
             }
         }
 
-        private void _CreateDragPopup(LayoutGridSplitter splitter)
+        private void _CreateDragPopup(LayoutDragSplitter splitter)
         {
             pToScreen = this.PointToScreenDPIWithoutFlowDirection(new Point());
             var transfrom = splitter.TransformToAncestor(this);
@@ -1111,9 +1111,9 @@ namespace YDock.View
             _dragPopup = null;
         }
 
-        internal LayoutGridSplitter _CreateSplitter(Cursor cursor)
+        internal LayoutDragSplitter _CreateSplitter(Cursor cursor)
         {
-            var splitter = new LayoutGridSplitter()
+            var splitter = new LayoutDragSplitter()
             {
                 Cursor = cursor,
                 Background = Direction == Direction.LeftToRight ? ResourceManager.SplitterBrushVertical : ResourceManager.SplitterBrushHorizontal,
@@ -1124,7 +1124,7 @@ namespace YDock.View
             return splitter;
         }
 
-        internal void _DesstroySplitter(LayoutGridSplitter splitter)
+        internal void _DesstroySplitter(LayoutDragSplitter splitter)
         {
             splitter.DragStarted -= OnDragStarted;
             splitter.DragDelta -= OnDragDelta;
@@ -1177,7 +1177,7 @@ namespace YDock.View
             }
             else
             {
-                if (obj is LayoutGridSplitter)
+                if (obj is LayoutDragSplitter)
                     return Constants.SplitterSpan;
                 else return Constants.SideLength;
             }

@@ -102,7 +102,7 @@
     <Compile Include="View\Layout\AnchorSidePanel.cs" />
     <Compile Include="View\Layout\DocumentPanel.cs" />
     <Compile Include="View\Control\LayoutDocumentGroupControl.cs" />
-    <Compile Include="View\Layout\LayoutGridSplitter.cs" />
+    <Compile Include="View\Layout\LayoutDragSplitter.cs" />
     <Compile Include="View\Layout\LayoutGroupPanel.cs" />
     <Compile Include="View\Layout\LayoutRootPanel.cs" />
     <Compile Include="View\Control\DockSideGroupControl.cs" />
