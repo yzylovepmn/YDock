@@ -17,7 +17,7 @@
         <TextBlock Grid.Row="1" Height="20" Width="80" Text="aaa"/>
     </Grid>-->
     <DockPanel>
-        <ydock:YDock x:Name="DockManager">
+        <ydock:DockManager x:Name="DockManager">
             <ydockmodel:YDockRoot>
                 <ydockmodel:YDockRoot.LeftSide>
                     <ydockmodel:YDockSide>
@@ -56,6 +56,6 @@
                     </ydockmodel:YDockSide>
                 </ydockmodel:YDockRoot.BottomSide>
             </ydockmodel:YDockRoot>
-        </ydock:YDock>
+        </ydock:DockManager>
     </DockPanel>
 </Window>

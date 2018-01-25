@@ -17,14 +17,14 @@ namespace YDock.View
     /// <summary>
     /// 用于容纳<see cref="LayoutGroupPanel"/>,以及AutoHideWindow
     /// </summary>
-    public class LayoutRootPanel : Panel, IView
+    public class LayoutRootPanel : Panel, IDockView
     {
         static LayoutRootPanel()
         {
             FocusableProperty.OverrideMetadata(typeof(LayoutRootPanel), new FrameworkPropertyMetadata(false));
         }
 
-        public LayoutRootPanel(IModel model)
+        public LayoutRootPanel(IDockModel model)
         {
             Model = model;
             RootGroupPanel = new LayoutGroupPanel() { ContainDocument = false, IsDocumentPanel = true };
@@ -112,8 +112,8 @@ namespace YDock.View
             return finalSize;
         }
 
-        private IModel _model;
-        public IModel Model
+        private IDockModel _model;
+        public IDockModel Model
         {
             get
             {
@@ -129,6 +129,14 @@ namespace YDock.View
                     if (_model != null)
                         _model.View = this;
                 }
+            }
+        }
+
+        public IDockView DockViewParent
+        {
+            get
+            {
+                return _model.DockManager;
             }
         }
     }

@@ -5,8 +5,9 @@ using System.Text;
 
 namespace YDock.Interface
 {
-    public interface IView
+    public interface IDockView
     {
-        IModel Model { get; set; }
+        IDockModel Model { get; set; }
+        IDockView DockViewParent { get; }
     }
 }

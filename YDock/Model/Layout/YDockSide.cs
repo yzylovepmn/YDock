@@ -11,7 +11,7 @@ using YDock.Interface;
 namespace YDock.Model
 {
     [ContentProperty("Children")]
-    public class YDockSide : IModel, ILayoutGroup
+    public class YDockSide : IDockModel, ILayoutGroup
     {
         public YDockSide()
         {
@@ -106,8 +106,8 @@ namespace YDock.Model
                 }
             }
         }
-        private IView _view;
-        public IView View
+        private IDockView _view;
+        public IDockView View
         {
             get
             {
@@ -141,7 +141,7 @@ namespace YDock.Model
         }
 
 
-        public YDock DockManager
+        public DockManager DockManager
         {
             get
             {

@@ -7,7 +7,7 @@ using System.Windows.Media;
 
 namespace YDock
 {
-    public class YDockHelper
+    public class DockHelper
     {
         public static T GetTemplateChild<T>(FrameworkTemplate template, FrameworkElement templateParent, string name)
         {

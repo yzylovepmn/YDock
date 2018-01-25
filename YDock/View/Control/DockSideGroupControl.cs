@@ -14,7 +14,7 @@ using YDock.Model;
 
 namespace YDock.View
 {
-    public class DockSideGroupControl : ItemsControl, IView
+    public class DockSideGroupControl : ItemsControl, IDockView
     {
         static DockSideGroupControl()
         {
@@ -45,7 +45,7 @@ namespace YDock.View
 
         private ILayoutGroup _model;
 
-        public IModel Model
+        public IDockModel Model
         {
             get
             {
@@ -78,7 +78,7 @@ namespace YDock.View
             }
         }
 
-        public YDock DockManager
+        public IDockView DockViewParent
         {
             get
             {

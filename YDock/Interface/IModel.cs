@@ -7,9 +7,9 @@ using YDock.Enum;
 
 namespace YDock.Interface
 {
-    public interface IModel
+    public interface IDockModel : ILayout
     {
-        IView View { get; set; }
+        IDockView View { get; set; }
     }
 
     public interface ILayoutElement : INotifyPropertyChanged, ILayout, ILayoutSize

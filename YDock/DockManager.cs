@@ -15,15 +15,15 @@ using YDock.View;
 namespace YDock
 {
     [ContentProperty("Root")]
-    public class YDock : Control
+    public class DockManager : Control, IDockView
     {
-        static YDock()
+        static DockManager()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(YDock), new FrameworkPropertyMetadata(typeof(YDock)));
-            FocusableProperty.OverrideMetadata(typeof(YDock), new FrameworkPropertyMetadata(false));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(DockManager), new FrameworkPropertyMetadata(typeof(DockManager)));
+            FocusableProperty.OverrideMetadata(typeof(DockManager), new FrameworkPropertyMetadata(false));
         }
 
-        public YDock()
+        public DockManager()
         {
             Root = new YDockRoot();
             _documents = new List<ILayoutElement>();
@@ -55,7 +55,7 @@ namespace YDock
 
         #region DependencyProperty
         public static readonly DependencyProperty LeftSideProperty =
-            DependencyProperty.Register("LeftSide", typeof(DockSideGroupControl), typeof(YDock),
+            DependencyProperty.Register("LeftSide", typeof(DockSideGroupControl), typeof(DockManager),
                 new FrameworkPropertyMetadata(null,
                     new PropertyChangedCallback(OnLeftSideChanged)));
 
@@ -67,7 +67,7 @@ namespace YDock
 
         private static void OnLeftSideChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((YDock)d).OnLeftSideChanged(e);
+            ((DockManager)d).OnLeftSideChanged(e);
         }
 
         protected virtual void OnLeftSideChanged(DependencyPropertyChangedEventArgs e)
@@ -79,7 +79,7 @@ namespace YDock
         }
 
         public static readonly DependencyProperty RightSideProperty =
-            DependencyProperty.Register("RightSide", typeof(DockSideGroupControl), typeof(YDock),
+            DependencyProperty.Register("RightSide", typeof(DockSideGroupControl), typeof(DockManager),
                 new FrameworkPropertyMetadata(null,
                     new PropertyChangedCallback(OnRightSideChanged)));
 
@@ -91,7 +91,7 @@ namespace YDock
 
         private static void OnRightSideChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((YDock)d).OnRightSideChanged(e);
+            ((DockManager)d).OnRightSideChanged(e);
         }
 
         protected virtual void OnRightSideChanged(DependencyPropertyChangedEventArgs e)
@@ -103,7 +103,7 @@ namespace YDock
         }
 
         public static readonly DependencyProperty TopSideProperty =
-            DependencyProperty.Register("TopSide", typeof(DockSideGroupControl), typeof(YDock),
+            DependencyProperty.Register("TopSide", typeof(DockSideGroupControl), typeof(DockManager),
                 new FrameworkPropertyMetadata(null,
                     new PropertyChangedCallback(OnTopSideChanged)));
 
@@ -115,7 +115,7 @@ namespace YDock
 
         private static void OnTopSideChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((YDock)d).OnTopSideChanged(e);
+            ((DockManager)d).OnTopSideChanged(e);
         }
 
         protected virtual void OnTopSideChanged(DependencyPropertyChangedEventArgs e)
@@ -127,7 +127,7 @@ namespace YDock
         }
 
         public static readonly DependencyProperty BottomSideProperty =
-            DependencyProperty.Register("BottomSide", typeof(DockSideGroupControl), typeof(YDock),
+            DependencyProperty.Register("BottomSide", typeof(DockSideGroupControl), typeof(DockManager),
                 new FrameworkPropertyMetadata(null,
                     new PropertyChangedCallback(OnBottomSideChanged)));
 
@@ -139,7 +139,7 @@ namespace YDock
 
         private static void OnBottomSideChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((YDock)d).OnBottomSideChanged(e);
+            ((DockManager)d).OnBottomSideChanged(e);
         }
 
         protected virtual void OnBottomSideChanged(DependencyPropertyChangedEventArgs e)
@@ -151,7 +151,7 @@ namespace YDock
         }
 
         public static readonly DependencyProperty LayoutRootPanelProperty =
-            DependencyProperty.Register("LayoutRootPanel", typeof(LayoutRootPanel), typeof(YDock),
+            DependencyProperty.Register("LayoutRootPanel", typeof(LayoutRootPanel), typeof(DockManager),
                 new FrameworkPropertyMetadata(null,
                     new PropertyChangedCallback(OnLayoutRootPanelChanged)));
 
@@ -163,7 +163,7 @@ namespace YDock
 
         private static void OnLayoutRootPanelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((YDock)d).OnLayoutRootPanelChanged(e);
+            ((DockManager)d).OnLayoutRootPanelChanged(e);
         }
 
         protected virtual void OnLayoutRootPanelChanged(DependencyPropertyChangedEventArgs e)
@@ -272,6 +272,27 @@ namespace YDock
                     yield return item;
                 foreach (var item in _bottomChildren)
                     yield return item;
+            }
+        }
+
+        public IDockModel Model
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IDockView DockViewParent
+        {
+            get
+            {
+                return null;
             }
         }
 

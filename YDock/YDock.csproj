@@ -112,8 +112,8 @@
     <Compile Include="View\Render\BaseRenderPanel.cs" />
     <Compile Include="View\Render\TextureHeaderVisual.cs" />
     <Compile Include="View\Window\AutoHideWindow.cs" />
-    <Compile Include="YDock.cs" />
-    <Compile Include="YDockHelper.cs" />
+    <Compile Include="DockManager.cs" />
+    <Compile Include="DockHelper.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

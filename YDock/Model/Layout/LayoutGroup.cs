@@ -7,12 +7,13 @@ using System.Linq;
 using System.Text;
 using YDock.Enum;
 using YDock.Interface;
+using YDock.View;
 
 namespace YDock.Model
 {
     public class LayoutGroup : ILayoutGroup
     {
-        public LayoutGroup(DockSide side, YDock dockManager)
+        public LayoutGroup(DockSide side, DockManager dockManager)
         {
             _side = side;
             _dockManager = dockManager;
@@ -25,6 +26,7 @@ namespace YDock.Model
                 foreach (LayoutElement item in e.OldItems)
                 {
                     item.PropertyChanged -= OnChildrenPropertyChanged;
+                    item.IsVisible = false;
                     item.Container = null;
                 }
             if (e.NewItems != null)
@@ -58,6 +60,9 @@ namespace YDock.Model
                 //OnChildrenChanged方法一定会触发下面的事件，故这里不用重复触发
                 //PropertyChanged(this, new PropertyChangedEventArgs("Children_CanSelect"));
             }
+
+            if (e.PropertyName == "IsActive")
+                IsActive = (sender as LayoutElement).IsActive;
         }
 
         public void RaisePropertyChanged(string propertyName)
@@ -108,8 +113,8 @@ namespace YDock.Model
             return Children.IndexOf(child as LayoutElement);
         }
 
-        private YDock _dockManager;
-        public YDock DockManager
+        private DockManager _dockManager;
+        public DockManager DockManager
         {
             get
             {
@@ -117,8 +122,8 @@ namespace YDock.Model
             }
         }
 
-        private IView _view;
-        public IView View
+        private IDockView _view;
+        public IDockView View
         {
             get
             {
@@ -137,11 +142,28 @@ namespace YDock.Model
                 }
             }
         }
+
+        private bool _isActive = false;
+        public bool IsActive
+        {
+            get
+            {
+                return _isActive;
+            }
+            set
+            {
+                if (_isActive != value)
+                {
+                    _isActive = value;
+                    RaisePropertyChanged("IsActive");
+                }
+            }
+        }
     }
 
     public class LayoutDocumentGroup : LayoutGroup
     {
-        public LayoutDocumentGroup(YDock dockManager) : base(DockSide.None, dockManager)
+        public LayoutDocumentGroup(DockManager dockManager) : base(DockSide.None, dockManager)
         {
 
         }

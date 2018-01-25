@@ -11,7 +11,7 @@ using YDock.Model;
 
 namespace YDock.View
 {
-    public class DragTabItem : TabItem, IDisposable
+    public class DragTabItem : TabItem, IDockView, IDisposable
     {
         static DragTabItem()
         {
@@ -38,13 +38,48 @@ namespace YDock.View
             }
         }
 
+        public IDockModel Model
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IDockView DockViewParent
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         static ILayoutElement _dragItem;
         static IList<Rect> _childrenBounds;
+        static bool _mouseInside = true;
+
+        protected override void OnMouseDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseDown(e);
+
+            if (e.MiddleButton == MouseButtonState.Pressed)
+            {
+                if ((Content as LayoutElement).IsActive)
+                    (Content as LayoutElement).DockManager.ActiveElement = null;
+                (Content as LayoutElement).CanSelect = false;
+            }
+        }
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
             if (IsMouseCaptured)
                 ReleaseMouseCapture();
+            _mouseInside = false;
             _dragItem = null;
 
             base.OnMouseLeftButtonUp(e);
@@ -52,11 +87,10 @@ namespace YDock.View
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
-            if (VisualParent == null) return;
             if (!IsMouseCaptured)
                 CaptureMouse();
+            _mouseInside = true;
             _dragItem = Content as ILayoutElement;
-
             UpdateChildrenBounds(VisualParent as Panel);
 
             base.OnMouseLeftButtonDown(e);
@@ -68,28 +102,33 @@ namespace YDock.View
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                if (VisualParent != null && _dragItem != null)
+                if (_dragItem != null)
                 {
                     var parent = VisualParent as Panel;
                     var p = e.GetPosition(parent);
                     int src = _container.IndexOf(_dragItem);
                     int des = _childrenBounds.FindIndex(p);
-                    if (des < 0 && _dragItem != null)
+                    if (des < 0)
                     {
-                        _dragItem = null;
+                        //_dragItem = null;
                         //TODO Drag
                     }
                     else
                     {
-                        if (parent.Children[src].IsMouseCaptured)
+                        if (_mouseInside)
                         {
                             if (src != des)
+                            {
                                 MoveTo(src, des, parent);
+                                _mouseInside = false;
+                            }
+                            else if (!_mouseInside)
+                                _mouseInside = true;
                         }
                         else
                         {
                             if (src == des)
-                                parent.Children[src].CaptureMouse();
+                                _mouseInside = true;
                             else
                             {
                                 if (des < src)
@@ -100,8 +139,6 @@ namespace YDock.View
                                     len += _childrenBounds[src].Size.Width;
                                     if (len > p.X)
                                         MoveTo(src, des, parent);
-                                    else if(!parent.Children[des].IsMouseCaptured)
-                                        parent.Children[des].CaptureMouse();
                                 }
                                 else
                                 {
@@ -111,8 +148,6 @@ namespace YDock.View
                                     len += _childrenBounds[des].Size.Width;
                                     if (len < p.X)
                                         MoveTo(src, des, parent);
-                                    else if (!parent.Children[des].IsMouseCaptured)
-                                        parent.Children[des].CaptureMouse();
                                 }
                             }
                         }
@@ -133,6 +168,7 @@ namespace YDock.View
             _container.MoveTo(src, des);
             (_container.View as TabControl).SelectedIndex = des;
             parent.UpdateLayout();
+            parent.Children[des].CaptureMouse();
             UpdateChildrenBounds(parent);
         }
 

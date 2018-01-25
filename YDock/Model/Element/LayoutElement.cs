@@ -183,7 +183,7 @@ namespace YDock.Model
 
 
 
-        public YDock DockManager
+        public DockManager DockManager
         {
             get
             {

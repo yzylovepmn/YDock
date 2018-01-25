@@ -190,7 +190,7 @@ namespace YDock.View
         }
 
 
-        public YDock DockManager
+        public DockManager DockManager
         {
             get
             {

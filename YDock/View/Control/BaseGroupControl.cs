@@ -58,8 +58,8 @@ namespace YDock.View
                     item.IsVisible = true;
         }
 
-        private IModel _model;
-        public IModel Model
+        private IDockModel _model;
+        public IDockModel Model
         {
             get
             {
@@ -78,11 +78,12 @@ namespace YDock.View
             }
         }
 
-        protected override void OnGotKeyboardFocus(System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        public IDockView DockViewParent
         {
-            if (SelectedContent != null)
-                (_model as ILayoutGroup).DockManager.ActiveElement = SelectedContent as LayoutElement;
-            base.OnGotKeyboardFocus(e);
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
 
         protected override void OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)

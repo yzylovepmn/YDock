@@ -10,7 +10,7 @@ namespace YDock.Interface
     public interface ILayout
     {
         DockSide Side { get; }
-        YDock DockManager { get; }
+        DockManager DockManager { get; }
     }
 
     public interface ILayoutSize
@@ -19,7 +19,7 @@ namespace YDock.Interface
         double DesiredHeight { get; set; }
     }
 
-    public interface ILayoutGroup : ILayout, IModel, INotifyPropertyChanged
+    public interface ILayoutGroup : IDockModel, INotifyPropertyChanged
     {
         IEnumerable<ILayoutElement> Children { get; }
         void MoveTo(int src, int des);
@@ -27,7 +27,7 @@ namespace YDock.Interface
         void RaisePropertyChanged(string propertyName);
     }
 
-    public interface ILayoutGroupControl : ILayoutSize, IView
+    public interface ILayoutGroupControl : ILayoutSize, IDockView
     {
 
     }

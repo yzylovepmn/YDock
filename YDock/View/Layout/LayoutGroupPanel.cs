@@ -16,7 +16,7 @@ namespace YDock.View
     /// <summary>
     /// the core class for layout and drag
     /// </summary>
-    public class LayoutGroupPanel : Panel, ILayoutSize
+    public class LayoutGroupPanel : Panel, ILayoutSize, IDockView, ILayout
     {
         public LayoutGroupPanel()
         {
@@ -87,15 +87,15 @@ namespace YDock.View
             }
         }
 
-        public YDock DockManager
+        public DockManager DockManager
         {
             get
             {
                 var parent = Parent;
                 while (parent != null)
                 {
-                    if (parent is YDock)
-                        return parent as YDock;
+                    if (parent is DockManager)
+                        return parent as DockManager;
                     if (parent is LayoutRootPanel)
                         parent = (parent as LayoutRootPanel).Parent;
                     if (parent is LayoutGroupPanel)
@@ -138,6 +138,35 @@ namespace YDock.View
         {
             get { return _direction; }
             set { _direction = value; }
+        }
+
+        public DockSide Side
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IDockModel Model
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IDockView DockViewParent
+        {
+            get
+            {
+                return Parent == null ? null : Parent as IDockView;
+            }
         }
 
         #region MeasureOverride

@@ -10,7 +10,7 @@ using YDock.Interface;
 
 namespace YDock.Model
 {
-    public class YDockRoot : DependencyObject, INotifyPropertyChanged, IModel
+    public class YDockRoot : DependencyObject, INotifyPropertyChanged, IDockModel
     {
         public YDockRoot()
         {
@@ -60,8 +60,8 @@ namespace YDock.Model
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         #region Parent
-        private YDock _dockManager;
-        public YDock DockManager
+        private DockManager _dockManager;
+        public DockManager DockManager
         {
             get { return _dockManager; }
             set { _dockManager = value; }
@@ -148,8 +148,8 @@ namespace YDock.Model
             }
         }
 
-        private IView _view;
-        public IView View
+        private IDockView _view;
+        public IDockView View
         {
             get
             {
@@ -159,6 +159,14 @@ namespace YDock.Model
             {
                 if (_view != value)
                     _view = value;
+            }
+        }
+
+        public DockSide Side
+        {
+            get
+            {
+                return DockSide.None;
             }
         }
 
