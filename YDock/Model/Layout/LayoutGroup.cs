@@ -183,5 +183,11 @@ namespace YDock.Model
                 return listSorted;
             }
         }
+
+        public void ActiveElement(ILayoutElement element)
+        {
+            (View as BaseGroupControl).SelectedIndex = Children.IndexOf(element);
+            DockManager.ActiveElement = element as LayoutElement;
+        }
     }
 }

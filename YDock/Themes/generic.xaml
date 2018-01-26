@@ -19,6 +19,34 @@
     <SolidColorBrush x:Key="AnchorPanelBackground" Color="#FFEEEEF2"/>
     <SolidColorBrush x:Key="ActivePanelItemBackground" Color="#FFC9DEF5"/>
 
+    <Style x:Key="CustomToggleButtonStyle" TargetType="{x:Type view:CustomToggleButton}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type view:CustomToggleButton}">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                        <Path Data="M0,0 L8,0 L4,4 Z" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="{TemplateBinding Foreground}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DocumentToggleButtonStyle" TargetType="{x:Type view:CustomToggleButton}" BasedOn="{StaticResource CustomToggleButtonStyle}">
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#FFC9DEF5"/>
+                <Setter Property="Foreground" Value="#FF007ACC"/>
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="{StaticResource ActiveHeaderBackground}"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    
+
     <Style TargetType="{x:Type ydock:DockManager}">
         <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
         <Setter Property="Template">
@@ -179,7 +207,58 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Border x:Name="Border" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,2">
-                            <view:DocumentPanel IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="15"/>
+                                </Grid.ColumnDefinitions>
+                                <view:DocumentPanel IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
+                                <view:CustomToggleButton IsThreeState="False" Height="15" Grid.Column="1" Style="{StaticResource DocumentToggleButtonStyle}">
+                                    <view:CustomToggleButton.DropContextMenu>
+                                        <view:CustomContextMenu ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.ChildrenSorted}">
+                                            <view:CustomContextMenu.Style>
+                                                <Style TargetType="{x:Type view:CustomContextMenu}">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="{x:Type view:CustomContextMenu}">
+                                                                <Border Background="#FFF6F6F6" Padding="2" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" SnapsToDevicePixels="True">
+                                                                    <StackPanel IsItemsHost="True"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Property="ItemContainerStyle">
+                                                        <Setter.Value>
+                                                            <Style TargetType="{x:Type view:CustomMenuItem}">
+                                                                <Setter Property="Background" Value="Transparent"/>
+                                                                <Setter Property="Template">
+                                                                    <Setter.Value>
+                                                                        <ControlTemplate TargetType="{x:Type view:CustomMenuItem}">
+                                                                            <Grid Background="{TemplateBinding Background}" Height="22">
+                                                                                <Grid.ColumnDefinitions>
+                                                                                    <ColumnDefinition Width="32"/>
+                                                                                    <ColumnDefinition Width="*"/>
+                                                                                </Grid.ColumnDefinitions>
+                                                                                <Image Source="{Binding ImageSource}"/>
+                                                                                <TextBlock Foreground="Black" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Title}" Margin="10,0,50,0"/>
+                                                                            </Grid>
+                                                                            <ControlTemplate.Triggers>
+                                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                                    <Setter Property="Background" Value="#FFC9DEF5"/>
+                                                                                </Trigger>
+                                                                            </ControlTemplate.Triggers>
+                                                                        </ControlTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                            </Style>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </view:CustomContextMenu.Style>
+                                        </view:CustomContextMenu>
+                                    </view:CustomToggleButton.DropContextMenu>
+                                </view:CustomToggleButton>
+                            </Grid>
                         </Border>
                         <Border x:Name="ContentPanel"
                                 VerticalAlignment="Stretch"

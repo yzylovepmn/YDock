@@ -192,7 +192,7 @@ namespace YDock
         /// <summary>
         /// 自动隐藏窗口的Model
         /// </summary>
-        public ILayoutElement AutoHideElement
+        internal ILayoutElement AutoHideElement
         {
             get { return LayoutRootPanel.AHWindow.Model; }
             set
@@ -209,7 +209,7 @@ namespace YDock
         }
 
         private LayoutElement _activeElement;
-        public LayoutElement ActiveElement
+        internal LayoutElement ActiveElement
         {
             get { return _activeElement; }
             set

@@ -93,6 +93,7 @@
     <Compile Include="Shell\WindowChrome.cs" />
     <Compile Include="Shell\WindowChromeWorker.cs" />
     <Compile Include="View\Control\BaseGroupControl.cs" />
+    <Compile Include="View\Control\CustomControl.cs" />
     <Compile Include="View\Control\DragTabItem.cs" />
     <Compile Include="View\Control\LayoutHeaderControl.cs" />
     <Compile Include="View\Control\PopupNotTop.cs" />
