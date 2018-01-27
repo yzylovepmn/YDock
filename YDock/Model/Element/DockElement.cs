@@ -10,9 +10,9 @@ using YDock.Interface;
 
 namespace YDock.Model
 {
-    public class LayoutElement : DependencyObject, ILayoutElement, IComparable<LayoutElement>
+    public class DockElement : DependencyObject, IDockElement, IComparable<DockElement>
     {
-        public LayoutElement()
+        internal DockElement()
         {
         }
 
@@ -22,7 +22,7 @@ namespace YDock.Model
         public UIElement Content
         {
             get { return _content; }
-            set
+            internal set
             {
                 if (_content != value)
                 {
@@ -34,43 +34,77 @@ namespace YDock.Model
         #endregion
 
 
-
         #region Title
         public static readonly DependencyProperty TitleProperty = 
-            DependencyProperty.Register("Title", typeof(string), typeof(LayoutElement),
+            DependencyProperty.Register("Title", typeof(string), typeof(DockElement),
                 new FrameworkPropertyMetadata(string.Empty));
 
         public string Title
         {
-            set { SetValue(TitleProperty, value); }
+            internal set { SetValue(TitleProperty, value); }
             get { return (string)GetValue(TitleProperty); }
         }
         #endregion
 
         #region ImageSource
         public static readonly DependencyProperty ImageSourceProperty =
-            DependencyProperty.Register("ImageSource", typeof(ImageSource), typeof(LayoutElement));
+            DependencyProperty.Register("ImageSource", typeof(ImageSource), typeof(DockElement));
 
         public ImageSource ImageSource
         {
-            set { SetValue(ImageSourceProperty, value); }
+            internal set { SetValue(ImageSourceProperty, value); }
             get { return (ImageSource)GetValue(ImageSourceProperty); }
         }
         #endregion
 
         #region DockSide
         public static readonly DependencyProperty SideProperty =
-            DependencyProperty.Register("Side", typeof(DockSide), typeof(LayoutElement));
+            DependencyProperty.Register("Side", typeof(DockSide), typeof(DockElement));
 
         public DockSide Side
         {
-            set { SetValue(SideProperty, value); }
+            internal set { SetValue(SideProperty, value); }
             get { return (DockSide)GetValue(SideProperty); }
+        }
+        #endregion
+
+        #region ID
+        private int _id;
+        public int ID
+        {
+            get { return _id; }
+            internal set
+            {
+                if (_id != value)
+                    _id = value;
+            }
+        }
+        #endregion
+
+        #region DockStatus
+        private DockStatus _status;
+        public DockStatus Status
+        {
+            get
+            {
+                return _status;
+            }
+            set
+            {
+                if (_status != value)
+                {
+                    _status = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs("Status"));
+                }
+            }
         }
         #endregion
 
         #region IsVisible
         private bool isVisible = false;
+        /// <summary>
+        /// Content是否可见
+        /// </summary>
         public bool IsVisible
         {
             internal set
@@ -87,6 +121,9 @@ namespace YDock.Model
 
         #region IsActive
         private bool _isActive = false;
+        /// <summary>
+        /// 是否为当前的活动窗口
+        /// </summary>
         public bool IsActive
         {
             internal set
@@ -102,7 +139,10 @@ namespace YDock.Model
         #endregion
 
         #region CanSelect
-        private bool _canSelect = true;
+        private bool _canSelect = false;
+        /// <summary>
+        /// 是否显示在用户界面供选择，默认为false
+        /// </summary>
         public bool CanSelect
         {
             internal set
@@ -126,7 +166,7 @@ namespace YDock.Model
             {
                 return _container;
             }
-            set
+            internal set
             {
                 if (_container != value)
                     _container = value;
@@ -182,7 +222,6 @@ namespace YDock.Model
         }
 
 
-
         public DockManager DockManager
         {
             get
@@ -191,9 +230,15 @@ namespace YDock.Model
             }
         }
 
-        public int CompareTo(LayoutElement other)
+        public int CompareTo(DockElement other)
         {
             return Title.CompareTo(other.Title);
+        }
+
+        public void Dispose()
+        {
+            _content = null;
+            _container = null;
         }
     }
 }

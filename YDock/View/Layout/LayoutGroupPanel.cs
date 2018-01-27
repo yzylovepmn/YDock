@@ -14,12 +14,13 @@ using YDock.Interface;
 namespace YDock.View
 {
     /// <summary>
-    /// the core class for layout and drag
+    /// the core class for layout and resize region
     /// </summary>
     public class LayoutGroupPanel : Panel, ILayoutSize, IDockView, ILayout
     {
-        public LayoutGroupPanel()
+        public LayoutGroupPanel(DockSide side = DockSide.None)
         {
+            _side = side;
         }
 
         /// <summary>
@@ -58,21 +59,15 @@ namespace YDock.View
         private bool _isAnchorPanel = false;
 
         /// <summary>
-        /// 表示该Panel的Children中包含<see cref="LayoutDocumentGroupControl"/>
+        /// 表示该Panel的Children中递归包含<see cref="LayoutDocumentGroupControl"/>
         /// </summary>
         public bool ContainDocument
         {
             get
             {
-                return _containDocument;
-            }
-            internal set
-            {
-                if (_containDocument != value)
-                    _containDocument = value;
+                return _side == DockSide.None;
             }
         }
-        private bool _containDocument = false;
 
         public bool IsEmpty
         {
@@ -83,7 +78,7 @@ namespace YDock.View
         {
             get
             {
-                return Parent is LayoutRootPanel;
+                return DockViewParent is LayoutRootPanel;
             }
         }
 
@@ -91,15 +86,11 @@ namespace YDock.View
         {
             get
             {
-                var parent = Parent;
-                while (parent != null)
+                var parent = DockViewParent;
+                while (parent?.DockViewParent != null)
                 {
-                    if (parent is DockManager)
-                        return parent as DockManager;
-                    if (parent is LayoutRootPanel)
-                        parent = (parent as LayoutRootPanel).Parent;
-                    if (parent is LayoutGroupPanel)
-                        parent = (parent as LayoutGroupPanel).Parent;
+                    if (parent.DockViewParent is DockManager)
+                        return parent.DockViewParent as DockManager;
                 }
                 return null;
             }
@@ -140,11 +131,17 @@ namespace YDock.View
             set { _direction = value; }
         }
 
+        private DockSide _side;
         public DockSide Side
         {
             get
             {
-                throw new NotImplementedException();
+                return _side;
+            }
+            internal set
+            {
+                if (_side != value)
+                    _side = value;
             }
         }
 
@@ -152,12 +149,7 @@ namespace YDock.View
         {
             get
             {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
+                return null;
             }
         }
 
@@ -173,7 +165,7 @@ namespace YDock.View
         protected override Size MeasureOverride(Size availableSize)
         {
             if (InternalChildren.Count == 0) return availableSize;
-            if (IsAnchorPanel || IsDocumentPanel)
+            if ((IsAnchorPanel || IsDocumentPanel) && !IsRootPanel)
                 return _MeasureOverrideFull(availableSize);
             else return _MeasureOverrideSplit(availableSize);
         }
@@ -539,7 +531,7 @@ namespace YDock.View
         protected override Size ArrangeOverride(Size finalSize)
         {
             if (InternalChildren.Count == 0) return finalSize;
-            if (IsAnchorPanel || IsDocumentPanel)
+            if ((IsAnchorPanel || IsDocumentPanel) && !IsRootPanel)
                 return _ArrangeOverrideFull(finalSize);
             else return _ArrangeOverrideSplit(finalSize);
         }
@@ -1241,14 +1233,14 @@ namespace YDock.View
                     break;
             }
         }
-
-
-
-        public void AddChild(ILayoutSize panel)
-        {
-            Children.Add(panel as UIElement);
-        }
-
         #endregion
+
+        public void Dispose()
+        {
+            foreach (var child in Children)
+                if (child is IDisposable)
+                    (child as IDisposable).Dispose();
+            Children.Clear();
+        }
     }
 }

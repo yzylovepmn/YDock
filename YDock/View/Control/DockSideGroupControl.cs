@@ -53,20 +53,20 @@ namespace YDock.View
             }
             set
             {
-                if (_model != null) _model.View = null;
+                if (_model != null) (_model as DockSideModel).View = null;
                 if (_model != value)
                 {
                     _model = value as ILayoutGroup;
-                    _model.View = this;
+                    (_model as DockSideModel).View = this;
                 }
             }
         }
 
-        public IEnumerable<ILayoutElement> Children
+        public IEnumerable<IDockElement> Children
         {
             get
             {
-                return Items.Cast<ILayoutElement>();
+                return Items.Cast<IDockElement>();
             }
         }
 
@@ -88,7 +88,14 @@ namespace YDock.View
 
         protected override DependencyObject GetContainerForItemOverride()
         {
-            return new DockSideItemControl(this._model);
+            return new DockSideItemControl(this);
+        }
+
+        public void Dispose()
+        {
+            BindingOperations.ClearBinding(this, ItemsSourceProperty);
+            Items.Clear();
+            Model = null;
         }
     }
 }

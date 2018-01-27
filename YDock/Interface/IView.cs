@@ -5,9 +5,9 @@ using System.Text;
 
 namespace YDock.Interface
 {
-    public interface IDockView
+    public interface IDockView : IDisposable
     {
-        IDockModel Model { get; set; }
+        IDockModel Model { get; }
         IDockView DockViewParent { get; }
     }
 }

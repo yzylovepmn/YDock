@@ -8,11 +8,16 @@ using YDock.Interface;
 
 namespace YDock.View
 {
-    public class LayoutHeaderControl : Control
+    public class LayoutHeaderControl : Control, IDisposable
     {
         static LayoutHeaderControl()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(LayoutHeaderControl), new FrameworkPropertyMetadata(default(LayoutHeaderControl)));
+        }
+
+        public void Dispose()
+        {
+            DataContext = null;
         }
     }
 }

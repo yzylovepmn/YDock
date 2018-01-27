@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Markup;
+using System.Windows.Media;
 using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
@@ -25,17 +26,14 @@ namespace YDock
 
         public DockManager()
         {
-            Root = new YDockRoot();
-            _documents = new List<ILayoutElement>();
-            _leftChildren = new List<ILayoutElement>();
-            _topChildren = new List<ILayoutElement>();
-            _rightChildren = new List<ILayoutElement>();
-            _bottomChildren = new List<ILayoutElement>();
+            Root = new DockRoot();
+            _dockControls = new List<IDockControl>();
+            _floatControls = new List<IDockControl>();
         }
 
         #region Root
-        private YDockRoot _root;
-        public YDockRoot Root
+        private DockRoot _root;
+        public DockRoot Root
         {
             get { return _root; }
             set
@@ -43,7 +41,7 @@ namespace YDock
                 if (_root != value)
                 {
                     if (_root != null)
-                        _root.DockManager = null;
+                        _root.Dispose();
                     _root = value;
                     if (_root != null)
                         _root.DockManager = this;
@@ -192,7 +190,7 @@ namespace YDock
         /// <summary>
         /// 自动隐藏窗口的Model
         /// </summary>
-        internal ILayoutElement AutoHideElement
+        internal IDockElement AutoHideElement
         {
             get { return LayoutRootPanel.AHWindow.Model; }
             set
@@ -201,15 +199,17 @@ namespace YDock
                 {
                     if(LayoutRootPanel.AHWindow.Model != null)
                         LayoutRootPanel.AHWindow.Model.IsVisible = false;
-                    LayoutRootPanel.AHWindow.Model = value as LayoutElement;
+                    LayoutRootPanel.AHWindow.Model = value as DockElement;
                     if (LayoutRootPanel.AHWindow.Model != null)
                         LayoutRootPanel.AHWindow.Model.IsVisible = true;
                 }
             }
         }
 
-        private LayoutElement _activeElement;
-        internal LayoutElement ActiveElement
+        /// <summary>
+        /// current ActiveElement
+        /// </summary>
+        internal DockElement ActiveElement
         {
             get { return _activeElement; }
             set
@@ -227,68 +227,9 @@ namespace YDock
                 }
             }
         }
-
-        private IList<ILayoutElement> _documents;
-        public IEnumerable<ILayoutElement> Documents
-        {
-            get { return _documents; }
-        }
-
-        private IList<ILayoutElement> _leftChildren;
-        public IEnumerable<ILayoutElement> LeftChildren
-        {
-            get { return _leftChildren; }
-        }
-
-        private IList<ILayoutElement> _rightChildren;
-        public IEnumerable<ILayoutElement> RightChildren
-        {
-            get { return _rightChildren; }
-        }
-
-        private IList<ILayoutElement> _topChildren;
-        public IEnumerable<ILayoutElement> TopChildren
-        {
-            get { return _topChildren; }
-        }
-
-        private IList<ILayoutElement> _bottomChildren;
-        public IEnumerable<ILayoutElement> BottomChildren
-        {
-            get { return _bottomChildren; }
-        }
-
-        public IEnumerable<ILayoutElement> Children
-        {
-            get
-            {
-                foreach (var item in _documents)
-                    yield return item;
-                foreach (var item in _leftChildren)
-                    yield return item;
-                foreach (var item in _topChildren)
-                    yield return item;
-                foreach (var item in _rightChildren)
-                    yield return item;
-                foreach (var item in _bottomChildren)
-                    yield return item;
-            }
-        }
+        private DockElement _activeElement;
 
         public IDockModel Model
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public IDockView DockViewParent
         {
             get
             {
@@ -296,109 +237,157 @@ namespace YDock
             }
         }
 
-        public void AddDocument(ILayoutElement document)
+        public IDockView DockViewParent
         {
-            LayoutRootPanel.RootGroupPanel.ContainDocument = true;
-            var group = new LayoutDocumentGroup(this);
-            group.Children.Add(document);
-            group.Children.Add(new LayoutElement() { Side = DockSide.None, Title = "Document_1", DesiredWidth = 10 });
-            group.Children.Add(new LayoutElement() { Side = DockSide.None, Title = "Document_2", DesiredWidth = 10 });
-            group.Children.Add(new LayoutElement() { Side = DockSide.None, Title = "Document_3", DesiredWidth = 10 });
-            if (LayoutRootPanel.RootGroupPanel.IsEmpty)
-                LayoutRootPanel.RootGroupPanel.AddDocumentChild(new LayoutDocumentGroupControl(group) { DesiredHeight = document.DesiredHeight, DesiredWidth = document.DesiredWidth });
-            else LayoutRootPanel.RootGroupPanel.AddDocumentChild(new LayoutDocumentGroupControl(group));
-        }
-
-        public void AddAnchorChild(ILayoutElement child)
-        {
-            if (child.Side == DockSide.Left ||
-                child.Side == DockSide.Right)
+            get
             {
-                if (LayoutRootPanel.RootGroupPanel.Children.Count == 1 || LayoutRootPanel.RootGroupPanel.Direction == Direction.LeftToRight)
-                {
-                    LayoutRootPanel.RootGroupPanel.Direction = Direction.LeftToRight;
-                    LayoutRootPanel.RootGroupPanel.IsDocumentPanel = false;
-                    var group = new LayoutGroup(child.Side, this);
-                    group.Children.Add(child);
-                    LayoutRootPanel.RootGroupPanel.AddAnchorChild(new AnchorSideGroupControl(group) { DesiredHeight = child.DesiredHeight, DesiredWidth = child.DesiredWidth }, child.Side);
-                }
-                else
-                {
-                    LayoutGroupPanel rootPanel = new LayoutGroupPanel() { ContainDocument = true, Direction = Direction.LeftToRight };
-                    var oldrootPanel = LayoutRootPanel.RootGroupPanel;
-                    LayoutRootPanel.RootGroupPanel = null;
-                    rootPanel.AddChild(oldrootPanel);
-
-                    var group = new LayoutGroup(child.Side, this);
-                    group.Children.Add(child);
-                    rootPanel.AddAnchorChild(new AnchorSideGroupControl(group) { DesiredHeight = child.DesiredHeight, DesiredWidth = child.DesiredWidth }, child.Side);
-                    LayoutRootPanel.RootGroupPanel = rootPanel;
-                }
-            }
-            else
-            {
-                if (LayoutRootPanel.RootGroupPanel.Children.Count == 1 || LayoutRootPanel.RootGroupPanel.Direction == Direction.UpToDown)
-                {
-                    LayoutRootPanel.RootGroupPanel.Direction = Direction.UpToDown;
-                    LayoutRootPanel.RootGroupPanel.IsDocumentPanel = false;
-                    var group = new LayoutGroup(child.Side, this);
-                    group.Children.Add(child);
-                    LayoutRootPanel.RootGroupPanel.AddAnchorChild(new AnchorSideGroupControl(group) { DesiredHeight = child.DesiredHeight, DesiredWidth = child.DesiredWidth }, child.Side);
-                }
-                else
-                {
-                    LayoutGroupPanel rootPanel = new LayoutGroupPanel() { ContainDocument = true, Direction = Direction.UpToDown };
-                    var oldrootPanel = LayoutRootPanel.RootGroupPanel;
-                    LayoutRootPanel.RootGroupPanel = null;
-                    rootPanel.AddChild(oldrootPanel);
-
-                    var group = new LayoutGroup(child.Side, this);
-                    group.Children.Add(child);
-                    rootPanel.AddAnchorChild(new AnchorSideGroupControl(group) { DesiredHeight = child.DesiredHeight, DesiredWidth = child.DesiredWidth }, child.Side);
-                    LayoutRootPanel.RootGroupPanel = rootPanel;
-                }
+                return this;
             }
         }
 
-        public void AddSidePanel(DockSide side)
+        /// <summary>
+        /// all registed DockControl
+        /// </summary>
+        public IEnumerable<IDockControl> DockControls
         {
+            get
+            {
+                foreach (var ctrl in _dockControls)
+                    yield return ctrl;
+            }
+        }
+        private IList<IDockControl> _dockControls;
+
+        /// <summary>
+        /// all registed FloatControls
+        /// </summary>
+        public IEnumerable<IDockControl> FloatControls
+        {
+            get
+            {
+                foreach (var ctrl in _floatControls)
+                    yield return ctrl;
+            }
+        }
+        private IList<IDockControl> _floatControls;
+
+        public int AllControlsCount
+        {
+            get
+            {
+                return _dockControls.Count + _floatControls.Count;
+            }
+        }
+
+        /// <summary>
+        /// all Docked child
+        /// </summary>
+        internal IEnumerable<IDockElement> DockedChildren
+        {
+            get
+            {
+                foreach (DockControl ctrl in _dockControls)
+                    yield return ctrl.Prototype;
+            }
+        }
+
+        /// <summary>
+        /// all Docked child
+        /// </summary>
+        internal IEnumerable<IDockElement> FloatedChildren
+        {
+            get
+            {
+                foreach (DockControl ctrl in _floatControls)
+                    yield return ctrl.Prototype;
+            }
+        }
+
+        #region Register
+        /// <summary>
+        /// 以选项卡模式向DockManager注册一个DockElement并返回对应的DockControl
+        /// </summary>
+        public DockControl RegisterDocument(string title, UIElement content, ImageSource imageSource = null)
+        {
+            DockElement ele = new DockElement()
+            {
+                ID = AllControlsCount,
+                Title = title,
+                Content = content,
+                ImageSource = imageSource,
+                Side = DockSide.None,
+                Status = DockStatus.Docked
+            };
+            var ctrl = new DockControl(ele);
+            _dockControls.Add(ctrl);
+            _root.AddDocument(ele);
+            return ctrl;
+        }
+        /// <summary>
+        /// 以通用模式（必须制定停靠方向，否则默认停靠在左侧）向DockManager注册一个DockElement并返回对应的DockControl
+        /// </summary>
+        public DockControl RegisterDock(string title, UIElement content, ImageSource imageSource = null, DockSide side = DockSide.Left, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength)
+        {
+            DockElement ele = new DockElement()
+            {
+                ID = AllControlsCount,
+                Title = title,
+                Content = content,
+                ImageSource = imageSource,
+                Side = side,
+                Status = DockStatus.AnchorSide,
+                DesiredWidth = desiredWidth,
+                DesiredHeight = desiredHeight
+            };
             switch (side)
             {
                 case DockSide.Left:
-                    LayoutGroupPanel rootPanel = new LayoutGroupPanel() { ContainDocument = false, IsAnchorPanel = true, Direction = Direction.UpToDown, DesiredWidth = 200 };
-
-                    var child = new LayoutElement() { Side = DockSide.Left, Title = "Document_Left", DesiredHeight = 100 };
-                    var group = new LayoutGroup(child.Side, this);
-                    group.Children.Add(child);
-                    rootPanel.Children.Add(new AnchorSideGroupControl(group) { DesiredHeight = child.DesiredHeight, DesiredWidth = child.DesiredWidth });
-                    rootPanel.Children.Add(rootPanel._CreateSplitter(Cursors.SizeNS));
-                    child = new LayoutElement() { Side = DockSide.Left, Title = "Document_Left", DesiredHeight = 180 };
-                    group = new LayoutGroup(child.Side, this);
-                    group.Children.Add(child);
-                    rootPanel.Children.Add(new AnchorSideGroupControl(group) { DesiredHeight = child.DesiredHeight, DesiredWidth = child.DesiredWidth });
-                    rootPanel.Children.Add(rootPanel._CreateSplitter(Cursors.SizeNS));
-                    child = new LayoutElement() { Side = DockSide.Left, Title = "Document_Left", DesiredHeight = 120 };
-                    group = new LayoutGroup(child.Side, this);
-                    group.Children.Add(child);
-                    group.Children.Add(new LayoutElement() { Side = DockSide.None, Title = "group_1", DesiredWidth = 10 });
-                    group.Children.Add(new LayoutElement() { Side = DockSide.None, Title = "group_2", DesiredWidth = 10 });
-                    group.Children.Add(new LayoutElement() { Side = DockSide.None, Title = "group_3", DesiredWidth = 10 });
-                    rootPanel.Children.Add(new AnchorSideGroupControl(group) { DesiredHeight = child.DesiredHeight, DesiredWidth = child.DesiredWidth });
-
-                    LayoutGroupPanel newrootPanel = new LayoutGroupPanel() { ContainDocument = true, Direction = Direction.LeftToRight };
-                    var oldrootPanel = LayoutRootPanel.RootGroupPanel;
-                    LayoutRootPanel.RootGroupPanel = null;
-                    newrootPanel.AddChild(oldrootPanel);
-                    newrootPanel.AddAnchorChild(rootPanel, side);
-                    LayoutRootPanel.RootGroupPanel = newrootPanel;
-                    break;
                 case DockSide.Right:
-                    break;
                 case DockSide.Top:
-                    break;
                 case DockSide.Bottom:
+                    _root.AddSideChild(ele, side);
                     break;
+                default://其他非法方向返回NULL
+                    ele.Dispose();
+                    return null;
             }
+            var ctrl = new DockControl(ele);
+            _dockControls.Add(ctrl);
+            return ctrl;
+        }
+        /// <summary>
+        /// 以Float模式向DockManager注册一个DockElement并返回对应的DockControl
+        /// </summary>
+        public DockControl RegisterFloat(string title, UIElement content, ImageSource imageSource = null, DockSide side = DockSide.Left, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength)
+        {
+            DockElement ele = new DockElement()
+            {
+                ID = AllControlsCount,
+                Title = title,
+                Content = content,
+                ImageSource = imageSource,
+                Side = side,
+                Status = DockStatus.Float,
+                DesiredWidth = desiredWidth,
+                DesiredHeight = desiredHeight
+            };
+            var ctrl = new DockControl(ele);
+            _floatControls.Add(ctrl);
+            return ctrl;
+        }
+        #endregion
+
+        public void Dispose()
+        {
+            foreach (var ctrl in _dockControls)
+                ctrl.Dispose();
+            _dockControls.Clear();
+            _dockControls = null;
+            foreach (var ctrl in _floatControls)
+                ctrl.Dispose();
+            _floatControls.Clear();
+            _floatControls = null;
+            Root = null;
         }
     }
 }

@@ -13,52 +13,62 @@ using YDock.Model;
 
 namespace YDock.View
 {
-    public class DockSideItemControl : ContentControl, IDisposable
+    public class DockSideItemControl : ContentControl, IDockView
     {
         static DockSideItemControl()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(DockSideItemControl), new FrameworkPropertyMetadata(typeof(DockSideItemControl)));
         }
 
-        public DockSideItemControl(ILayoutGroup container)
+        public DockSideItemControl(IDockView dockViewParent)
         {
-            _container = container;
+            _dockViewParent = dockViewParent;
         }
 
-        private ILayoutGroup _container;
         public ILayoutGroup Container
         {
             get
             {
-                return _container;
+                return _dockViewParent?.Model as ILayoutGroup;
             }
+        }
 
-            set
+        public IDockModel Model
+        {
+            get
             {
-                if (_container != value)
-                    _container = value;
+                return null;
+            }
+        }
+
+        private IDockView _dockViewParent;
+        public IDockView DockViewParent
+        {
+            get
+            {
+                return _dockViewParent;
             }
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
-            var ele = Content as LayoutElement;
-            if (ele == _container.DockManager.AutoHideElement)
+            var ele = Content as DockElement;
+            if (ele == Container.DockManager.AutoHideElement)
             {
-                _container.DockManager.ActiveElement = null;
-                _container.DockManager.AutoHideElement = null;
+                Container.DockManager.ActiveElement = null;
+                Container.DockManager.AutoHideElement = null;
             }
             else
             {
-                _container.DockManager.ActiveElement = ele;
-                _container.DockManager.AutoHideElement = ele;
+                Container.DockManager.ActiveElement = ele;
+                Container.DockManager.AutoHideElement = ele;
             }
             base.OnMouseLeftButtonDown(e);
         }
 
         public void Dispose()
         {
-            _container = null;
+            _dockViewParent = null;
         }
     }
 }

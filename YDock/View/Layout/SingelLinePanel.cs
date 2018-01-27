@@ -21,8 +21,9 @@ namespace YDock.View
                 width += child.DesiredSize.Width + child.Margin.Left + child.Margin.Right;
                 height = Math.Max(height, child.DesiredSize.Height);
             }
+            if (visibleChildren.Count() > 0)
             //不计算最后一个元素的右边距
-            width -= visibleChildren.Last().Margin.Right;
+                width -= visibleChildren.Last().Margin.Right;
 
             return new Size(Math.Min(width, availableSize.Width), height);
         }

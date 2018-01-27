@@ -11,30 +11,23 @@ using YDock.Model;
 
 namespace YDock.View
 {
-    public class DragTabItem : TabItem, IDockView, IDisposable
+    public class DragTabItem : TabItem, IDockView
     {
         static DragTabItem()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(DragTabItem), new FrameworkPropertyMetadata(typeof(DragTabItem)));
         }
 
-        public DragTabItem(ILayoutGroup container)
+        public DragTabItem(BaseGroupControl dockViewParent)
         {
-            _container = container;
+            _dockViewParent = dockViewParent;
         }
 
-        private ILayoutGroup _container;
         public ILayoutGroup Container
         {
             get
             {
-                return _container;
-            }
-
-            set
-            {
-                if (_container != value)
-                    _container = value;
+                return _dockViewParent.Model as ILayoutGroup;
             }
         }
 
@@ -42,26 +35,18 @@ namespace YDock.View
         {
             get
             {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
+                return null;
             }
         }
 
+        private BaseGroupControl _dockViewParent;
         public IDockView DockViewParent
         {
             get
             {
-                throw new NotImplementedException();
+                return _dockViewParent;
             }
         }
-
-        static ILayoutElement _dragItem;
-        static IList<Rect> _childrenBounds;
-        static bool _mouseInside = true;
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
@@ -69,9 +54,9 @@ namespace YDock.View
 
             if (e.MiddleButton == MouseButtonState.Pressed)
             {
-                if ((Content as LayoutElement).IsActive)
-                    (Content as LayoutElement).DockManager.ActiveElement = null;
-                (Content as LayoutElement).CanSelect = false;
+                if ((Content as DockElement).IsActive)
+                    (Content as DockElement).DockManager.ActiveElement = null;
+                (Content as DockElement).CanSelect = false;
             }
         }
 
@@ -79,8 +64,8 @@ namespace YDock.View
         {
             if (IsMouseCaptured)
                 ReleaseMouseCapture();
-            _mouseInside = false;
-            _dragItem = null;
+            _dockViewParent._mouseInside = false;
+            _dockViewParent._dragItem = null;
 
             base.OnMouseLeftButtonUp(e);
         }
@@ -89,25 +74,25 @@ namespace YDock.View
         {
             if (!IsMouseCaptured)
                 CaptureMouse();
-            _mouseInside = true;
-            _dragItem = Content as ILayoutElement;
-            UpdateChildrenBounds(VisualParent as Panel);
+            _dockViewParent._mouseInside = true;
+            _dockViewParent._dragItem = Content as IDockElement;
+            _dockViewParent.UpdateChildrenBounds(VisualParent as Panel);
 
             base.OnMouseLeftButtonDown(e);
             //在基类事件处理后再设置
-            _dragItem.DockManager.ActiveElement = _dragItem as LayoutElement;
+            _dockViewParent.Model.DockManager.ActiveElement = _dockViewParent._dragItem as DockElement;
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                if (_dragItem != null)
+                if (_dockViewParent._dragItem != null)
                 {
                     var parent = VisualParent as Panel;
                     var p = e.GetPosition(parent);
-                    int src = _container.IndexOf(_dragItem);
-                    int des = _childrenBounds.FindIndex(p);
+                    int src = Container.IndexOf(_dockViewParent._dragItem);
+                    int des = _dockViewParent._childrenBounds.FindIndex(p);
                     if (des < 0)
                     {
                         //_dragItem = null;
@@ -115,28 +100,28 @@ namespace YDock.View
                     }
                     else
                     {
-                        if (_mouseInside)
+                        if (_dockViewParent._mouseInside)
                         {
                             if (src != des)
                             {
                                 MoveTo(src, des, parent);
-                                _mouseInside = false;
+                                _dockViewParent._mouseInside = false;
                             }
-                            else if (!_mouseInside)
-                                _mouseInside = true;
+                            else if (!_dockViewParent._mouseInside)
+                                _dockViewParent._mouseInside = true;
                         }
                         else
                         {
                             if (src == des)
-                                _mouseInside = true;
+                                _dockViewParent._mouseInside = true;
                             else
                             {
                                 if (des < src)
                                 {
                                     double len = 0;
                                     for (int i = 0; i < des; i++)
-                                        len += _childrenBounds[i].Size.Width;
-                                    len += _childrenBounds[src].Size.Width;
+                                        len += _dockViewParent._childrenBounds[i].Size.Width;
+                                    len += _dockViewParent._childrenBounds[src].Size.Width;
                                     if (len > p.X)
                                         MoveTo(src, des, parent);
                                 }
@@ -144,8 +129,8 @@ namespace YDock.View
                                 {
                                     double len = 0;
                                     for (int i = 0; i < src; i++)
-                                        len += _childrenBounds[i].Size.Width;
-                                    len += _childrenBounds[des].Size.Width;
+                                        len += _dockViewParent._childrenBounds[i].Size.Width;
+                                    len += _dockViewParent._childrenBounds[des].Size.Width;
                                     if (len < p.X)
                                         MoveTo(src, des, parent);
                                 }
@@ -158,29 +143,18 @@ namespace YDock.View
             base.OnMouseMove(e);
         }
 
-        public void Dispose()
-        {
-            _container = null;
-        }
-
         private void MoveTo(int src, int des, Panel parent)
         {
-            _container.MoveTo(src, des);
-            (_container.View as TabControl).SelectedIndex = des;
+            Container.MoveTo(src, des);
+            (_dockViewParent as TabControl).SelectedIndex = des;
             parent.UpdateLayout();
             parent.Children[des].CaptureMouse();
-            UpdateChildrenBounds(parent);
+            _dockViewParent.UpdateChildrenBounds(parent);
         }
 
-        private void UpdateChildrenBounds(Panel parent)
+        public void Dispose()
         {
-            _childrenBounds = new List<Rect>();
-            var originP = parent.PointToScreenDPIWithoutFlowDirection(new Point());
-            foreach (TabItem child in parent.Children)
-            {
-                var childP = child.PointToScreenDPIWithoutFlowDirection(new Point());
-                _childrenBounds.Add(new Rect(new Point(childP.X - originP.X, childP.Y - originP.Y), child.TransformActualSizeToAncestor()));
-            }
+            _dockViewParent = null;
         }
     }
 }

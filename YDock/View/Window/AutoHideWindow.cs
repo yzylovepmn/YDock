@@ -165,8 +165,8 @@ namespace YDock.View
 
         private LayoutContentControl _layoutContent;
 
-        private LayoutElement _model;
-        public LayoutElement Model
+        private DockElement _model;
+        public DockElement Model
         {
             get { return _model; }
             set
@@ -198,7 +198,7 @@ namespace YDock.View
             }
         }
 
-        private void _CreateContentForModel(LayoutElement model)
+        private void _CreateContentForModel(DockElement model)
         {
             _layoutContent.Model = model;
             if (model.DesiredHeight < Constants.SideLength)
@@ -220,7 +220,7 @@ namespace YDock.View
             Children.Add(_splitter);
         }
 
-        private void _DestroyContentForModel(LayoutElement Model)
+        private void _DestroyContentForModel(DockElement Model)
         {
             _layoutContent.Model = null;
             Children.Clear();

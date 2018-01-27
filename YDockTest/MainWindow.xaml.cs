@@ -33,102 +33,19 @@ namespace YDockTest
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            DockManager.AddDocument(new LayoutElement() { Side = DockSide.None, Title = "Document", DesiredWidth = 10, Content = new TextBlock() { Text = "Content", VerticalAlignment = VerticalAlignment.Center } });
-            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Left, Title = "Document_Left", DesiredWidth = 200, Content = new TextBlock() { Text = "Content", VerticalAlignment = VerticalAlignment.Center } });
-            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Left, Title = "Document_Left", DesiredWidth = 200, Content = new TextBlock() { Text = "Content", VerticalAlignment = VerticalAlignment.Center } });
-            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Top, Title = "Document_Top", DesiredHeight = 180, Content = new TextBlock() { Text = "Content", VerticalAlignment = VerticalAlignment.Center } });
-            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Right, Title = "Document_Right", DesiredWidth = 200, Content = new TextBlock() { Text = "Content", VerticalAlignment = VerticalAlignment.Center } });
-            DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Bottom, Title = "Document_Bottom", DesiredHeight = 180, Content = new TextBlock() { Text = "Content", VerticalAlignment = VerticalAlignment.Center } });
-            DockManager.AddSidePanel(DockSide.Left);
+            //DockManager.AddDocument(new LayoutElement() { Side = DockSide.None, Title = "Document", DesiredWidth = 10, Content = new TextBlock() { Text = "Content", VerticalAlignment = VerticalAlignment.Center } });
+            //DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Left, Title = "Document_Left", DesiredWidth = 200, Content = new TextBlock() { Text = "Content", VerticalAlignment = VerticalAlignment.Center } });
+            //DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Left, Title = "Document_Left", DesiredWidth = 200, Content = new TextBlock() { Text = "Content", VerticalAlignment = VerticalAlignment.Center } });
+            //DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Top, Title = "Document_Top", DesiredHeight = 180, Content = new TextBlock() { Text = "Content", VerticalAlignment = VerticalAlignment.Center } });
+            //DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Right, Title = "Document_Right", DesiredWidth = 200, Content = new TextBlock() { Text = "Content", VerticalAlignment = VerticalAlignment.Center } });
+            //DockManager.AddAnchorChild(new LayoutElement() { Side = DockSide.Bottom, Title = "Document_Bottom", DesiredHeight = 180, Content = new TextBlock() { Text = "Content", VerticalAlignment = VerticalAlignment.Center } });
+            //DockManager.AddSidePanel(DockSide.Left);
+            DockManager.RegisterDocument("Document_0", new TextBlock() { Text = "Document_Content0" });
+            DockManager.RegisterDocument("Document_1", new TextBlock() { Text = "Document_Content1" });
+            DockManager.RegisterDock("Dock_Left", new TextBlock() { Text = "Dock_Left_Content" });
+            DockManager.RegisterDock("Dock_Right", new TextBlock() { Text = "Dock_Right_Content" }, null, DockSide.Right);
+            DockManager.RegisterDock("Dock_Top", new TextBlock() { Text = "Dock_Top_Content" }, null, DockSide.Top);
+            DockManager.RegisterDock("Dock_Bottom", new TextBlock() { Text = "Dock_Bottom_Content" }, null, DockSide.Bottom);
         }
-
-        //private Window wnd;
-        //private bool isDragging = false;
-        //private Matrix transform;
-        //private Point delta;
-
-
-        //private void UpdateLocation(double top, double left)
-        //{
-        //    if (wnd == null) return;
-        //    wnd.Top = top;
-        //    wnd.Left = left;
-        //}
-
-        //private T GetVisual<T>(Visual relativeObj, Point p) where T : UIElement
-        //{
-        //    var hittest = VisualTreeHelper.HitTest(relativeObj, p);
-        //    if (hittest == null) return default(T);
-        //    else
-        //    {
-        //        if (hittest.VisualHit is T) return (T)hittest.VisualHit;
-        //        else return default(T);
-        //    }
-        //}
-
-        //private Window CreateWnd(UIElement content)
-        //{
-        //    //((TextBlock)content).LayoutTransform = new RotateTransform(270);
-        //    return new Window()
-        //    {
-        //        AllowsTransparency = true,
-        //        Background = null,
-        //        ResizeMode = ResizeMode.NoResize,
-        //        WindowStyle = WindowStyle.None,
-        //        ShowInTaskbar = false,
-        //        Content = content,
-        //        Owner = this,
-        //        IsHitTestVisible = false,
-        //        ShowActivated = false,
-        //        SizeToContent = SizeToContent.WidthAndHeight
-        //    };
-        //}
-
-        //public Point GetMousePosition()
-        //{
-        //    System.Drawing.Point point = System.Windows.Forms.Control.MousePosition;
-        //    return new System.Windows.Point(point.X, point.Y);
-        //}
-
-        //private void OnMouseMove(object sender, MouseEventArgs e)
-        //{
-        //    if (e.LeftButton == MouseButtonState.Pressed)
-        //    {
-        //        if (isDragging)
-        //        {
-        //            var p = transform.Transform(GetMousePosition());
-        //            UpdateLocation(p.Y - delta.Y, p.X - delta.X);
-        //        }
-        //    }
-        //}
-
-        //private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        //{
-        //    var ele = GetVisual<TextBlock>(GD, e.GetPosition(GD));
-        //    if (ele != null)
-        //    {
-        //        delta = e.GetPosition(ele);
-        //        transform = PresentationSource.FromVisual(this).CompositionTarget.TransformFromDevice;
-        //        var p = transform.Transform(GetMousePosition());
-        //        ((Grid)ele.Parent).Children.Remove(ele);
-        //        wnd = CreateWnd(ele);
-        //        UpdateLocation(p.Y - delta.Y, p.X - delta.X);
-        //        wnd.Show();
-        //        isDragging = true;
-        //        GD.CaptureMouse();
-        //    }
-        //}
-
-        //private void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        //{
-        //    if (wnd == null) return;
-        //    var content = wnd.Content;
-        //    wnd.Content = null;
-        //    wnd.Close();
-        //    wnd = null;
-        //    GD.Children.Add((UIElement)content);
-        //    GD.ReleaseMouseCapture();
-        //    isDragging = false;
-        //}
     }
 }

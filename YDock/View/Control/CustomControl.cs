@@ -90,7 +90,7 @@ namespace YDock.View
         protected override void OnClick()
         {
             base.OnClick();
-            var ele = DataContext as ILayoutElement;
+            var ele = DataContext as IDockElement;
             if (ele.Container is LayoutDocumentGroup)
                 (ele.Container as LayoutDocumentGroup).ActiveElement(ele);
         }

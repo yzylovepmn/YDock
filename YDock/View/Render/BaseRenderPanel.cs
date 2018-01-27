@@ -85,10 +85,10 @@ namespace YDock.View
         protected override void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             base.OnDataContextChanged(sender, e);
-            if (e.OldValue != null && e.OldValue is ILayoutElement)
-                (e.OldValue as ILayoutElement).PropertyChanged -= OnModelPropertyChanged;
-            if (e.NewValue != null && e.NewValue is ILayoutElement)
-                (e.NewValue as ILayoutElement).PropertyChanged += OnModelPropertyChanged;
+            if (e.OldValue != null && e.OldValue is IDockElement)
+                (e.OldValue as IDockElement).PropertyChanged -= OnModelPropertyChanged;
+            if (e.NewValue != null && e.NewValue is IDockElement)
+                (e.NewValue as IDockElement).PropertyChanged += OnModelPropertyChanged;
         }
 
         private void OnModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

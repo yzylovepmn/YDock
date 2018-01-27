@@ -68,12 +68,10 @@ namespace YDock.View
                 }
                 width -= selecteditem.DesiredSize.Width + selecteditem.Margin.Left + selecteditem.Margin.Right;
 
-                ILayoutElement element = selecteditem.Content as ILayoutElement;
+                IDockElement element = selecteditem.Content as IDockElement;
                 ILayoutGroup tab = element.Container;
-                var models = (ObservableCollection<ILayoutElement>)tab.Children;
-                models.RemoveAt(index);
-                models.Insert(startindex, element);
-                ((LayoutDocumentGroupControl)tab.View).SelectedIndex = startindex;
+                tab.MoveTo(index, startindex);
+                ((TabControl)tab.View).SelectedIndex = startindex;
 
                 for (; startindex < visibleChildren.Count; startindex++)
                 {

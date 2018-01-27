@@ -16,7 +16,7 @@ namespace YDock.View
             double voffset = (size.Height - 4) / 2;
             using (var ctx = RenderOpen())
             {
-                var model = (VisualParent as FrameworkElement).DataContext as LayoutElement;
+                var model = (VisualParent as FrameworkElement).DataContext as DockElement;
                 if (model.IsActive)
                 {
                     ctx.DrawLine(ResourceManager.ActiveDashPen, new Point(0, voffset), new Point(size.Width, voffset));

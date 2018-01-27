@@ -21,9 +21,9 @@ namespace YDock.Interface
 
     public interface ILayoutGroup : IDockModel, INotifyPropertyChanged
     {
-        IEnumerable<ILayoutElement> Children { get; }
+        IEnumerable<IDockElement> Children { get; }
         void MoveTo(int src, int des);
-        int IndexOf(ILayoutElement child);
+        int IndexOf(IDockElement child);
         void RaisePropertyChanged(string propertyName);
     }
 

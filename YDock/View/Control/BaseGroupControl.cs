@@ -18,6 +18,23 @@ namespace YDock.View
             SetBinding(ItemsSourceProperty, new Binding("Model.Children_CanSelect") { Source = this });
         }
 
+        #region for drag
+        internal IDockElement _dragItem;
+        internal IList<Rect> _childrenBounds;
+        internal bool _mouseInside = true;
+
+        internal void UpdateChildrenBounds(Panel parent)
+        {
+            _childrenBounds = new List<Rect>();
+            var originP = parent.PointToScreenDPIWithoutFlowDirection(new Point());
+            foreach (TabItem child in parent.Children)
+            {
+                var childP = child.PointToScreenDPIWithoutFlowDirection(new Point());
+                _childrenBounds.Add(new Rect(new Point(childP.X - originP.X, childP.Y - originP.Y), child.TransformActualSizeToAncestor()));
+            }
+        }
+        #endregion
+
         private double _desiredWidth;
         public double DesiredWidth
         {
@@ -50,11 +67,11 @@ namespace YDock.View
         {
             base.OnSelectionChanged(e);
             if (e.RemovedItems != null)
-                foreach (LayoutElement item in e.RemovedItems)
+                foreach (DockElement item in e.RemovedItems)
                     item.IsVisible = false;
 
             if (e.AddedItems != null)
-                foreach (LayoutElement item in e.AddedItems)
+                foreach (DockElement item in e.AddedItems)
                     item.IsVisible = true;
         }
 
@@ -70,19 +87,25 @@ namespace YDock.View
                 if (_model != value)
                 {
                     if (_model != null)
-                        _model.View = null;
+                        (_model as LayoutGroup).View = null;
                     _model = value;
                     if (_model != null)
-                        _model.View = this;
+                        (_model as LayoutGroup).View = this;
                 }
             }
         }
 
+        private IDockView _dockViewParent;
         public IDockView DockViewParent
         {
             get
             {
-                throw new NotImplementedException();
+                return _dockViewParent;
+            }
+            internal set
+            {
+                if (_dockViewParent != value)
+                    _dockViewParent = value;
             }
         }
 
@@ -90,19 +113,30 @@ namespace YDock.View
         {
             base.OnMouseLeftButtonDown(e);
             if (SelectedContent != null)
-                (_model as ILayoutGroup).DockManager.ActiveElement = SelectedContent as LayoutElement;
+                (_model as ILayoutGroup).DockManager.ActiveElement = SelectedContent as DockElement;
         }
 
         protected override void OnMouseRightButtonDown(System.Windows.Input.MouseButtonEventArgs e)
         {
             base.OnMouseRightButtonDown(e);
             if (SelectedContent != null)
-                (_model as ILayoutGroup).DockManager.ActiveElement = SelectedContent as LayoutElement;
+                (_model as ILayoutGroup).DockManager.ActiveElement = SelectedContent as DockElement;
         }
 
         protected override DependencyObject GetContainerForItemOverride()
         {
-            return new DragTabItem(_model as ILayoutGroup);
+            return new DragTabItem(this);
+        }
+
+        public virtual void Dispose()
+        {
+            BindingOperations.ClearBinding(this, ItemsSourceProperty);
+            Items.Clear();
+            Model = null;
+            _dockViewParent = null;
+            _dragItem = null;
+            _childrenBounds.Clear();
+            _childrenBounds = null;
         }
     }
 }

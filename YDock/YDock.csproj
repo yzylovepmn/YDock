@@ -55,15 +55,18 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Converters\NullBindingConverter.cs" />
     <Compile Include="Converters\SideToAngleConverter.cs" />
+    <Compile Include="DockControl.cs" />
     <Compile Include="Enum\Direction.cs" />
     <Compile Include="Enum\DockSide.cs" />
+    <Compile Include="Enum\DockStatus.cs" />
     <Compile Include="Interface\ILayout.cs" />
     <Compile Include="Interface\IModel.cs" />
     <Compile Include="Interface\IView.cs" />
-    <Compile Include="Model\Element\LayoutElement.cs" />
+    <Compile Include="Model\Element\DockElement.cs" />
+    <Compile Include="Model\Layout\BaseLayoutGroup.cs" />
     <Compile Include="Model\Layout\LayoutGroup.cs" />
-    <Compile Include="Model\Layout\YDockSide.cs" />
-    <Compile Include="Model\YDockRoot.cs" />
+    <Compile Include="Model\Layout\DockSideModel.cs" />
+    <Compile Include="Model\DockRoot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -98,7 +101,7 @@
     <Compile Include="View\Control\LayoutHeaderControl.cs" />
     <Compile Include="View\Control\PopupNotTop.cs" />
     <Compile Include="View\Element\LayoutContentControl.cs" />
-    <Compile Include="View\Element\DockSideItemControl.cs" />
+    <Compile Include="View\Control\DockSideItemControl.cs" />
     <Compile Include="View\Control\AnchorSideGroupControl.cs" />
     <Compile Include="View\Layout\AnchorSidePanel.cs" />
     <Compile Include="View\Layout\DocumentPanel.cs" />

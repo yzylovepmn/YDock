@@ -8,54 +8,86 @@
         xmlns:ydockmodel="clr-namespace:YDock.Model;assembly=YDock"
         mc:Ignorable="d" WindowState="Maximized"
         Title="MainWindow" Height="350" Width="525">
-    <!--<Grid x:Name="GD" MouseMove="OnMouseMove" MouseLeftButtonDown="OnMouseLeftButtonDown" MouseLeftButtonUp="OnMouseLeftButtonUp">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="20"/>
-        </Grid.RowDefinitions>
-        <TextBlock Grid.Row="1" Height="20" Width="80" Text="aaa"/>
-    </Grid>-->
     <DockPanel>
         <ydock:DockManager x:Name="DockManager">
-            <ydockmodel:YDockRoot>
-                <ydockmodel:YDockRoot.LeftSide>
-                    <ydockmodel:YDockSide>
-                        <ydockmodel:LayoutElement Title="我是asdsa">
+            <!--<ydockmodel:DockRoot>
+                <ydockmodel:DockRoot.LeftSide>
+                    <ydockmodel:DockSideModel>
+                        <ydockmodel:LayoutElement Title="Left_1">
                             <ydockmodel:LayoutElement.Content>
-                                <TextBlock Text="heiheihei"/>
+                                <TextBlock Text="Left_1_Content"/>
                             </ydockmodel:LayoutElement.Content>
                         </ydockmodel:LayoutElement>
-                        <ydockmodel:LayoutElement Title="憨ahdfhfdh憨彭"/>
-                        <ydockmodel:LayoutElement Title="一sfsdf只"/>
-                        <ydockmodel:LayoutElement Title="憨ahdfhfdh憨彭"/>
-                    </ydockmodel:YDockSide>
-                </ydockmodel:YDockRoot.LeftSide>
-                <ydockmodel:YDockRoot.RightSide>
-                    <ydockmodel:YDockSide>
-                        <ydockmodel:LayoutElement Title="我是"/>
-                        <ydockmodel:LayoutElement Title="憨憨彭"/>
-                        <ydockmodel:LayoutElement Title="一只"/>
-                        <ydockmodel:LayoutElement Title="憨憨彭"/>
-                    </ydockmodel:YDockSide>
-                </ydockmodel:YDockRoot.RightSide>
-                <ydockmodel:YDockRoot.TopSide>
-                    <ydockmodel:YDockSide>
-                        <ydockmodel:LayoutElement Title="我是"/>
-                        <ydockmodel:LayoutElement Title="憨憨彭"/>
-                        <ydockmodel:LayoutElement Title="一只"/>
-                        <ydockmodel:LayoutElement Title="憨憨彭"/>
-                    </ydockmodel:YDockSide>
-                </ydockmodel:YDockRoot.TopSide>
-                <ydockmodel:YDockRoot.BottomSide>
-                    <ydockmodel:YDockSide>
-                        <ydockmodel:LayoutElement Title="我是"/>
-                        <ydockmodel:LayoutElement Title="憨憨彭"/>
-                        <ydockmodel:LayoutElement Title="一只"/>
-                        <ydockmodel:LayoutElement Title="憨憨彭"/>
-                    </ydockmodel:YDockSide>
-                </ydockmodel:YDockRoot.BottomSide>
-            </ydockmodel:YDockRoot>
+                        <ydockmodel:LayoutElement Title="Left_2">
+                            <ydockmodel:LayoutElement.Content>
+                                <TextBlock Text="Left_2_Content"/>
+                            </ydockmodel:LayoutElement.Content>
+                        </ydockmodel:LayoutElement>
+                        <ydockmodel:LayoutElement Title="Left_3">
+                            <ydockmodel:LayoutElement.Content>
+                                <TextBlock Text="Left_3_Content"/>
+                            </ydockmodel:LayoutElement.Content>
+                        </ydockmodel:LayoutElement>
+                    </ydockmodel:DockSideModel>
+                </ydockmodel:DockRoot.LeftSide>
+                <ydockmodel:DockRoot.RightSide>
+                    <ydockmodel:DockSideModel>
+                        <ydockmodel:LayoutElement Title="Right_1">
+                            <ydockmodel:LayoutElement.Content>
+                                <TextBlock Text="Right_1_Content"/>
+                            </ydockmodel:LayoutElement.Content>
+                        </ydockmodel:LayoutElement>
+                        <ydockmodel:LayoutElement Title="Right_2">
+                            <ydockmodel:LayoutElement.Content>
+                                <TextBlock Text="Right_2_Content"/>
+                            </ydockmodel:LayoutElement.Content>
+                        </ydockmodel:LayoutElement>
+                        <ydockmodel:LayoutElement Title="Right_3">
+                            <ydockmodel:LayoutElement.Content>
+                                <TextBlock Text="Right_3_Content"/>
+                            </ydockmodel:LayoutElement.Content>
+                        </ydockmodel:LayoutElement>
+                    </ydockmodel:DockSideModel>
+                </ydockmodel:DockRoot.RightSide>
+                <ydockmodel:DockRoot.TopSide>
+                    <ydockmodel:DockSideModel>
+                        <ydockmodel:LayoutElement Title="Top_1">
+                            <ydockmodel:LayoutElement.Content>
+                                <TextBlock Text="Top_1_Content"/>
+                            </ydockmodel:LayoutElement.Content>
+                        </ydockmodel:LayoutElement>
+                        <ydockmodel:LayoutElement Title="Top_2">
+                            <ydockmodel:LayoutElement.Content>
+                                <TextBlock Text="Top_2_Content"/>
+                            </ydockmodel:LayoutElement.Content>
+                        </ydockmodel:LayoutElement>
+                        <ydockmodel:LayoutElement Title="Top_3">
+                            <ydockmodel:LayoutElement.Content>
+                                <TextBlock Text="Top_3_Content"/>
+                            </ydockmodel:LayoutElement.Content>
+                        </ydockmodel:LayoutElement>
+                    </ydockmodel:DockSideModel>
+                </ydockmodel:DockRoot.TopSide>
+                <ydockmodel:DockRoot.BottomSide>
+                    <ydockmodel:DockSideModel>
+                        <ydockmodel:LayoutElement Title="Bottom_1">
+                            <ydockmodel:LayoutElement.Content>
+                                <TextBlock Text="Bottom_1_Content"/>
+                            </ydockmodel:LayoutElement.Content>
+                        </ydockmodel:LayoutElement>
+                        <ydockmodel:LayoutElement Title="Bottom_2">
+                            <ydockmodel:LayoutElement.Content>
+                                <TextBlock Text="Bottom_2_Content"/>
+                            </ydockmodel:LayoutElement.Content>
+                        </ydockmodel:LayoutElement>
+                        <ydockmodel:LayoutElement Title="Bottom_3">
+                            <ydockmodel:LayoutElement.Content>
+                                <TextBlock Text="Bottom_3_Content"/>
+                            </ydockmodel:LayoutElement.Content>
+                        </ydockmodel:LayoutElement>
+                    </ydockmodel:DockSideModel>
+                </ydockmodel:DockRoot.BottomSide>
+            </ydockmodel:DockRoot>-->
         </ydock:DockManager>
     </DockPanel>
 </Window>

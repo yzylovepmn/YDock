@@ -26,11 +26,11 @@ namespace YDock.View
 
 
         public static readonly DependencyProperty ModelProperty =
-            DependencyProperty.Register("Model", typeof(LayoutElement), typeof(LayoutContentControl));
+            DependencyProperty.Register("Model", typeof(DockElement), typeof(LayoutContentControl));
 
-        public LayoutElement Model
+        public DockElement Model
         {
-            get { return (LayoutElement)GetValue(ModelProperty); }
+            get { return (DockElement)GetValue(ModelProperty); }
             set
             {
                 SetValue(ModelProperty, value);

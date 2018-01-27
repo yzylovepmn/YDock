@@ -27,8 +27,17 @@ namespace YDock.View
         public LayoutRootPanel(IDockModel model)
         {
             Model = model;
-            RootGroupPanel = new LayoutGroupPanel() { ContainDocument = false, IsDocumentPanel = true };
+            _InitContent();
+        }
+
+        private void _InitContent()
+        {
             AHWindow = new AutoHideWindow();
+            //先初始化Document区域
+            RootGroupPanel = new LayoutGroupPanel() { IsDocumentPanel = true };
+            (_model as DockRoot).DocumentModel = new LayoutDocumentGroup(DockViewParent as DockManager);
+            var _documentControl = new LayoutDocumentGroupControl((_model as DockRoot).DocumentModel);
+            RootGroupPanel.Children.Add(_documentControl);
         }
 
         private LayoutGroupPanel _rootGroupPanel;
@@ -57,7 +66,10 @@ namespace YDock.View
                 if (_ahWindow != value)
                 {
                     if (_ahWindow != null)
+                    {
                         Children.Remove(_ahWindow);
+                        _ahWindow.Dispose();
+                    }
                     _ahWindow = value;
                     if (_ahWindow != null)
                     {
@@ -119,15 +131,15 @@ namespace YDock.View
             {
                 return _model;
             }
-            set
+            internal set
             {
                 if (_model != value)
                 {
                     if (_model != null)
-                        _model.View = null;
+                        (_model as DockRoot).View = null;
                     _model = value;
                     if (_model != null)
-                        _model.View = this;
+                        (_model as DockRoot).View = this;
                 }
             }
         }
@@ -138,6 +150,15 @@ namespace YDock.View
             {
                 return _model.DockManager;
             }
+        }
+
+        public void Dispose()
+        {
+            Model = null;
+            RootGroupPanel.Dispose();
+            RootGroupPanel = null;
+            AHWindow = null;
+            Children.Clear();
         }
     }
 }

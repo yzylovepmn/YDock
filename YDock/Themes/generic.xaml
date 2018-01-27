@@ -45,7 +45,7 @@
         </Style.Triggers>
     </Style>
 
-    
+
 
     <Style TargetType="{x:Type ydock:DockManager}">
         <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
@@ -278,6 +278,7 @@
                     <ControlTemplate.Triggers>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self},Path=Items.Count}" Value="0">
                             <Setter TargetName="Border" Property="Visibility" Value="Collapsed"/>
+                            <Setter Property="BorderThickness" Value="1"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self},Path=Model.IsActive}" Value="True">
                             <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource ActiveHeaderBackground}"/>
