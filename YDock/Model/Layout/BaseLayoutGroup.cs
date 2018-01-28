@@ -23,6 +23,7 @@ namespace YDock.Model
             if (e.OldItems != null)
                 foreach (DockElement item in e.OldItems)
                 {
+                    item.IsVisible = false;
                     item.Container = null;
                     item.PropertyChanged -= OnChildrenPropertyChanged;
                 }
@@ -141,6 +142,10 @@ namespace YDock.Model
                 if (element != null && !element.CanSelect)
                     (element as DockElement).CanSelect = true;
                 DockManager.ActiveElement = element as DockElement;
+            }
+            else
+            {
+
             }
         }
 

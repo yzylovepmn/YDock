@@ -288,6 +288,20 @@ namespace YDock
             }
         }
 
+        internal void ChangeControlMode(IDockControl ctrl)
+        {
+            if (ctrl.Mode == DockMode.Float)
+            {
+                _floatControls.Remove(ctrl);
+                _dockControls.Add(ctrl);
+            }
+            else
+            {
+                _dockControls.Remove(ctrl);
+                _floatControls.Add(ctrl);
+            }
+        }
+
         /// <summary>
         /// all Docked child
         /// </summary>
@@ -320,8 +334,10 @@ namespace YDock
         /// <param name="content">内容</param>
         /// <param name="imageSource">标题栏图标</param>
         /// <param name="canSelect">是否直接停靠在选项栏中供用户选择(默认为False)</param>
+        /// <param name="desiredWidth">期望的宽度</param>
+        /// <param name="desiredHeight">期望的高度</param>
         /// <returns></returns>
-        public DockControl RegisterDocument(string title, UIElement content, ImageSource imageSource = null, bool canSelect = false)
+        public DockControl RegisterDocument(string title, UIElement content, ImageSource imageSource = null, bool canSelect = false, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength)
         {
             DockElement ele = new DockElement()
             {
@@ -331,7 +347,9 @@ namespace YDock
                 ImageSource = imageSource,
                 Side = DockSide.None,
                 Mode = DockMode.Normal,
-                CanSelect = canSelect
+                CanSelect = canSelect,
+                DesiredWidth = desiredWidth,
+                DesiredHeight = desiredHeight
             };
             var ctrl = new DockControl(ele);
             _dockControls.Add(ctrl);

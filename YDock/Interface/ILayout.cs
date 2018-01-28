@@ -19,7 +19,7 @@ namespace YDock.Interface
         bool IsAnchorPanel { get; }
         bool IsDocumentPanel { get; }
         void DetachChild(IDockView child);
-        void AttachChild(IDockView child);
+        void AttachChild(IDockView child, int index);
     }
 
     public interface ILayoutSize
@@ -42,6 +42,6 @@ namespace YDock.Interface
     public interface ILayoutGroupControl : ILayoutSize, IDockView
     {
         bool TryDeatchFromParent();
-        void AttachToParent(ILayoutPanel parent);
+        void AttachToParent(ILayoutPanel parent, int index);
     }
 }

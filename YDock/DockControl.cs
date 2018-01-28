@@ -8,6 +8,7 @@ using System.Windows.Media;
 using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
+using YDock.View;
 
 namespace YDock
 {
@@ -137,7 +138,7 @@ namespace YDock
         #endregion
         /// <summary>
         /// 通用显示的方法。
-        /// 显示的模式（Dock，Float，AnchorSide）与当前Status有关，若需要切换显示模式请调用其它方法
+        /// 显示的模式（Dock，Float，AnchorSide）与当前Status有关，若需要切换显示模式请调用ShowWithMode方法
         /// </summary>
         public void Show()
         {
@@ -148,20 +149,63 @@ namespace YDock
         /// <summary>
         /// 以指定模式显示该项，若该项原模式与指定模式不同，则切换为指定模式
         /// </summary>
-        /// <param name="mode"></param>
+        /// <param name="mode">指定的显示模式</param>
         public void ShowWithMode(DockMode mode)
         {
             if (mode == Mode)
+            {
                 Show();
+                return;
+            }
+
+            if (mode == DockMode.Float ||
+                Mode == DockMode.Float)
+                DockManager.ChangeControlMode(this);
+
+            //切换为指定模式
+            (_prototype as DockElement).Mode = mode;
+            //保存DockManager的引用供后面使用
+            var dockManager = DockManager;
+            //先解除与原Container的关联
+            Container.Detach(_prototype);
+            //关联新的Container
             switch (mode)
             {
                 case DockMode.Normal:
+                    if (Side == DockSide.None)
+                        (_prototype as DockElement).Side = DockSide.Left;
+                    var layoutGroup = new LayoutGroup(Side, dockManager);
+                    layoutGroup.Attach(_prototype);
+                    var layoutGroupCtrl = new AnchorSideGroupControl(layoutGroup);
+                    if (Side == DockSide.Left || Side == DockSide.Top)
+                        layoutGroupCtrl.AttachToParent(dockManager.LayoutRootPanel.RootGroupPanel, 0);
+                    else layoutGroupCtrl.AttachToParent(dockManager.LayoutRootPanel.RootGroupPanel, dockManager.LayoutRootPanel.RootGroupPanel.Count);
                     break;
                 case DockMode.DockBar:
+                    switch (Side)
+                    {
+                        //None默认停靠左侧
+                        case DockSide.None:
+                        case DockSide.Left:
+                            (_prototype as DockElement).Side = DockSide.Left;
+                            dockManager.Root.LeftSide.Attach(_prototype);
+                            break;
+                        case DockSide.Right:
+                            dockManager.Root.RightSide.Attach(_prototype);
+                            break;
+                        case DockSide.Top:
+                            dockManager.Root.TopSide.Attach(_prototype);
+                            break;
+                        case DockSide.Bottom:
+                            dockManager.Root.BottomSide.Attach(_prototype);
+                            break;
+                    }
                     break;
                 case DockMode.Float:
+                    //TODO 对于Float，每次创建新的浮动窗口
                     break;
             }
+            Show();
         }
 
         /// <summary>

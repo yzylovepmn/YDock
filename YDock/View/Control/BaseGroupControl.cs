@@ -140,9 +140,9 @@ namespace YDock.View
             return true;
         }
 
-        public void AttachToParent(ILayoutPanel parent)
+        public void AttachToParent(ILayoutPanel parent, int index)
         {
-            parent.AttachChild(this);
+            parent.AttachChild(this, index);
         }
 
         public virtual void Dispose()

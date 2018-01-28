@@ -76,7 +76,7 @@ namespace YDock.View
 
         public int Count
         {
-            get { return Children.Count; }
+            get { return (Children.Count + 1) / 2; }
         }
 
         public bool IsRootPanel
@@ -1240,22 +1240,22 @@ namespace YDock.View
         }
         #endregion
 
+        public void DetachChild(IDockView child)
+        {
+
+        }
+
+        public void AttachChild(IDockView child, int index)
+        {
+
+        }
+
         public void Dispose()
         {
             foreach (var child in Children)
                 if (child is IDisposable)
                     (child as IDisposable).Dispose();
             Children.Clear();
-        }
-
-        public void DetachChild(IDockView child)
-        {
-            
-        }
-
-        public void AttachChild(IDockView child)
-        {
-            
         }
     }
 }
