@@ -56,16 +56,17 @@
     <Compile Include="Converters\NullBindingConverter.cs" />
     <Compile Include="Converters\SideToAngleConverter.cs" />
     <Compile Include="DockControl.cs" />
+    <Compile Include="DragManager.cs" />
     <Compile Include="Enum\Direction.cs" />
     <Compile Include="Enum\DockSide.cs" />
-    <Compile Include="Enum\DockStatus.cs" />
+    <Compile Include="Enum\DockMode.cs" />
     <Compile Include="Interface\ILayout.cs" />
     <Compile Include="Interface\IModel.cs" />
     <Compile Include="Interface\IView.cs" />
     <Compile Include="Model\Element\DockElement.cs" />
     <Compile Include="Model\Layout\BaseLayoutGroup.cs" />
     <Compile Include="Model\Layout\LayoutGroup.cs" />
-    <Compile Include="Model\Layout\DockSideModel.cs" />
+    <Compile Include="Model\Layout\DockSideGroup.cs" />
     <Compile Include="Model\DockRoot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -101,7 +102,7 @@
     <Compile Include="View\Control\LayoutHeaderControl.cs" />
     <Compile Include="View\Control\PopupNotTop.cs" />
     <Compile Include="View\Element\LayoutContentControl.cs" />
-    <Compile Include="View\Control\DockSideItemControl.cs" />
+    <Compile Include="View\Control\DockBarItemControl.cs" />
     <Compile Include="View\Control\AnchorSideGroupControl.cs" />
     <Compile Include="View\Layout\AnchorSidePanel.cs" />
     <Compile Include="View\Layout\DocumentPanel.cs" />
@@ -109,7 +110,7 @@
     <Compile Include="View\Layout\LayoutDragSplitter.cs" />
     <Compile Include="View\Layout\LayoutGroupPanel.cs" />
     <Compile Include="View\Layout\LayoutRootPanel.cs" />
-    <Compile Include="View\Control\DockSideGroupControl.cs" />
+    <Compile Include="View\Control\DockBarGroupControl.cs" />
     <Compile Include="View\Extensions.cs" />
     <Compile Include="View\Layout\SingelLinePanel.cs" />
     <Compile Include="View\Render\BaseVisual.cs" />

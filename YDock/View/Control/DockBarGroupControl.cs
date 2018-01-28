@@ -14,15 +14,15 @@ using YDock.Model;
 
 namespace YDock.View
 {
-    public class DockSideGroupControl : ItemsControl, IDockView
+    public class DockBarGroupControl : ItemsControl, IDockView
     {
-        static DockSideGroupControl()
+        static DockBarGroupControl()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(DockSideGroupControl), new FrameworkPropertyMetadata(typeof(DockSideGroupControl)));
-            FocusableProperty.OverrideMetadata(typeof(DockSideGroupControl), new FrameworkPropertyMetadata(false));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(DockBarGroupControl), new FrameworkPropertyMetadata(typeof(DockBarGroupControl)));
+            FocusableProperty.OverrideMetadata(typeof(DockBarGroupControl), new FrameworkPropertyMetadata(false));
         }
 
-        public DockSideGroupControl(ILayoutGroup model)
+        public DockBarGroupControl(ILayoutGroup model)
         {
             Model = model;
 
@@ -53,11 +53,11 @@ namespace YDock.View
             }
             set
             {
-                if (_model != null) (_model as DockSideModel).View = null;
+                if (_model != null) (_model as DockSideGroup).View = null;
                 if (_model != value)
                 {
                     _model = value as ILayoutGroup;
-                    (_model as DockSideModel).View = this;
+                    (_model as DockSideGroup).View = this;
                 }
             }
         }
@@ -88,7 +88,7 @@ namespace YDock.View
 
         protected override DependencyObject GetContainerForItemOverride()
         {
-            return new DockSideItemControl(this);
+            return new DockBarItemControl(this);
         }
 
         public void Dispose()

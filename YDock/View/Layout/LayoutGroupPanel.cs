@@ -16,7 +16,7 @@ namespace YDock.View
     /// <summary>
     /// the core class for layout and resize region
     /// </summary>
-    public class LayoutGroupPanel : Panel, ILayoutSize, IDockView, ILayout
+    public class LayoutGroupPanel : Panel, ILayoutPanel
     {
         public LayoutGroupPanel(DockSide side = DockSide.None)
         {
@@ -72,6 +72,11 @@ namespace YDock.View
         public bool IsEmpty
         {
             get { return Children.Count == 0; }
+        }
+
+        public int Count
+        {
+            get { return Children.Count; }
         }
 
         public bool IsRootPanel
@@ -1241,6 +1246,16 @@ namespace YDock.View
                 if (child is IDisposable)
                     (child as IDisposable).Dispose();
             Children.Clear();
+        }
+
+        public void DetachChild(IDockView child)
+        {
+            
+        }
+
+        public void AttachChild(IDockView child)
+        {
+            
         }
     }
 }

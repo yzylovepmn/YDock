@@ -5,10 +5,10 @@ using System.Text;
 
 namespace YDock.Enum
 {
-    public enum DockStatus
+    public enum DockMode
     {
-        AnchorSide,
-        Docked,
+        Normal,
+        DockBar,
         Float
     }
 }

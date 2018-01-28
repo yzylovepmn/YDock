@@ -178,6 +178,7 @@ namespace YDock.View
                     _model = value;
                     if (_model != null)
                         _CreateContentForModel(_model);
+                    (Parent as Panel).InvalidateMeasure();
                 }
             }
         }
@@ -201,10 +202,6 @@ namespace YDock.View
         private void _CreateContentForModel(DockElement model)
         {
             _layoutContent.Model = model;
-            if (model.DesiredHeight < Constants.SideLength)
-                model.DesiredHeight = Constants.SideLength * 4;
-            if (model.DesiredWidth < Constants.SideLength)
-                model.DesiredWidth = Constants.SideLength * 4;
             switch (model.Side)
             {
                 case DockSide.Left:

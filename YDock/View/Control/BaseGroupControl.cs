@@ -113,19 +113,36 @@ namespace YDock.View
         {
             base.OnMouseLeftButtonDown(e);
             if (SelectedContent != null)
-                (_model as ILayoutGroup).DockManager.ActiveElement = SelectedContent as DockElement;
+                (_model as ILayoutGroup).SetActive(SelectedContent as DockElement);
         }
 
         protected override void OnMouseRightButtonDown(System.Windows.Input.MouseButtonEventArgs e)
         {
             base.OnMouseRightButtonDown(e);
             if (SelectedContent != null)
-                (_model as ILayoutGroup).DockManager.ActiveElement = SelectedContent as DockElement;
+                (_model as ILayoutGroup).SetActive(SelectedContent as DockElement);
         }
 
         protected override DependencyObject GetContainerForItemOverride()
         {
             return new DragTabItem(this);
+        }
+
+        public bool TryDeatchFromParent()
+        {
+            if (Parent != null)
+            {
+                var panel = Parent as ILayoutPanel;
+                if (panel.IsDocumentPanel && panel.Count == 1)
+                    return false;
+                panel.DetachChild(this);
+            }
+            return true;
+        }
+
+        public void AttachToParent(ILayoutPanel parent)
+        {
+            parent.AttachChild(this);
         }
 
         public virtual void Dispose()

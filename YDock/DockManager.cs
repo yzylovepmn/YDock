@@ -27,13 +27,14 @@ namespace YDock
         public DockManager()
         {
             Root = new DockRoot();
+            _dragManager = new DragManager(this);
             _dockControls = new List<IDockControl>();
             _floatControls = new List<IDockControl>();
         }
 
         #region Root
         private DockRoot _root;
-        public DockRoot Root
+        internal DockRoot Root
         {
             get { return _root; }
             set
@@ -50,16 +51,23 @@ namespace YDock
         }
         #endregion
 
+        #region DragManager
+        private DragManager _dragManager;
+        internal DragManager DragManager
+        {
+            get { return _dragManager; }
+        }
+        #endregion
 
         #region DependencyProperty
         public static readonly DependencyProperty LeftSideProperty =
-            DependencyProperty.Register("LeftSide", typeof(DockSideGroupControl), typeof(DockManager),
+            DependencyProperty.Register("LeftSide", typeof(DockBarGroupControl), typeof(DockManager),
                 new FrameworkPropertyMetadata(null,
                     new PropertyChangedCallback(OnLeftSideChanged)));
 
-        public DockSideGroupControl LeftSide
+        public DockBarGroupControl LeftSide
         {
-            get { return (DockSideGroupControl)GetValue(LeftSideProperty); }
+            get { return (DockBarGroupControl)GetValue(LeftSideProperty); }
             set { SetValue(LeftSideProperty, value); }
         }
 
@@ -77,13 +85,13 @@ namespace YDock
         }
 
         public static readonly DependencyProperty RightSideProperty =
-            DependencyProperty.Register("RightSide", typeof(DockSideGroupControl), typeof(DockManager),
+            DependencyProperty.Register("RightSide", typeof(DockBarGroupControl), typeof(DockManager),
                 new FrameworkPropertyMetadata(null,
                     new PropertyChangedCallback(OnRightSideChanged)));
 
-        public DockSideGroupControl RightSide
+        public DockBarGroupControl RightSide
         {
-            get { return (DockSideGroupControl)GetValue(RightSideProperty); }
+            get { return (DockBarGroupControl)GetValue(RightSideProperty); }
             set { SetValue(RightSideProperty, value); }
         }
 
@@ -101,13 +109,13 @@ namespace YDock
         }
 
         public static readonly DependencyProperty TopSideProperty =
-            DependencyProperty.Register("TopSide", typeof(DockSideGroupControl), typeof(DockManager),
+            DependencyProperty.Register("TopSide", typeof(DockBarGroupControl), typeof(DockManager),
                 new FrameworkPropertyMetadata(null,
                     new PropertyChangedCallback(OnTopSideChanged)));
 
-        public DockSideGroupControl TopSide
+        public DockBarGroupControl TopSide
         {
-            get { return (DockSideGroupControl)GetValue(TopSideProperty); }
+            get { return (DockBarGroupControl)GetValue(TopSideProperty); }
             set { SetValue(TopSideProperty, value); }
         }
 
@@ -125,13 +133,13 @@ namespace YDock
         }
 
         public static readonly DependencyProperty BottomSideProperty =
-            DependencyProperty.Register("BottomSide", typeof(DockSideGroupControl), typeof(DockManager),
+            DependencyProperty.Register("BottomSide", typeof(DockBarGroupControl), typeof(DockManager),
                 new FrameworkPropertyMetadata(null,
                     new PropertyChangedCallback(OnBottomSideChanged)));
 
-        public DockSideGroupControl BottomSide
+        public DockBarGroupControl BottomSide
         {
-            get { return (DockSideGroupControl)GetValue(BottomSideProperty); }
+            get { return (DockBarGroupControl)GetValue(BottomSideProperty); }
             set { SetValue(BottomSideProperty, value); }
         }
 
@@ -180,20 +188,20 @@ namespace YDock
             if (_root.DockManager == this)
             {
                 LayoutRootPanel = new LayoutRootPanel(_root);
-                LeftSide = new DockSideGroupControl(_root.LeftSide);
-                RightSide = new DockSideGroupControl(_root.RightSide);
-                BottomSide = new DockSideGroupControl(_root.BottomSide);
-                TopSide = new DockSideGroupControl(_root.TopSide);
+                LeftSide = new DockBarGroupControl(_root.LeftSide);
+                RightSide = new DockBarGroupControl(_root.RightSide);
+                BottomSide = new DockBarGroupControl(_root.BottomSide);
+                TopSide = new DockBarGroupControl(_root.TopSide);
             }
         }
 
         /// <summary>
         /// 自动隐藏窗口的Model
         /// </summary>
-        internal IDockElement AutoHideElement
+        public IDockElement AutoHideElement
         {
             get { return LayoutRootPanel.AHWindow.Model; }
-            set
+            internal set
             {
                 if (LayoutRootPanel.AHWindow.Model != value)
                 {
@@ -209,10 +217,10 @@ namespace YDock
         /// <summary>
         /// current ActiveElement
         /// </summary>
-        internal DockElement ActiveElement
+        public DockElement ActiveElement
         {
             get { return _activeElement; }
-            set
+            internal set
             {
                 if (_activeElement != value)
                 {
@@ -222,6 +230,7 @@ namespace YDock
                     if (_activeElement != null)
                     {
                         _activeElement.IsActive = true;
+                        //这里必须将AutoHideElement设为NULL，保证当前活动窗口只有一个
                         AutoHideElement = null;
                     }
                 }
@@ -307,7 +316,12 @@ namespace YDock
         /// <summary>
         /// 以选项卡模式向DockManager注册一个DockElement并返回对应的DockControl
         /// </summary>
-        public DockControl RegisterDocument(string title, UIElement content, ImageSource imageSource = null)
+        /// <param name="title">标题栏文字</param>
+        /// <param name="content">内容</param>
+        /// <param name="imageSource">标题栏图标</param>
+        /// <param name="canSelect">是否直接停靠在选项栏中供用户选择(默认为False)</param>
+        /// <returns></returns>
+        public DockControl RegisterDocument(string title, UIElement content, ImageSource imageSource = null, bool canSelect = false)
         {
             DockElement ele = new DockElement()
             {
@@ -316,7 +330,8 @@ namespace YDock
                 Content = content,
                 ImageSource = imageSource,
                 Side = DockSide.None,
-                Status = DockStatus.Docked
+                Mode = DockMode.Normal,
+                CanSelect = canSelect
             };
             var ctrl = new DockControl(ele);
             _dockControls.Add(ctrl);
@@ -324,9 +339,17 @@ namespace YDock
             return ctrl;
         }
         /// <summary>
-        /// 以通用模式（必须制定停靠方向，否则默认停靠在左侧）向DockManager注册一个DockElement并返回对应的DockControl
+        /// 以DockBar模式（必须指定停靠方向，否则默认停靠在左侧）向DockManager注册一个DockElement并返回对应的DockControl
         /// </summary>
-        public DockControl RegisterDock(string title, UIElement content, ImageSource imageSource = null, DockSide side = DockSide.Left, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength)
+        /// <param name="title">标题栏文字</param>
+        /// <param name="content">内容</param>
+        /// <param name="imageSource">标题栏图标</param>
+        /// <param name="side">停靠方向（默认左侧）</param>
+        /// <param name="canSelect">是否直接停靠在选项栏中供用户选择(默认为False)</param>
+        /// <param name="desiredWidth">期望的宽度</param>
+        /// <param name="desiredHeight">期望的高度</param>
+        /// <returns></returns>
+        public DockControl RegisterDock(string title, UIElement content, ImageSource imageSource = null, DockSide side = DockSide.Left, bool canSelect = false, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength)
         {
             DockElement ele = new DockElement()
             {
@@ -335,7 +358,8 @@ namespace YDock
                 Content = content,
                 ImageSource = imageSource,
                 Side = side,
-                Status = DockStatus.AnchorSide,
+                Mode = DockMode.DockBar,
+                CanSelect = canSelect,
                 DesiredWidth = desiredWidth,
                 DesiredHeight = desiredHeight
             };
@@ -358,6 +382,13 @@ namespace YDock
         /// <summary>
         /// 以Float模式向DockManager注册一个DockElement并返回对应的DockControl
         /// </summary>
+        /// <param name="title">标题栏文字</param>
+        /// <param name="content">内容</param>
+        /// <param name="imageSource">标题栏图标</param>
+        /// <param name="side">停靠方向（默认左侧）</param>
+        /// <param name="desiredWidth">期望的宽度</param>
+        /// <param name="desiredHeight">期望的高度</param>
+        /// <returns></returns>
         public DockControl RegisterFloat(string title, UIElement content, ImageSource imageSource = null, DockSide side = DockSide.Left, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength)
         {
             DockElement ele = new DockElement()
@@ -367,7 +398,7 @@ namespace YDock
                 Content = content,
                 ImageSource = imageSource,
                 Side = side,
-                Status = DockStatus.Float,
+                Mode = DockMode.Float,
                 DesiredWidth = desiredWidth,
                 DesiredHeight = desiredHeight
             };

@@ -19,10 +19,10 @@ namespace YDock.Model
 
         private void _InitSide()
         {
-            LeftSide = new DockSideModel();
-            RightSide = new DockSideModel();
-            TopSide = new DockSideModel();
-            BottomSide = new DockSideModel();
+            LeftSide = new DockSideGroup();
+            RightSide = new DockSideGroup();
+            TopSide = new DockSideGroup();
+            BottomSide = new DockSideGroup();
         }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
@@ -40,8 +40,8 @@ namespace YDock.Model
 
         #region DockSide
 
-        private DockSideModel _leftSide;
-        public DockSideModel LeftSide
+        private DockSideGroup _leftSide;
+        public DockSideGroup LeftSide
         {
             get { return _leftSide; }
             set
@@ -61,8 +61,8 @@ namespace YDock.Model
             }
         }
 
-        private DockSideModel _rightSide;
-        public DockSideModel RightSide
+        private DockSideGroup _rightSide;
+        public DockSideGroup RightSide
         {
             get { return _rightSide; }
             set
@@ -82,8 +82,8 @@ namespace YDock.Model
             }
         }
 
-        private DockSideModel _topSide;
-        public DockSideModel TopSide
+        private DockSideGroup _topSide;
+        public DockSideGroup TopSide
         {
             get { return _topSide; }
             set
@@ -103,8 +103,8 @@ namespace YDock.Model
             }
         }
 
-        private DockSideModel _bottomSide;
-        public DockSideModel BottomSide
+        private DockSideGroup _bottomSide;
+        public DockSideGroup BottomSide
         {
             get { return _bottomSide; }
             set
@@ -159,7 +159,7 @@ namespace YDock.Model
 
         internal void AddDocument(IDockElement ele)
         {
-            _documentModel.Children.Add(ele);
+            _documentModel.Attach(ele);
         }
 
         internal void AddSideChild(IDockElement ele, DockSide side)
@@ -167,16 +167,16 @@ namespace YDock.Model
             switch (side)
             {
                 case DockSide.Left:
-                    LeftSide.Children.Add(ele);
+                    LeftSide.Attach(ele);
                     break;
                 case DockSide.Right:
-                    RightSide.Children.Add(ele);
+                    RightSide.Attach(ele);
                     break;
                 case DockSide.Top:
-                    TopSide.Children.Add(ele);
+                    TopSide.Attach(ele);
                     break;
                 case DockSide.Bottom:
-                    BottomSide.Children.Add(ele);
+                    BottomSide.Attach(ele);
                     break;
             }
         }

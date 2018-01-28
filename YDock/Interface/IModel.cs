@@ -16,16 +16,20 @@ namespace YDock.Interface
 
     public interface IDockElement : IDockOrigin
     {
-        ILayoutGroup Container { get; }
+
     }
 
-    public interface IDockOrigin: ILayout, ILayoutSize, INotifyPropertyChanged, IDisposable
+    public interface IDockOrigin : ILayout, ILayoutSize, INotifyPropertyChanged, IDisposable
     {
         int ID { get; }
         string Title { get; }
         ImageSource ImageSource { get; }
         UIElement Content { get; }
-        DockStatus Status { get; }
+        DockMode Mode { get; }
+        bool IsVisible { get; }
+        bool IsActive { get; }
+        bool CanSelect { get; }
+        ILayoutGroup Container { get; }
     }
 
     public interface IDockControl : IDockOrigin

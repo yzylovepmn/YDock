@@ -13,14 +13,14 @@ using YDock.Model;
 
 namespace YDock.View
 {
-    public class DockSideItemControl : ContentControl, IDockView
+    public class DockBarItemControl : ContentControl, IDockView
     {
-        static DockSideItemControl()
+        static DockBarItemControl()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(DockSideItemControl), new FrameworkPropertyMetadata(typeof(DockSideItemControl)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(DockBarItemControl), new FrameworkPropertyMetadata(typeof(DockBarItemControl)));
         }
 
-        public DockSideItemControl(IDockView dockViewParent)
+        public DockBarItemControl(IDockView dockViewParent)
         {
             _dockViewParent = dockViewParent;
         }
@@ -54,15 +54,8 @@ namespace YDock.View
         {
             var ele = Content as DockElement;
             if (ele == Container.DockManager.AutoHideElement)
-            {
-                Container.DockManager.ActiveElement = null;
-                Container.DockManager.AutoHideElement = null;
-            }
-            else
-            {
-                Container.DockManager.ActiveElement = ele;
-                Container.DockManager.AutoHideElement = ele;
-            }
+                Container.SetActive(null);
+            else Container.SetActive(ele);
             base.OnMouseLeftButtonDown(e);
         }
 

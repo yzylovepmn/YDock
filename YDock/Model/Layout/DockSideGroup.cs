@@ -11,9 +11,9 @@ using YDock.Interface;
 namespace YDock.Model
 {
     [ContentProperty("Children")]
-    public class DockSideModel : BaseLayoutGroup
+    public class DockSideGroup : BaseLayoutGroup
     {
-        public DockSideModel()
+        public DockSideGroup()
         {
         }
 
@@ -37,6 +37,12 @@ namespace YDock.Model
             {
                 return _root.DockManager;
             }
+        }
+
+        public override void SetActive(IDockElement element)
+        {
+            base.SetActive(element);
+            DockManager.AutoHideElement = element;
         }
 
         public override void Dispose()

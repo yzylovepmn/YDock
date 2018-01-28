@@ -55,7 +55,7 @@ namespace YDock.View
             if (e.MiddleButton == MouseButtonState.Pressed)
             {
                 if ((Content as DockElement).IsActive)
-                    (Content as DockElement).DockManager.ActiveElement = null;
+                    Container.SetActive(null);
                 (Content as DockElement).CanSelect = false;
             }
         }
@@ -80,7 +80,7 @@ namespace YDock.View
 
             base.OnMouseLeftButtonDown(e);
             //在基类事件处理后再设置
-            _dockViewParent.Model.DockManager.ActiveElement = _dockViewParent._dragItem as DockElement;
+            Container.SetActive(_dockViewParent._dragItem);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)

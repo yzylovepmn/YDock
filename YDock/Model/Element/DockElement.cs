@@ -16,6 +16,18 @@ namespace YDock.Model
         {
         }
 
+        #region Ctrl
+        private DockControl _dockControl;
+        public DockControl DockControl
+        {
+            get { return _dockControl; }
+            internal set
+            {
+                if (_dockControl != null)
+                    _dockControl = value;
+            }
+        }
+        #endregion
 
         #region Content
         private UIElement _content;
@@ -32,7 +44,6 @@ namespace YDock.Model
             }
         }
         #endregion
-
 
         #region Title
         public static readonly DependencyProperty TitleProperty = 
@@ -82,8 +93,8 @@ namespace YDock.Model
         #endregion
 
         #region DockStatus
-        private DockStatus _status;
-        public DockStatus Status
+        private DockMode _status;
+        public DockMode Mode
         {
             get
             {
@@ -141,7 +152,7 @@ namespace YDock.Model
         #region CanSelect
         private bool _canSelect = false;
         /// <summary>
-        /// 是否显示在用户界面供选择，默认为false
+        /// 是否显示在用户界面供用户点击显示，默认为false
         /// </summary>
         public bool CanSelect
         {
@@ -237,6 +248,7 @@ namespace YDock.Model
 
         public void Dispose()
         {
+            _dockControl = null;
             _content = null;
             _container = null;
         }
