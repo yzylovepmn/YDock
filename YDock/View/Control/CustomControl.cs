@@ -41,16 +41,8 @@ namespace YDock.View
             {
                 DropContextMenu.PlacementTarget = this;
                 DropContextMenu.Placement = PlacementMode.Bottom;
-                DropContextMenu.Closed += OnDropContextMenuClosed;
                 DropContextMenu.IsOpen = true;
             }
-            IsChecked = true;
-        }
-
-        private void OnDropContextMenuClosed(object sender, RoutedEventArgs e)
-        {
-            IsChecked = false;
-            DropContextMenu.Closed -= OnDropContextMenuClosed;
         }
 
         public void Dispose()

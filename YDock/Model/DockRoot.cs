@@ -157,11 +157,6 @@ namespace YDock.Model
             }
         }
 
-        internal void AddDocument(IDockElement ele)
-        {
-            _documentModel.Attach(ele);
-        }
-
         internal void AddSideChild(IDockElement ele, DockSide side)
         {
             switch (side)

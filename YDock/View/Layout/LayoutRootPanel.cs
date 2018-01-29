@@ -17,7 +17,7 @@ namespace YDock.View
     /// <summary>
     /// 用于容纳<see cref="LayoutGroupPanel"/>,以及AutoHideWindow
     /// </summary>
-    public class LayoutRootPanel : Panel, IDockView
+    public class LayoutRootPanel : Panel, ILayoutPanel
     {
         static LayoutRootPanel()
         {
@@ -37,7 +37,7 @@ namespace YDock.View
             RootGroupPanel = new LayoutGroupPanel() { IsDocumentPanel = true };
             (_model as DockRoot).DocumentModel = new LayoutDocumentGroup(DockViewParent as DockManager);
             var _documentControl = new LayoutDocumentGroupControl((_model as DockRoot).DocumentModel);
-            RootGroupPanel.Children.Add(_documentControl);
+            RootGroupPanel._AttachChild(_documentControl, 0);
         }
 
         private LayoutGroupPanel _rootGroupPanel;
@@ -152,6 +152,72 @@ namespace YDock.View
             }
         }
 
+        public int Count
+        {
+            get
+            {
+                return 2;
+            }
+        }
+
+        public bool IsAnchorPanel
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public bool IsDocumentPanel
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public double DesiredWidth
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public double DesiredHeight
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public DockSide Side
+        {
+            get
+            {
+                return DockSide.All;
+            }
+        }
+
+        public DockManager DockManager
+        {
+            get
+            {
+                return _model.DockManager;
+            }
+        }
+
         public void Dispose()
         {
             Model = null;
@@ -159,6 +225,18 @@ namespace YDock.View
             RootGroupPanel = null;
             AHWindow = null;
             Children.Clear();
+        }
+
+        public void DetachChild(IDockView child)
+        {
+            if (child == RootGroupPanel)
+                RootGroupPanel = null;
+        }
+
+        public void AttachChild(IDockView child, int index)
+        {
+            if (child is LayoutGroupPanel)
+                RootGroupPanel = child as LayoutGroupPanel;
         }
     }
 }

@@ -16,6 +16,7 @@ namespace YDock.Enum
         LeftRight = Left | Right,
         TopBottom = Top | Bottom,
         LeftBottom = Left | Bottom,
-        TopRight = Top | Right
+        TopRight = Top | Right,
+        All = LeftRight | TopBottom
     }
 }

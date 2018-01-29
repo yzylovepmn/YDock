@@ -68,6 +68,7 @@
     <Compile Include="Model\Layout\LayoutGroup.cs" />
     <Compile Include="Model\Layout\DockSideGroup.cs" />
     <Compile Include="Model\DockRoot.cs" />
+    <Compile Include="Model\ModelExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -111,7 +112,7 @@
     <Compile Include="View\Layout\LayoutGroupPanel.cs" />
     <Compile Include="View\Layout\LayoutRootPanel.cs" />
     <Compile Include="View\Control\DockBarGroupControl.cs" />
-    <Compile Include="View\Extensions.cs" />
+    <Compile Include="View\ViewExtensions.cs" />
     <Compile Include="View\Layout\SingelLinePanel.cs" />
     <Compile Include="View\Render\BaseVisual.cs" />
     <Compile Include="View\Render\BaseRenderPanel.cs" />

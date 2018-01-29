@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using YDock.Enum;
 using YDock.Interface;
+using YDock.Model;
 
 namespace YDock.View
 {
@@ -76,7 +77,7 @@ namespace YDock.View
 
         public int Count
         {
-            get { return (Children.Count + 1) / 2; }
+            get { return Children.Count; }
         }
 
         public bool IsRootPanel
@@ -1210,44 +1211,150 @@ namespace YDock.View
         }
         #endregion
 
-        #region Test
-        public void AddDocumentChild(ILayoutGroupControl child)
-        {
-            Children.Add(child as UIElement);
-        }
-
-        public void AddAnchorChild(UIElement child, DockSide side)
-        {
-            switch (side)
-            {
-                case DockSide.Left:
-                    Children.Insert(0, _CreateSplitter(Cursors.SizeWE));
-                    Children.Insert(0, child);
-                    break;
-                case DockSide.Top:
-                    Children.Insert(0, _CreateSplitter(Cursors.SizeNS));
-                    Children.Insert(0, child);
-                    break;
-                case DockSide.Right:
-                    Children.Add(_CreateSplitter(Cursors.SizeWE));
-                    Children.Add(child);
-                    break;
-                case DockSide.Bottom:
-                    Children.Add(_CreateSplitter(Cursors.SizeNS));
-                    Children.Add(child);
-                    break;
-            }
-        }
-        #endregion
-
         public void DetachChild(IDockView child)
         {
-
+            if (Children.Contains(child as UIElement))
+            {
+                int index = Children.IndexOf(child as UIElement);
+                if (index > 0)
+                {
+                    Children.RemoveAt(index);
+                    //移除对应的Spliter
+                    if (Children.Count > 0)
+                    {
+                        _DesstroySplitter(Children[index - 1] as LayoutDragSplitter);
+                        Children.RemoveAt(index - 1);
+                    }
+                }
+                else
+                {
+                    Children.RemoveAt(0);
+                    //移除对应的Spliter
+                    if (Children.Count > 0)
+                    {
+                        _DesstroySplitter(Children[0] as LayoutDragSplitter);
+                        Children.RemoveAt(0);
+                    }
+                }
+                //若元素为空，且不是RootPanel和DocumentPanel，则递归的将其从Parent中移除
+                if (Children.Count == 0 && !IsRootPanel && !IsDocumentPanel)
+                {
+                    (DockViewParent as ILayoutPanel).DetachChild(this);
+                    Dispose();
+                }
+            }
         }
 
+        /// <summary>
+        /// 将子元素加入到Children中
+        /// </summary>
+        /// <param name="child"></param>
+        /// <param name="index">要插入的索引（不包括Spliter）</param>
         public void AttachChild(IDockView child, int index)
         {
+            switch (Direction)
+            {
+                case Direction.LeftToRight:
+                    if (child.Model != null && (child.Model.Side == DockSide.Top
+                            || child.Model.Side == DockSide.Bottom))
+                    {
+                        if (Children.Count == 1)
+                            Direction = Direction.UpToDown;
+                        else
+                        {
+                            if (IsRootPanel)
+                            {
+                                var dockManager = DockManager;
+                                //首先从Parent移除此Panel
+                                DockManager.LayoutRootPanel.DetachChild(this);
+                                var pparent = new LayoutGroupPanel() { Direction = Direction.UpToDown };
+                                if (child.Model.Side == DockSide.Top)
+                                {
+                                    pparent._AttachChild(this, 0);
+                                    pparent._AttachChild(child, 0);
+                                }
+                                else
+                                {
+                                    pparent._AttachChild(child, 0);
+                                    pparent._AttachChild(this, 0);
+                                }
+                                dockManager.LayoutRootPanel.AttachChild(pparent, 0);
+                            }
+                            else
+                            {
+                                int pindex = (DockViewParent as LayoutGroupPanel).Children.IndexOf(this);
+                                if (child.Model.Side == DockSide.Top)
+                                    (DockViewParent as ILayoutPanel).AttachChild(child, pindex);
+                                else (DockViewParent as ILayoutPanel).AttachChild(child, pindex + 1);
+                                if (Side != DockSide.None)
+                                    DockManager.ChangeSide(child, Side);
+                            }
+                            return;
+                        }
+                    }
+                    break;
+                case Direction.UpToDown:
+                    if (child.Model != null && (child.Model.Side == DockSide.Left
+                            || child.Model.Side == DockSide.Right))
+                    {
+                        if (Children.Count == 1)
+                            Direction = Direction.LeftToRight;
+                        else
+                        {
+                            if (IsRootPanel)
+                            {
+                                var dockManager = DockManager;
+                                //首先从Parent移除此Panel
+                                DockManager.LayoutRootPanel.DetachChild(this);
+                                var pparent = new LayoutGroupPanel() { Direction = Direction.LeftToRight };
+                                if (child.Model.Side == DockSide.Left)
+                                {
+                                    pparent._AttachChild(this, 0);
+                                    pparent._AttachChild(child, 0);
+                                }
+                                else
+                                {
+                                    pparent._AttachChild(child, 0);
+                                    pparent._AttachChild(this, 0);
+                                }
+                                dockManager.LayoutRootPanel.AttachChild(pparent, 0);
+                            }
+                            else
+                            {
+                                int pindex = (DockViewParent as LayoutGroupPanel).Children.IndexOf(this);
+                                if (child.Model.Side == DockSide.Left)
+                                    (DockViewParent as ILayoutPanel).AttachChild(child, pindex);
+                                else (DockViewParent as ILayoutPanel).AttachChild(child, pindex + 1);
+                                if (Side != DockSide.None)
+                                    DockManager.ChangeSide(child, Side);
+                            }
+                            return;
+                        }
+                    }
+                    break;
+            }
+            _AttachChild(child, index);
+        }
 
+        internal void _AttachChild(IDockView child, int index)
+        {
+            Children.Insert(index, child as UIElement);
+            if (Children.Count > 1)
+            {
+                switch (Direction)
+                {
+                    case Direction.LeftToRight:
+                        if (index % 2 == 0)
+                            Children.Insert(index + 1, _CreateSplitter(Cursors.SizeWE));
+                        else Children.Insert(index, _CreateSplitter(Cursors.SizeWE));
+                        break;
+                    case Direction.UpToDown:
+                        if (index % 2 == 0)
+                            Children.Insert(index + 1, _CreateSplitter(Cursors.SizeNS));
+                        else Children.Insert(index, _CreateSplitter(Cursors.SizeNS));
+                        break;
+                }
+            }
         }
 
         public void Dispose()

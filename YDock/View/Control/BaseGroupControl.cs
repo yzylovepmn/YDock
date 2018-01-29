@@ -136,6 +136,7 @@ namespace YDock.View
                 if (panel.IsDocumentPanel && panel.Count == 1)
                     return false;
                 panel.DetachChild(this);
+                Dispose();
             }
             return true;
         }

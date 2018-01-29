@@ -213,7 +213,7 @@
                                     <ColumnDefinition Width="15"/>
                                 </Grid.ColumnDefinitions>
                                 <view:DocumentPanel IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
-                                <view:CustomToggleButton IsThreeState="False" Height="15" Grid.Column="1" Style="{StaticResource DocumentToggleButtonStyle}">
+                                <view:CustomToggleButton IsChecked="{Binding RelativeSource={RelativeSource Self},Path=DropContextMenu.IsOpen}" IsThreeState="False" Height="15" Grid.Column="1" Style="{StaticResource DocumentToggleButtonStyle}">
                                     <view:CustomToggleButton.DropContextMenu>
                                         <view:CustomContextMenu ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.ChildrenSorted}">
                                             <view:CustomContextMenu.Style>
@@ -221,9 +221,22 @@
                                                     <Setter Property="Template">
                                                         <Setter.Value>
                                                             <ControlTemplate TargetType="{x:Type view:CustomContextMenu}">
-                                                                <Border Background="#FFF6F6F6" Padding="2" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" SnapsToDevicePixels="True">
-                                                                    <StackPanel IsItemsHost="True"/>
-                                                                </Border>
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="2"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <Grid.RowDefinitions>
+                                                                        <RowDefinition Height="*"/>
+                                                                        <RowDefinition Height="2"/>
+                                                                    </Grid.RowDefinitions>
+                                                                    <Grid.Effect>
+                                                                        <DropShadowEffect Opacity="0.4" Color="Black" ShadowDepth="8"/>
+                                                                    </Grid.Effect>
+                                                                    <Border Background="#FFF6F6F6" Padding="2" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" SnapsToDevicePixels="True">
+                                                                        <StackPanel IsItemsHost="True"/>
+                                                                    </Border>
+                                                                </Grid>
                                                             </ControlTemplate>
                                                         </Setter.Value>
                                                     </Setter>

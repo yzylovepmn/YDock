@@ -23,6 +23,7 @@ namespace YDock.Model
         protected override void OnChildrenCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             base.OnChildrenCollectionChanged(sender, e);
+            if (_view == null) return;
             if (e.NewItems?.Count > 0)
                 (_view as TabControl).SelectedIndex = IndexOf(e.NewItems[e.NewItems.Count - 1] as IDockElement);
             else (_view as TabControl).SelectedIndex = Children_CanSelect.Count() - 1;
@@ -33,6 +34,7 @@ namespace YDock.Model
             base.OnChildrenPropertyChanged(sender, e);
             if (e.PropertyName == "CanSelect")
             {
+                if (_view == null) return;
                 if ((sender as DockElement).CanSelect)
                     (_view as TabControl).SelectedIndex = Children_CanSelect.Count() - 1;
                 else (_view as TabControl).SelectedIndex = Children_CanSelect.Count() > 0 ? 0 : -1;
@@ -94,6 +96,14 @@ namespace YDock.Model
             }
         }
 
+        public override void Attach(IDockElement element)
+        {
+            if (!element.Side.Assert() || (element.Side == DockSide.None
+                && !(this is LayoutDocumentGroup)))
+                throw new ArgumentException("Side is illegal!");
+            base.Attach(element);
+        }
+
         public override void Dispose()
         {
             _dockManager = null;
@@ -115,6 +125,13 @@ namespace YDock.Model
                 listSorted.Sort();
                 return listSorted;
             }
+        }
+
+        public override void Attach(IDockElement element)
+        {
+            if (element.Side != DockSide.None)
+                throw new ArgumentException("Side is illegal!");
+            base.Attach(element);
         }
     }
 }

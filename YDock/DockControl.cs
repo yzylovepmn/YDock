@@ -162,6 +162,10 @@ namespace YDock
                 Mode == DockMode.Float)
                 DockManager.ChangeControlMode(this);
 
+            //Document模式不允许转换为DockBar模式
+            if (Side == DockSide.None && mode == DockMode.DockBar)
+                return;
+
             //切换为指定模式
             (_prototype as DockElement).Mode = mode;
             //保存DockManager的引用供后面使用
@@ -172,22 +176,23 @@ namespace YDock
             switch (mode)
             {
                 case DockMode.Normal:
+                    //None表示作为Document文档停靠
                     if (Side == DockSide.None)
-                        (_prototype as DockElement).Side = DockSide.Left;
-                    var layoutGroup = new LayoutGroup(Side, dockManager);
-                    layoutGroup.Attach(_prototype);
-                    var layoutGroupCtrl = new AnchorSideGroupControl(layoutGroup);
-                    if (Side == DockSide.Left || Side == DockSide.Top)
-                        layoutGroupCtrl.AttachToParent(dockManager.LayoutRootPanel.RootGroupPanel, 0);
-                    else layoutGroupCtrl.AttachToParent(dockManager.LayoutRootPanel.RootGroupPanel, dockManager.LayoutRootPanel.RootGroupPanel.Count);
+                        dockManager.Root.DocumentModel.Attach(_prototype);
+                    else
+                    {
+                        var layoutGroup = new LayoutGroup(Side, dockManager);
+                        layoutGroup.Attach(_prototype);
+                        var layoutGroupCtrl = new AnchorSideGroupControl(layoutGroup);
+                        if (Side == DockSide.Left || Side == DockSide.Top)
+                            layoutGroupCtrl.AttachToParent(dockManager.LayoutRootPanel.RootGroupPanel, 0);
+                        else layoutGroupCtrl.AttachToParent(dockManager.LayoutRootPanel.RootGroupPanel, dockManager.LayoutRootPanel.RootGroupPanel.Count);
+                    }
                     break;
                 case DockMode.DockBar:
                     switch (Side)
                     {
-                        //None默认停靠左侧
-                        case DockSide.None:
                         case DockSide.Left:
-                            (_prototype as DockElement).Side = DockSide.Left;
                             dockManager.Root.LeftSide.Attach(_prototype);
                             break;
                         case DockSide.Right:

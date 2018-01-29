@@ -8,7 +8,7 @@ using System.Windows.Media.Media3D;
 
 namespace YDock.View
 {
-    internal static class Extensions
+    internal static class ViewExtensions
     {
         public static Point PointToScreenDPI(this Visual visual, Point pt)
         {

@@ -353,7 +353,7 @@ namespace YDock
             };
             var ctrl = new DockControl(ele);
             _dockControls.Add(ctrl);
-            _root.AddDocument(ele);
+            _root.DocumentModel.Attach(ele);
             return ctrl;
         }
         /// <summary>
@@ -425,6 +425,16 @@ namespace YDock
             return ctrl;
         }
         #endregion
+
+        internal void ChangeSide(IDockView view, DockSide side)
+        {
+            if (view.Model.Side == side) return;
+            if (view is BaseGroupControl)
+                (view.Model as BaseLayoutGroup).Side = side;
+            if (view is LayoutGroupPanel)
+                (view as LayoutGroupPanel).Side = side;
+        }
+
 
         public void Dispose()
         {
