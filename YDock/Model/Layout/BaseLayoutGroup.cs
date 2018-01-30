@@ -23,7 +23,6 @@ namespace YDock.Model
             if (e.OldItems != null)
                 foreach (DockElement item in e.OldItems)
                 {
-                    item.IsVisible = false;
                     item.Container = null;
                     item.PropertyChanged -= OnChildrenPropertyChanged;
                 }
@@ -154,6 +153,7 @@ namespace YDock.Model
             if (element == null || !_children.Contains(element))
                 throw new InvalidOperationException("Detach Failed!");
             _children.Remove(element);
+            (element as DockElement).IsVisible = false;
         }
 
         public virtual void Attach(IDockElement element)

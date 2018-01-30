@@ -3,6 +3,7 @@
                     xmlns:ydock="clr-namespace:YDock"
                     xmlns:view="clr-namespace:YDock.View"
                     xmlns:enum="clr-namespace:YDock.Enum"
+                    xmlns:shell="clr-namespace:Microsoft.Windows.Shell"
                     xmlns:converters="clr-namespace:YDock.Converters">
     <enum:DockSide x:Key="Top">Top</enum:DockSide>
     <enum:DockSide x:Key="Right">Right</enum:DockSide>
@@ -135,7 +136,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <view:LayoutHeaderControl DataContext="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model}" Style="{StaticResource LayoutHeaderControlStyle}"/>
+                            <view:LayoutHeaderControl shell:WindowChrome.IsHitTestVisibleInChrome="True" DataContext="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model}" Style="{StaticResource LayoutHeaderControlStyle}"/>
                             <ContentPresenter Grid.Row="1" Content="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Content}"/>
                         </Grid>
                     </Border>
@@ -212,8 +213,8 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="15"/>
                                 </Grid.ColumnDefinitions>
-                                <view:DocumentPanel IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
-                                <view:CustomToggleButton IsChecked="{Binding RelativeSource={RelativeSource Self},Path=DropContextMenu.IsOpen}" IsThreeState="False" Height="15" Grid.Column="1" Style="{StaticResource DocumentToggleButtonStyle}">
+                                <view:DocumentPanel shell:WindowChrome.IsHitTestVisibleInChrome="True" IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
+                                <view:CustomToggleButton shell:WindowChrome.IsHitTestVisibleInChrome="True" IsChecked="{Binding RelativeSource={RelativeSource Self},Path=DropContextMenu.IsOpen}" IsThreeState="False" Height="15" Grid.Column="1" Style="{StaticResource DocumentToggleButtonStyle}">
                                     <view:CustomToggleButton.DropContextMenu>
                                         <view:CustomContextMenu ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.ChildrenSorted}">
                                             <view:CustomContextMenu.Style>
@@ -323,10 +324,10 @@
                                         <Setter Property="Background" Value="{StaticResource MouseOnBackground}"/>
                                         <Setter TargetName="title" Property="Foreground" Value="White"/>
                                     </Trigger>
-                                    <DataTrigger Binding="{Binding IsVisible}" Value="True">
+                                    <Trigger Property="IsSelected" Value="True">
                                         <Setter Property="Background" Value="{StaticResource BorderBrush}"/>
                                         <Setter TargetName="title" Property="Foreground" Value="#FF717171"/>
-                                    </DataTrigger>
+                                    </Trigger>
                                     <DataTrigger Binding="{Binding IsActive}" Value="True">
                                         <Setter Property="Background" Value="{StaticResource ActiveHeaderBackground}"/>
                                         <Setter TargetName="title" Property="Foreground" Value="White"/>
@@ -427,6 +428,54 @@
                 <DataTemplate>
                     <view:LayoutContentControl Model="{Binding}"/>
                 </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style TargetType="{x:Type view:AnchorGroupWindow}">
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
+        <Setter Property="shell:WindowChrome.WindowChrome">
+            <Setter.Value>
+                <shell:WindowChrome
+                    ResizeBorderThickness="8"
+                    CaptionHeight="24"
+                    GlassFrameThickness="2"
+                    ShowSystemMenu="True"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type view:AnchorGroupWindow}">
+                    <Border ClipToBounds="True" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <DockPanel x:Name="HeaderPanel">
+                                <Image DockPanel.Dock="Left" Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
+                                <TextBlock DockPanel.Dock="Left" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
+
+                            </DockPanel>
+                            <AdornerDecorator Grid.Row="1">
+                                <ContentPresenter Content="{TemplateBinding Content}"/>
+                            </AdornerDecorator>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=NoBorder}" Value="True">
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=IsSpiltMode}" Value="False">
+                            <Setter TargetName="HeaderPanel" Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>

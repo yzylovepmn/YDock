@@ -39,8 +39,6 @@ namespace YDock.Model
                     (_view as TabControl).SelectedIndex = Children_CanSelect.Count() - 1;
                 else (_view as TabControl).SelectedIndex = Children_CanSelect.Count() > 0 ? 0 : -1;
             }
-            if (e.PropertyName == "IsActive")
-                IsActive = (sender as IDockElement).IsActive;
         }
 
         private DockManager _dockManager;
@@ -49,23 +47,6 @@ namespace YDock.Model
             get
             {
                 return _dockManager;
-            }
-        }
-
-        private bool _isActive = false;
-        public bool IsActive
-        {
-            get
-            {
-                return _isActive;
-            }
-            set
-            {
-                if (_isActive != value)
-                {
-                    _isActive = value;
-                    RaisePropertyChanged("IsActive");
-                }
             }
         }
 
@@ -117,6 +98,30 @@ namespace YDock.Model
 
         }
 
+        protected override void OnChildrenPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            base.OnChildrenPropertyChanged(sender, e);
+            if (e.PropertyName == "IsActive")
+                IsActive = (sender as IDockElement).IsActive;
+        }
+
+        private bool _isActive = false;
+        public bool IsActive
+        {
+            get
+            {
+                return _isActive;
+            }
+            set
+            {
+                if (_isActive != value)
+                {
+                    _isActive = value;
+                    RaisePropertyChanged("IsActive");
+                }
+            }
+        }
+
         public IEnumerable<IDockElement> ChildrenSorted
         {
             get
@@ -132,6 +137,13 @@ namespace YDock.Model
             if (element.Side != DockSide.None)
                 throw new ArgumentException("Side is illegal!");
             base.Attach(element);
+            if (element.IsActive) IsActive = true;
+        }
+
+        public override void Detach(IDockElement element)
+        {
+            base.Detach(element);
+            if (element.IsActive) IsActive = false;
         }
     }
 }

@@ -13,13 +13,22 @@ namespace YDock.Interface
         DockManager DockManager { get; }
     }
 
-    public interface ILayoutPanel : ILayoutSize, IDockView, ILayout
+    public interface ILayoutViewParent
+    {
+        void DetachChild(IDockView child);
+        void AttachChild(IDockView child, int index);
+    }
+
+    public interface ILayoutViewWithSize : ILayoutSize, IDockView
+    {
+
+    }
+
+    public interface ILayoutPanel : ILayoutViewWithSize, ILayout, ILayoutViewParent
     {
         int Count { get; }
         bool IsAnchorPanel { get; }
         bool IsDocumentPanel { get; }
-        void DetachChild(IDockView child);
-        void AttachChild(IDockView child, int index);
     }
 
     public interface ILayoutSize
@@ -39,9 +48,9 @@ namespace YDock.Interface
         void RaisePropertyChanged(string propertyName);
     }
 
-    public interface ILayoutGroupControl : ILayoutSize, IDockView
+    public interface ILayoutGroupControl : ILayoutViewWithSize
     {
-        bool TryDeatchFromParent();
+        bool TryDeatchFromParent(bool isDispose = true);
         void AttachToParent(ILayoutPanel parent, int index);
     }
 }

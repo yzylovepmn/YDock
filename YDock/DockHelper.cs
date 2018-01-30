@@ -13,6 +13,19 @@ namespace YDock
         {
             return (T)template.FindName(name, templateParent);
         }
+
+        public static Window CreateTransparentWindow()
+        {
+            return new Window()
+            {
+                Height = SystemParameters.FullPrimaryScreenHeight,
+                Width = SystemParameters.FullPrimaryScreenWidth,
+                AllowsTransparency = true,
+                Background = new SolidColorBrush(new Color() { A = 1 }),
+                WindowStyle = WindowStyle.None,
+                ShowInTaskbar = false
+            };
+        }
     }
 
     public class ElementComparer<T> : IComparer<T>

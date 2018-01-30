@@ -95,17 +95,12 @@ namespace YDock.View
             }
         }
 
-        private IDockView _dockViewParent;
+
         public IDockView DockViewParent
         {
             get
             {
-                return _dockViewParent;
-            }
-            internal set
-            {
-                if (_dockViewParent != value)
-                    _dockViewParent = value;
+                return Parent as IDockView;
             }
         }
 
@@ -128,15 +123,19 @@ namespace YDock.View
             return new DragTabItem(this);
         }
 
-        public bool TryDeatchFromParent()
+        public bool TryDeatchFromParent(bool isDispose = true)
         {
             if (Parent != null)
             {
-                var panel = Parent as ILayoutPanel;
-                if (panel.IsDocumentPanel && panel.Count == 1)
-                    return false;
-                panel.DetachChild(this);
-                Dispose();
+                if (DockViewParent is ILayoutPanel)
+                {
+                    var panel = DockViewParent as ILayoutPanel;
+                    if (panel.IsDocumentPanel && panel.Count == 1)
+                        return false;
+                }
+                (DockViewParent as ILayoutViewParent).DetachChild(this);
+                if (isDispose)
+                    Dispose();
             }
             return true;
         }
@@ -151,7 +150,6 @@ namespace YDock.View
             BindingOperations.ClearBinding(this, ItemsSourceProperty);
             Items.Clear();
             Model = null;
-            _dockViewParent = null;
             _dragItem = null;
             _childrenBounds.Clear();
             _childrenBounds = null;

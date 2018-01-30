@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using YDock.Interface;
@@ -95,8 +96,12 @@ namespace YDock.View
                     int des = _dockViewParent._childrenBounds.FindIndex(p);
                     if (des < 0)
                     {
-                        //_dragItem = null;
+                        if (IsMouseCaptured)
+                            ReleaseMouseCapture();
                         //TODO Drag
+                        var item = _dockViewParent._dragItem;
+                        _dockViewParent._dragItem = null;
+                        _dockViewParent.Model.DockManager.DragManager.IntoDragAction(item);
                     }
                     else
                     {
@@ -146,15 +151,16 @@ namespace YDock.View
         private void MoveTo(int src, int des, Panel parent)
         {
             Container.MoveTo(src, des);
-            (_dockViewParent as TabControl).SelectedIndex = des;
             parent.UpdateLayout();
             parent.Children[des].CaptureMouse();
             _dockViewParent.UpdateChildrenBounds(parent);
+            (_dockViewParent as BaseGroupControl).SelectedIndex = des;
         }
 
         public void Dispose()
         {
             _dockViewParent = null;
+            Content = null;
         }
     }
 }

@@ -17,7 +17,7 @@ namespace YDock.View
     /// <summary>
     /// 用于容纳<see cref="LayoutGroupPanel"/>,以及AutoHideWindow
     /// </summary>
-    public class LayoutRootPanel : Panel, ILayoutPanel
+    public class LayoutRootPanel : Panel, IDockView, ILayoutViewParent
     {
         static LayoutRootPanel()
         {
@@ -145,72 +145,6 @@ namespace YDock.View
         }
 
         public IDockView DockViewParent
-        {
-            get
-            {
-                return _model.DockManager;
-            }
-        }
-
-        public int Count
-        {
-            get
-            {
-                return 2;
-            }
-        }
-
-        public bool IsAnchorPanel
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        public bool IsDocumentPanel
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        public double DesiredWidth
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public double DesiredHeight
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public DockSide Side
-        {
-            get
-            {
-                return DockSide.All;
-            }
-        }
-
-        public DockManager DockManager
         {
             get
             {

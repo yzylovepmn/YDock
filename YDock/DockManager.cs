@@ -59,7 +59,45 @@ namespace YDock
         }
         #endregion
 
+        #region MainWindow
+        public Window MainWindow
+        {
+            get { return Window.GetWindow(this); }
+        }
+        #endregion
+
         #region DependencyProperty
+
+        #region DockImageSource
+        public static readonly DependencyProperty DockImageSourceProperty =
+            DependencyProperty.Register("DockImageSource", typeof(ImageSource), typeof(DockManager));
+
+        /// <summary>
+        /// 用于浮动窗口显示，一般用作你程序的ImageSource
+        /// </summary>
+        public ImageSource DockImageSource
+        {
+            internal set { SetValue(DockImageSourceProperty, value); }
+            get { return (ImageSource)GetValue(DockImageSourceProperty); }
+        }
+        #endregion
+
+        #region DockTitle
+        public static readonly DependencyProperty DockTitleProperty =
+            DependencyProperty.Register("DockTitle", typeof(string), typeof(DockManager),
+                new FrameworkPropertyMetadata(string.Empty));
+
+        /// <summary>
+        /// 用于浮动窗口显示，一般用作你程序的Title
+        /// </summary>
+        public string DockTitle
+        {
+            internal set { SetValue(DockTitleProperty, value); }
+            get { return (string)GetValue(DockTitleProperty); }
+        }
+        #endregion
+
+        #region Side & Root
         public static readonly DependencyProperty LeftSideProperty =
             DependencyProperty.Register("LeftSide", typeof(DockBarGroupControl), typeof(DockManager),
                 new FrameworkPropertyMetadata(null,
@@ -179,6 +217,8 @@ namespace YDock
             if (e.NewValue != null)
                 AddLogicalChild(e.NewValue);
         }
+        #endregion
+
         #endregion
 
         protected override void OnInitialized(EventArgs e)

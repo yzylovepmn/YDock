@@ -1267,6 +1267,7 @@ namespace YDock.View
                                 var dockManager = DockManager;
                                 //首先从Parent移除此Panel
                                 DockManager.LayoutRootPanel.DetachChild(this);
+                                if (IsDocumentPanel) IsDocumentPanel = false;
                                 var pparent = new LayoutGroupPanel() { Direction = Direction.UpToDown };
                                 if (child.Model.Side == DockSide.Top)
                                 {
@@ -1306,6 +1307,7 @@ namespace YDock.View
                                 var dockManager = DockManager;
                                 //首先从Parent移除此Panel
                                 DockManager.LayoutRootPanel.DetachChild(this);
+                                if (IsDocumentPanel) IsDocumentPanel = false;
                                 var pparent = new LayoutGroupPanel() { Direction = Direction.LeftToRight };
                                 if (child.Model.Side == DockSide.Left)
                                 {

@@ -71,7 +71,7 @@ namespace YDock.View
                 IDockElement element = selecteditem.Content as IDockElement;
                 ILayoutGroup tab = element.Container;
                 tab.MoveTo(index, startindex);
-                ((TabControl)tab.View).SelectedIndex = startindex;
+                //((TabControl)tab.View).SelectedIndex = startindex;
 
                 for (; startindex < visibleChildren.Count; startindex++)
                 {
