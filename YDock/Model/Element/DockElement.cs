@@ -93,19 +93,19 @@ namespace YDock.Model
         #endregion
 
         #region DockStatus
-        private DockMode _status;
+        private DockMode _mode;
         public DockMode Mode
         {
             get
             {
-                return _status;
+                return _mode;
             }
-            set
+            internal set
             {
-                if (_status != value)
+                if (_mode != value)
                 {
-                    _status = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs("Status"));
+                    _mode = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs("Mode"));
                 }
             }
         }

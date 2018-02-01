@@ -22,6 +22,8 @@ namespace YDock.View
         internal IDockElement _dragItem;
         internal IList<Rect> _childrenBounds;
         internal bool _mouseInside = true;
+        internal Point _mouseDown;
+        internal Rect _rect;
 
         internal void UpdateChildrenBounds(Panel parent)
         {

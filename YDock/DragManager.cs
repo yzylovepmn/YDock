@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
@@ -11,6 +12,48 @@ using YDock.View;
 
 namespace YDock
 {
+    public class DragItem : IDisposable
+    {
+        public DragItem(object relativeObj, DockMode mode, Point clickPos, Rect clickRect)
+        {
+            _relativeObj = relativeObj;
+            _mode = mode;
+            _clickPos = clickPos;
+            _clickRect = clickRect;
+        }
+
+        private object _relativeObj;
+        public object RelativeObj
+        {
+            get { return _relativeObj; }
+        }
+        /// <summary>
+        /// 拖动前的Mode
+        /// </summary>
+        public DockMode Mode
+        {
+            get { return _mode; }
+        }
+        private DockMode _mode;
+
+        public Point ClickPos
+        {
+            get { return _clickPos; }
+        }
+        private Point _clickPos;
+
+        public Rect ClickRect
+        {
+            get { return _clickRect; }
+        }
+        private Rect _clickRect;
+
+        public void Dispose()
+        {
+            _relativeObj = null;
+        }
+    }
+
     public class DragManager
     {
         public DragManager(DockManager dockManager)
@@ -24,8 +67,8 @@ namespace YDock
             get { return _dockManager; }
         }
 
-        private ILayoutGroup _dragItem;
-        private Window _dragWnd;
+        private ILayoutGroupControl _dragTarget;
+        private DragItem _dragItem;
         private Window _dragHelper;
         private bool _isDragging = false;
         public bool IsDragging
@@ -34,20 +77,23 @@ namespace YDock
         }
 
 
-        internal void IntoDragAction(object relativeObj)
+        internal void IntoDragAction(DragItem dragItem)
         {
-            BeforeDrag(relativeObj);
+            _dragItem = dragItem;
+            BeforeDrag();
         }
 
-        private void BeforeDrag(object relativeObj)
+        private void BeforeDrag()
         {
             _isDragging = true;
-            _InitDragItem(relativeObj);
+            _InitDragItem();
             _InitDragHelper();
         }
 
         private void _DoDragDrop()
         {
+            _isDragging = false;
+
 
             AfterDrag();
         }
@@ -56,49 +102,18 @@ namespace YDock
         {
             _DestroyDragHelper();
             _DestroyDragItem();
-            _isDragging = false;
         }
 
-        private void _InitDragItem(object relativeObj)
+        private void _InitDragItem()
         {
-            if (relativeObj is ILayoutGroup)
-                _dragItem = relativeObj as ILayoutGroup;
-            if (relativeObj is IDockElement)
-            {
-                IDockElement ele = relativeObj as IDockElement;
-                ele.Container.Detach(ele);
-                if (ele.Side == DockSide.None)
-                {
-                    _dragItem = new LayoutDocumentGroup(DockManager);
-                    _dragItem.Attach(ele);
-                }
-                else
-                {
-                    _dragItem = new LayoutGroup(ele.Side, DockManager);
-                    _dragItem.Attach(ele);
-                }
-            }
-            IDockView view;
-            if (_dragItem.View == null)
-            {
-                if (_dragItem is LayoutDocumentGroup)
-                    view = new LayoutDocumentGroupControl(_dragItem);
-                else view = new AnchorSideGroupControl(_dragItem);
-            }
-            else
-            {
-                view = _dragItem.View;
-                (view as ILayoutGroupControl).TryDeatchFromParent(false);
-            }
-            AnchorGroupWindow window = new AnchorGroupWindow();
-            window.AttachChild(view, 0);
-            window.Show();
+
         }
 
         private void _DestroyDragItem()
         {
+            _dragItem.Dispose();
             _dragItem = null;
-            _dragWnd = null;
+            _dragTarget = null;
         }
 
         private void _InitDragHelper()
@@ -112,15 +127,32 @@ namespace YDock
 
         private void _DestroyDragHelper()
         {
-            _dragHelper.MouseMove -= OnMouseMove;
             _dragHelper.MouseLeftButtonUp -= OnMouseLeftButtonUp;
+            _dragHelper.MouseMove -= OnMouseMove;
             _dragHelper.Close();
             _dragHelper = null;
         }
 
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
+            var p = e.GetPosition(DockManager.LayoutRootPanel.RootGroupPanel);
+            VisualTreeHelper.HitTest(DockManager.LayoutRootPanel.RootGroupPanel, _HitFilter, _HitRessult, new PointHitTestParameters(p));
+        }
 
+        private HitTestResultBehavior _HitRessult(HitTestResult result)
+        {
+            _dragTarget = null;
+            return HitTestResultBehavior.Stop;
+        }
+
+        private HitTestFilterBehavior _HitFilter(DependencyObject potentialHitTestTarget)
+        {
+            if (potentialHitTestTarget is ILayoutGroupControl)
+            {
+                _dragTarget = potentialHitTestTarget as ILayoutGroupControl;
+                return HitTestFilterBehavior.Stop;
+            }
+            return HitTestFilterBehavior.Continue;
         }
 
         private void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)

@@ -45,6 +45,7 @@ namespace YDock.Interface
         void SetActive(IDockElement element);
         void Detach(IDockElement element);
         void Attach(IDockElement element);
+        void SetDockMode(DockMode mode);
         void RaisePropertyChanged(string propertyName);
     }
 

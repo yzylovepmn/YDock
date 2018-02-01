@@ -163,6 +163,19 @@ namespace YDock.Model
             _children.Add(element);
         }
 
+        public void SetDockMode(DockMode mode)
+        {
+            foreach (DockElement child in _children)
+            {
+                if (child.Mode != mode)
+                {
+                    if (child.Mode == DockMode.Float || mode == DockMode.Float)
+                        DockManager.ChangeControlMode(child.DockControl);
+                    child.Mode = mode;
+                }
+            }
+        }
+
         public virtual void Dispose()
         {
             _children.CollectionChanged -= OnChildrenCollectionChanged;

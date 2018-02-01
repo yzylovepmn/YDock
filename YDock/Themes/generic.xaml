@@ -207,7 +207,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Border x:Name="Border" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,2">
+                        <Border x:Name="Border" SnapsToDevicePixels="True" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,2">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>

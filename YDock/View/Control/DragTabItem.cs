@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
 
@@ -63,30 +64,34 @@ namespace YDock.View
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
+            base.OnMouseLeftButtonUp(e);
+
             if (IsMouseCaptured)
                 ReleaseMouseCapture();
             _dockViewParent._mouseInside = false;
             _dockViewParent._dragItem = null;
-
-            base.OnMouseLeftButtonUp(e);
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
-            if (!IsMouseCaptured)
-                CaptureMouse();
+            //在基类事件处理后再设置
+            base.OnMouseLeftButtonDown(e);
+
             _dockViewParent._mouseInside = true;
+            _dockViewParent._mouseDown = e.GetPosition(this);
+            _dockViewParent._rect = DockHelper.CreateChildRectFromParent(VisualParent as Panel, this);
             _dockViewParent._dragItem = Content as IDockElement;
             _dockViewParent.UpdateChildrenBounds(VisualParent as Panel);
 
-            base.OnMouseLeftButtonDown(e);
-            //在基类事件处理后再设置
             Container.SetActive(_dockViewParent._dragItem);
+
+            if (!IsMouseCaptured)
+                CaptureMouse();
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed)
+            if (e.LeftButton == MouseButtonState.Pressed && IsMouseCaptured)
             {
                 if (_dockViewParent._dragItem != null)
                 {
@@ -101,7 +106,7 @@ namespace YDock.View
                         //TODO Drag
                         var item = _dockViewParent._dragItem;
                         _dockViewParent._dragItem = null;
-                        _dockViewParent.Model.DockManager.DragManager.IntoDragAction(item);
+                        _dockViewParent.Model.DockManager.DragManager.IntoDragAction(new DragItem(item, DockMode.Normal, _dockViewParent._mouseDown, _dockViewParent._rect));
                     }
                     else
                     {
@@ -152,9 +157,9 @@ namespace YDock.View
         {
             Container.MoveTo(src, des);
             parent.UpdateLayout();
-            parent.Children[des].CaptureMouse();
             _dockViewParent.UpdateChildrenBounds(parent);
             (_dockViewParent as BaseGroupControl).SelectedIndex = des;
+            parent.Children[des].CaptureMouse();
         }
 
         public void Dispose()

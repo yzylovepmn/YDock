@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using YDock.View;
 
 namespace YDock
 {
@@ -23,8 +24,16 @@ namespace YDock
                 AllowsTransparency = true,
                 Background = new SolidColorBrush(new Color() { A = 1 }),
                 WindowStyle = WindowStyle.None,
+                WindowState = WindowState.Maximized,
                 ShowInTaskbar = false
             };
+        }
+
+        public static Rect CreateChildRectFromParent(FrameworkElement parent, FrameworkElement child)
+        {
+            var originP = parent.PointToScreenDPIWithoutFlowDirection(new Point());
+            var childP = child.PointToScreenDPIWithoutFlowDirection(new Point());
+            return new Rect(new Point(childP.X - originP.X, childP.Y - originP.Y), child.TransformActualSizeToAncestor());
         }
     }
 
