@@ -47,41 +47,6 @@
     </Style>
 
 
-
-    <Style TargetType="{x:Type ydock:DockManager}">
-        <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ydock:DockManager}">
-                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                        <Grid FlowDirection="LeftToRight">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="5"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="5"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="5"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="5"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <ContentPresenter Content="{TemplateBinding LayoutRootPanel}" Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" Grid.ColumnSpan="3"/>
-                            <ContentPresenter Content="{TemplateBinding RightSide}" Grid.Column="4" Grid.Row="2"/>
-                            <ContentPresenter Content="{TemplateBinding LeftSide}" Grid.Column="0" Grid.Row="2"/>
-                            <ContentPresenter Content="{TemplateBinding TopSide}" Grid.Column="2" Grid.Row="0"/>
-                            <ContentPresenter Content="{TemplateBinding BottomSide}" Grid.Column="2" Grid.Row="4"/>
-                        </Grid>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-
     <Style TargetType="{x:Type view:LayoutDragSplitter}">
         <Setter Property="Template">
             <Setter.Value>
@@ -92,11 +57,11 @@
         </Setter>
     </Style>
 
-    <Style x:Key="LayoutHeaderControlStyle" TargetType="{x:Type view:LayoutHeaderControl}">
+    <Style x:Key="LayoutHeaderControlStyle" TargetType="{x:Type view:AnchorHeaderControl}">
         <Setter Property="Background" Value="{StaticResource DisActiveHeaderBackground}"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type view:LayoutHeaderControl}">
+                <ControlTemplate TargetType="{x:Type view:AnchorHeaderControl}">
                     <Border Background="{TemplateBinding Background}" Padding="2">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -104,7 +69,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="HeaderTextBlock" VerticalAlignment="Center" Text="{Binding Title}"/>
+                            <TextBlock x:Name="HeaderTextBlock" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Text="{Binding Title}"/>
                             <view:TexturePanel DataContext="{Binding}" Grid.Column="1" Margin="10,0,10,0"/>
                             <StackPanel Grid.Column="2">
 
@@ -136,7 +101,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <view:LayoutHeaderControl shell:WindowChrome.IsHitTestVisibleInChrome="True" DataContext="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model}" Style="{StaticResource LayoutHeaderControlStyle}"/>
+                            <view:AnchorHeaderControl DataContext="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model}" Style="{StaticResource LayoutHeaderControlStyle}"/>
                             <ContentPresenter Grid.Row="1" Content="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Content}"/>
                         </Grid>
                     </Border>
@@ -194,6 +159,33 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <ControlTemplate x:Key="DocumentHeaderTemplate" TargetType="{x:Type view:DragTabItem}">
+        <Border Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+            <Grid Margin="4,3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Image VerticalAlignment="Center" Source="{Binding Path=ImageSource,Converter={StaticResource NullToDoNothingConverter}}" Stretch="Uniform"/>
+                <TextBlock x:Name="title" VerticalAlignment="Center" Margin="4,0,0,0" Text="{Binding Path=Title}" Grid.Column="1"/>
+            </Grid>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource MouseOnBackground}"/>
+                <Setter TargetName="title" Property="Foreground" Value="White"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{StaticResource BorderBrush}"/>
+                <Setter TargetName="title" Property="Foreground" Value="#FF717171"/>
+            </Trigger>
+            <DataTrigger Binding="{Binding IsActive}" Value="True">
+                <Setter Property="Background" Value="{StaticResource ActiveHeaderBackground}"/>
+                <Setter TargetName="title" Property="Foreground" Value="White"/>
+            </DataTrigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
 
     <Style TargetType="{x:Type view:LayoutDocumentGroupControl}">
         <Setter Property="BorderThickness" Value="1,0,1,1"/>
@@ -306,36 +298,7 @@
             <Setter.Value>
                 <Style TargetType="{x:Type view:DragTabItem}">
                     <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type view:DragTabItem}">
-                                <Border Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
-                                    <Grid Margin="4,3">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition/>
-                                        </Grid.ColumnDefinitions>
-                                        <Image VerticalAlignment="Center" Source="{Binding Path=ImageSource,Converter={StaticResource NullToDoNothingConverter}}" Stretch="Uniform"/>
-                                        <TextBlock x:Name="title" VerticalAlignment="Center" Margin="4,0,0,0" Text="{Binding Path=Title}" Grid.Column="1"/>
-                                    </Grid>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="{StaticResource MouseOnBackground}"/>
-                                        <Setter TargetName="title" Property="Foreground" Value="White"/>
-                                    </Trigger>
-                                    <Trigger Property="IsSelected" Value="True">
-                                        <Setter Property="Background" Value="{StaticResource BorderBrush}"/>
-                                        <Setter TargetName="title" Property="Foreground" Value="#FF717171"/>
-                                    </Trigger>
-                                    <DataTrigger Binding="{Binding IsActive}" Value="True">
-                                        <Setter Property="Background" Value="{StaticResource ActiveHeaderBackground}"/>
-                                        <Setter TargetName="title" Property="Foreground" Value="White"/>
-                                    </DataTrigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
+                    <Setter Property="Template" Value="{Binding DockManager.DocumentHeaderTemplate}"/>
                 </Style>
             </Setter.Value>
         </Setter>
@@ -413,7 +376,7 @@
                             </MultiTrigger.Setters>
                         </MultiTrigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Foreground" Value="#FF0E9EE2"/>
+                            <Setter Property="Foreground" Value="{StaticResource ActiveHeaderBackground}"/>
                             <Setter Property="Background" Value="WhiteSmoke"/>
                             <Setter Property="BorderThickness" Value="1,0,1,1"/>
                             <Setter Property="Margin" Value="0,-1,0,0"/>
@@ -432,6 +395,115 @@
         </Setter>
     </Style>
 
+    <Style TargetType="{x:Type view:SingleAnchorWindow}">
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+        <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
+        <Setter Property="shell:WindowChrome.WindowChrome">
+            <Setter.Value>
+                <shell:WindowChrome
+                    ResizeBorderThickness="9"
+                    CaptionHeight="20"
+                    CornerRadius="0"
+                    GlassFrameThickness="0"
+                    ShowSystemMenu="False"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type view:SingleAnchorWindow}">
+                    <Grid Background="#01FFFFFF" Margin="{TemplateBinding Padding}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="8"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="8"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="1" Grid.Row="1"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}"
+                                SnapsToDevicePixels="True">
+                            <AdornerDecorator>
+                                <ContentPresenter Content="{TemplateBinding Content}"/>
+                            </AdornerDecorator>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="WindowState" Value="Maximized">
+                <Setter Property="Padding" Value="-2,-2,-2,38"/>
+            </Trigger>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self},Path=Content.Items.Count}" Value="1">
+                <Setter Property="BorderThickness" Value="0"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="{x:Type view:DocumentGroupWindow}">
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
+        <Setter Property="shell:WindowChrome.WindowChrome">
+            <Setter.Value>
+                <shell:WindowChrome
+                    ResizeBorderThickness="8"
+                    CaptionHeight="28"
+                    CornerRadius="0"
+                    GlassFrameThickness="0"
+                    ShowSystemMenu="True"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type view:DocumentGroupWindow}">
+                    <Grid Background="#01FFFFFF" Margin="{TemplateBinding Padding}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="8"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="8"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Row="1" Grid.Column="1" ClipToBounds="True" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="32"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <DockPanel x:Name="HeaderPanel">
+                                    <Image DockPanel.Dock="Left" Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
+                                    <TextBlock DockPanel.Dock="Left" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
+
+                                </DockPanel>
+                                <AdornerDecorator Grid.Row="1">
+                                    <Border Padding="6,0,6,6">
+                                        <ContentPresenter Content="{TemplateBinding Content}"/>
+                                    </Border>
+                                </AdornerDecorator>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="WindowState" Value="Maximized">
+                <Setter Property="Padding" Value="-2,-2,-2,38"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 
     <Style TargetType="{x:Type view:AnchorGroupWindow}">
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
@@ -441,40 +513,81 @@
             <Setter.Value>
                 <shell:WindowChrome
                     ResizeBorderThickness="8"
-                    CaptionHeight="24"
-                    GlassFrameThickness="2"
+                    CaptionHeight="28"
+                    CornerRadius="0"
+                    GlassFrameThickness="0"
                     ShowSystemMenu="True"/>
             </Setter.Value>
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:AnchorGroupWindow}">
-                    <Border ClipToBounds="True" BorderBrush="{TemplateBinding BorderBrush}"
+                    <Grid Background="#01FFFFFF">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="8"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="8"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Row="1" Grid.Column="1" ClipToBounds="True" BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}">
-                        <Grid>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="32"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <DockPanel x:Name="HeaderPanel">
+                                    <Image DockPanel.Dock="Left" Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
+                                    <TextBlock DockPanel.Dock="Left" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
+
+                                </DockPanel>
+                                <AdornerDecorator Grid.Row="1">
+                                    <Border>
+                                        <ContentPresenter Content="{TemplateBinding Content}"/>
+                                    </Border>
+                                </AdornerDecorator>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type ydock:DockManager}">
+        <Setter Property="DocumentHeaderTemplate" Value="{StaticResource DocumentHeaderTemplate}"/>
+        <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ydock:DockManager}">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid FlowDirection="LeftToRight">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="5"/>
                                 <RowDefinition Height="*"/>
+                                <RowDefinition Height="5"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <DockPanel x:Name="HeaderPanel">
-                                <Image DockPanel.Dock="Left" Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
-                                <TextBlock DockPanel.Dock="Left" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
-
-                            </DockPanel>
-                            <AdornerDecorator Grid.Row="1">
-                                <ContentPresenter Content="{TemplateBinding Content}"/>
-                            </AdornerDecorator>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="5"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="5"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ContentPresenter Content="{TemplateBinding LayoutRootPanel}" Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" Grid.ColumnSpan="3"/>
+                            <ContentPresenter Content="{TemplateBinding RightSide}" Grid.Column="4" Grid.Row="2"/>
+                            <ContentPresenter Content="{TemplateBinding LeftSide}" Grid.Column="0" Grid.Row="2"/>
+                            <ContentPresenter Content="{TemplateBinding TopSide}" Grid.Column="2" Grid.Row="0"/>
+                            <ContentPresenter Content="{TemplateBinding BottomSide}" Grid.Column="2" Grid.Row="4"/>
                         </Grid>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=NoBorder}" Value="True">
-                            <Setter Property="BorderThickness" Value="0"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=IsSpiltMode}" Value="False">
-                            <Setter TargetName="HeaderPanel" Property="Visibility" Value="Collapsed"/>
-                        </DataTrigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -8,6 +8,33 @@ using YDock.Interface;
 
 namespace YDock.View
 {
+    /// <summary>
+    /// Without WindowHeader
+    /// </summary>
+    public class SingleAnchorWindow : BaseFloatWindow
+    {
+        static SingleAnchorWindow()
+        {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(SingleAnchorWindow), new FrameworkPropertyMetadata(typeof(SingleAnchorWindow)));
+        }
+
+        public SingleAnchorWindow(bool needReCreate = false) : base(needReCreate)
+        {
+            ShowInTaskbar = false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="child">为ILayoutGroupControl类型</param>
+        /// <param name="index"></param>
+        public override void AttachChild(IDockView child, int index)
+        {
+            base.AttachChild(child, index);
+            Owner = child.Model.DockManager.MainWindow;
+        }
+    }
+
     public class AnchorGroupWindow : BaseFloatWindow
     {
         static AnchorGroupWindow()
@@ -15,45 +42,21 @@ namespace YDock.View
             DefaultStyleKeyProperty.OverrideMetadata(typeof(AnchorGroupWindow), new FrameworkPropertyMetadata(typeof(AnchorGroupWindow)));
         }
 
-        private bool _noBorder = false;
-        public bool NoBorder
+        public AnchorGroupWindow()
         {
-            get
-            {
-                return _noBorder;
-            }
-            set
-            {
-                if (_noBorder != value)
-                {
-                    _noBorder = value;
-                    RaisePropertyChanged("NoBorder");
-                }
-            }
+            ShowInTaskbar = false;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="child">为ILayoutPanel类型</param>
+        /// <param name="index"></param>
         public override void AttachChild(IDockView child, int index)
         {
+            _heightEceeed += Constants.FloatWindowHeaderHeight;
             base.AttachChild(child, index);
-            _UpdateNoBorder();
-            if (child is ILayoutPanel)
-                Owner = (child as ILayoutPanel).DockManager.MainWindow;
-            else Owner = child.Model.DockManager.MainWindow;
-        }
-
-        public override void DetachChild(IDockView child)
-        {
-            base.DetachChild(child);
-            _UpdateNoBorder();
-        }
-
-        void _UpdateNoBorder()
-        {
-            if (Content != null && Content is ILayoutGroupControl
-                && (Content as BaseGroupControl).Items.Count == 1)
-                NoBorder = true;
-            else NoBorder = false;
+            Owner = (child as ILayoutPanel).DockManager.MainWindow;
         }
     }
 }

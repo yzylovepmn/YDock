@@ -13,6 +13,9 @@ namespace YDock
         public const double DragOpacity = 0.5;
         public const double DockDefaultWidthLength = 300;
         public const double DockDefaultHeightLength = 200;
+        public const double FloatWindowHeaderHeight = 32;
+        public const double FloatWindowResizeLength = 8;
+        public const double DocumentWindowPadding = 6;
         #endregion
     }
 }

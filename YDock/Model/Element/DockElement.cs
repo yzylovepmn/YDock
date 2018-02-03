@@ -12,8 +12,9 @@ namespace YDock.Model
 {
     public class DockElement : DependencyObject, IDockElement, IComparable<DockElement>
     {
-        internal DockElement()
+        internal DockElement(bool isDocument = false)
         {
+            _isDocument = isDocument;
         }
 
         #region Ctrl
@@ -23,7 +24,7 @@ namespace YDock.Model
             get { return _dockControl; }
             internal set
             {
-                if (_dockControl != null)
+                if (_dockControl != value)
                     _dockControl = value;
             }
         }
@@ -128,6 +129,14 @@ namespace YDock.Model
             }
             get { return isVisible; }
         }
+        #endregion
+
+        #region IsDocument
+        private bool _isDocument;
+        /// <summary>
+        /// 是否以Document模式注册，该属性将影响Dock的浮动窗口的模式
+        /// </summary>
+        public bool IsDocument { get { return _isDocument; } }
         #endregion
 
         #region IsActive

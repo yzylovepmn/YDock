@@ -105,6 +105,11 @@ namespace YDock
             }
         }
 
+        public bool IsDocument
+        {
+            get { return _prototype.IsDocument; }
+        }
+
         public DockMode Mode
         {
             get
@@ -158,12 +163,8 @@ namespace YDock
                 return;
             }
 
-            if (mode == DockMode.Float ||
-                Mode == DockMode.Float)
-                DockManager.ChangeControlMode(this);
-
-            //Document模式不允许转换为DockBar模式
-            if (Side == DockSide.None && mode == DockMode.DockBar)
+            //Document不允许转换为DockBar模式
+            if (IsDocument && mode == DockMode.DockBar)
                 return;
 
             //切换为指定模式

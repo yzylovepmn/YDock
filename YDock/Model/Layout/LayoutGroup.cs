@@ -64,15 +64,23 @@ namespace YDock.Model
         public override void Detach(IDockElement element)
         {
             base.Detach(element);
-            //如果Children_CanSelect数量为0，且Container不是LayoutDocumentGroup，则尝试将view从界面移除
-            if (Children_CanSelect.Count() == 0 && !(this is LayoutDocumentGroup))
+            //保存Size信息
+            if (_view != null)
             {
-                var ret = (_view as ILayoutGroupControl).TryDeatchFromParent();
-                if (ret)
+                (element as DockElement).DesiredHeight = (_view as BaseGroupControl).ActualHeight;
+                (element as DockElement).DesiredWidth = (_view as BaseGroupControl).ActualWidth;
+                //如果Children_CanSelect数量为0，且Container不是LayoutDocumentGroup，则尝试将view从界面移除
+                if (Children_CanSelect.Count() == 0 //如果Children_CanSelect数量为0
+                    && (!(this is LayoutDocumentGroup) //Container不是LayoutDocumentGroup
+                    || _view.DockViewParent == null))//表示Parent为浮动窗口,可以移除
                 {
-                    _view = null;
-                    if (_children.Count == 0)
-                        Dispose();
+                    var ret = (_view as ILayoutGroupControl).TryDeatchFromParent();
+                    if (ret)
+                    {
+                        _view = null;
+                        if (_children.Count == 0)
+                            Dispose();
+                    }
                 }
             }
         }

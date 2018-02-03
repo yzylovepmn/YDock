@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using YDock.View;
 
@@ -35,6 +36,13 @@ namespace YDock
             var childP = child.PointToScreenDPIWithoutFlowDirection(new Point());
             return new Rect(new Point(childP.X - originP.X, childP.Y - originP.Y), child.TransformActualSizeToAncestor());
         }
+
+        public static Point GetMousePosition(FrameworkElement relativeTo)
+        {
+            var mouseP = Mouse.GetPosition(relativeTo);
+            var pToScreen = relativeTo.PointToScreenDPIWithoutFlowDirection(new Point());
+            return new Point(pToScreen.X + mouseP.X, pToScreen.Y + mouseP.Y);
+        }
     }
 
     public class ElementComparer<T> : IComparer<T>
@@ -56,6 +64,7 @@ namespace YDock
     {
         public static readonly SolidColorBrush SplitterBrushVertical;
         public static readonly SolidColorBrush SplitterBrushHorizontal;
+        public static readonly SolidColorBrush TextBlockActiveForeground;
         public static readonly Pen ActiveDashPen;
         public static readonly Pen DisActiveDashPen;
 
@@ -74,6 +83,14 @@ namespace YDock
                 R = 0xCC,
                 G = 0xCE,
                 B = 0xDB,
+                A = 0xFF
+            });
+
+            TextBlockActiveForeground = new SolidColorBrush(new Color()
+            {
+                R = 0x00,
+                G = 0x7A,
+                B = 0xCC,
                 A = 0xFF
             });
 

@@ -8,9 +8,33 @@ using YDock.Interface;
 
 namespace YDock.View
 {
-    public abstract class BaseFloatWindow : Window, ILayoutViewParent, INotifyPropertyChanged
+    public abstract class BaseFloatWindow : Window, ILayoutViewParent
     {
-        public ILayoutViewWithSize Child
+        protected BaseFloatWindow(bool needReCreate = false)
+        {
+            MinWidth = 150;
+            MinHeight = 60;
+            _widthEceeed = Constants.FloatWindowResizeLength * 2;
+            _heightEceeed = Constants.FloatWindowResizeLength * 2;
+            _needReCreate = needReCreate;
+            AllowsTransparency = true;
+            WindowStyle = WindowStyle.None;
+            ShowActivated = true;
+        }
+
+        protected double _widthEceeed;
+        internal double WidthEceeed
+        {
+            get { return _widthEceeed; }
+        }
+
+        protected double _heightEceeed;
+        internal double HeightEceeed
+        {
+            get { return _heightEceeed; }
+        }
+
+        internal ILayoutViewWithSize Child
         {
             get
             {
@@ -18,21 +42,11 @@ namespace YDock.View
             }
         }
 
-        private bool _isSpiltMode;
-        public bool IsSpiltMode
+        private bool _needReCreate;
+        internal bool NeedReCreate
         {
-            get
-            {
-                return _isSpiltMode;
-            }
-            set
-            {
-                if (_isSpiltMode != value)
-                {
-                    _isSpiltMode = value;
-                    RaisePropertyChanged("IsSpiltMode");
-                }
-            }
+            get { return _needReCreate; }
+            set { _needReCreate = value; }
         }
 
         public DockManager DockManager
@@ -49,31 +63,23 @@ namespace YDock.View
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
-        public void RaisePropertyChanged(string propertyName)
-        {
-            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-
         public virtual void AttachChild(IDockView child, int index)
         {
             if (Content != child)
+            {
                 Content = child;
-            _UpdateSpiltMode();
+                Height = (child as ILayoutSize).DesiredHeight + _heightEceeed;
+                Width = (child as ILayoutSize).DesiredWidth + _widthEceeed;
+            }
         }
 
         public virtual void DetachChild(IDockView child)
         {
             if (child == Content)
+            {
                 Content = null;
-            _UpdateSpiltMode();
-        }
-
-        void _UpdateSpiltMode()
-        {
-            if (Content != null && Content is ILayoutPanel)
-                IsSpiltMode = true;
-            else IsSpiltMode = false;
+                Close();
+            }
         }
     }
 }

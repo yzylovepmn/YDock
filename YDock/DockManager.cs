@@ -29,7 +29,6 @@ namespace YDock
             Root = new DockRoot();
             _dragManager = new DragManager(this);
             _dockControls = new List<IDockControl>();
-            _floatControls = new List<IDockControl>();
         }
 
         #region Root
@@ -94,6 +93,17 @@ namespace YDock
         {
             internal set { SetValue(DockTitleProperty, value); }
             get { return (string)GetValue(DockTitleProperty); }
+        }
+        #endregion
+
+        #region DocumentHeaderTemplate
+        public static readonly DependencyProperty DocumentHeaderTemplateProperty =
+            DependencyProperty.Register("DocumentHeaderTemplate", typeof(ControlTemplate), typeof(DockManager));
+
+        public ControlTemplate DocumentHeaderTemplate
+        {
+            internal set { SetValue(DocumentHeaderTemplateProperty, value); }
+            get { return (ControlTemplate)GetValue(DocumentHeaderTemplateProperty); }
         }
         #endregion
 
@@ -307,62 +317,12 @@ namespace YDock
         }
         private IList<IDockControl> _dockControls;
 
-        /// <summary>
-        /// all registed FloatControls
-        /// </summary>
-        public IEnumerable<IDockControl> FloatControls
-        {
-            get
-            {
-                foreach (var ctrl in _floatControls)
-                    yield return ctrl;
-            }
-        }
-        private IList<IDockControl> _floatControls;
 
         public int AllControlsCount
         {
             get
             {
-                return _dockControls.Count + _floatControls.Count;
-            }
-        }
-
-        internal void ChangeControlMode(IDockControl ctrl)
-        {
-            if (ctrl.Mode == DockMode.Float)
-            {
-                _floatControls.Remove(ctrl);
-                _dockControls.Add(ctrl);
-            }
-            else
-            {
-                _dockControls.Remove(ctrl);
-                _floatControls.Add(ctrl);
-            }
-        }
-
-        /// <summary>
-        /// all Docked child
-        /// </summary>
-        internal IEnumerable<IDockElement> DockedChildren
-        {
-            get
-            {
-                foreach (DockControl ctrl in _dockControls)
-                    yield return ctrl.Prototype;
-            }
-        }
-
-        /// <summary>
-        /// all Docked child
-        /// </summary>
-        internal IEnumerable<IDockElement> FloatedChildren
-        {
-            get
-            {
-                foreach (DockControl ctrl in _floatControls)
-                    yield return ctrl.Prototype;
+                return _dockControls.Count;
             }
         }
 
@@ -379,7 +339,7 @@ namespace YDock
         /// <returns></returns>
         public DockControl RegisterDocument(string title, UIElement content, ImageSource imageSource = null, bool canSelect = false, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength)
         {
-            DockElement ele = new DockElement()
+            DockElement ele = new DockElement(true)
             {
                 ID = AllControlsCount,
                 Title = title,
@@ -461,7 +421,7 @@ namespace YDock
                 DesiredHeight = desiredHeight
             };
             var ctrl = new DockControl(ele);
-            _floatControls.Add(ctrl);
+            _dockControls.Add(ctrl);
             return ctrl;
         }
         #endregion
@@ -482,10 +442,6 @@ namespace YDock
                 ctrl.Dispose();
             _dockControls.Clear();
             _dockControls = null;
-            foreach (var ctrl in _floatControls)
-                ctrl.Dispose();
-            _floatControls.Clear();
-            _floatControls = null;
             Root = null;
         }
     }

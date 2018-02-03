@@ -45,6 +45,13 @@ namespace YDock.Model
             DockManager.AutoHideElement = element;
         }
 
+        public override void Detach(IDockElement element)
+        {
+            base.Detach(element);
+            if (DockManager.AutoHideElement == element)
+                DockManager.AutoHideElement = null;
+        }
+
         public override void Dispose()
         {
             base.Dispose();

@@ -219,6 +219,11 @@ namespace YDock.View
 
         private void _DestroyContentForModel(DockElement Model)
         {
+            if (ActualWidth > 0)
+            {
+                Model.DesiredWidth = ActualWidth - Constants.SplitterSpan / 2;
+                Model.DesiredHeight = ActualHeight - Constants.SplitterSpan / 2;
+            }
             _layoutContent.Model = null;
             Children.Clear();
         }

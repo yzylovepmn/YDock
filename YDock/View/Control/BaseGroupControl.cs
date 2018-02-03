@@ -16,6 +16,11 @@ namespace YDock.View
         {
             Model = model;
             SetBinding(ItemsSourceProperty, new Binding("Model.Children_CanSelect") { Source = this });
+            if (model.Children.Count() > 0)
+            {
+                DesiredWidth = model.Children.First().DesiredWidth;
+                DesiredHeight = model.Children.First().DesiredHeight;
+            }
         }
 
         #region for drag
@@ -28,11 +33,12 @@ namespace YDock.View
         internal void UpdateChildrenBounds(Panel parent)
         {
             _childrenBounds = new List<Rect>();
-            var originP = parent.PointToScreenDPIWithoutFlowDirection(new Point());
+            double hoffset = 0;
             foreach (TabItem child in parent.Children)
             {
-                var childP = child.PointToScreenDPIWithoutFlowDirection(new Point());
-                _childrenBounds.Add(new Rect(new Point(childP.X - originP.X, childP.Y - originP.Y), child.TransformActualSizeToAncestor()));
+                var childSize = child.TransformActualSizeToAncestor();
+                _childrenBounds.Add(new Rect(new Point(hoffset, 0), childSize));
+                hoffset += childSize.Width;
             }
         }
         #endregion
@@ -135,7 +141,9 @@ namespace YDock.View
                     if (panel.IsDocumentPanel && panel.Count == 1)
                         return false;
                 }
-                (DockViewParent as ILayoutViewParent).DetachChild(this);
+                (Parent as ILayoutViewParent).DetachChild(this);
+                DesiredHeight = ActualHeight;
+                DesiredWidth = ActualWidth;
                 if (isDispose)
                     Dispose();
             }

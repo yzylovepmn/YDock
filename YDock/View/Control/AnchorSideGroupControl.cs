@@ -20,8 +20,7 @@ namespace YDock.View
 
         internal AnchorSideGroupControl(ILayoutGroup model) : base(model)
         {
-            DesiredWidth = model.Children.First().DesiredWidth;
-            DesiredHeight = model.Children.First().DesiredHeight;
+            
         }
     }
 }

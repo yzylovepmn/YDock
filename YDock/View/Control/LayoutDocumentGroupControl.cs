@@ -18,8 +18,7 @@ namespace YDock.View
             FocusableProperty.OverrideMetadata(typeof(LayoutDocumentGroupControl), new FrameworkPropertyMetadata(false));
         }
 
-
-        internal LayoutDocumentGroupControl(ILayoutGroup model) : base(model)
+        public LayoutDocumentGroupControl(ILayoutGroup model) : base(model)
         {
         }
     }

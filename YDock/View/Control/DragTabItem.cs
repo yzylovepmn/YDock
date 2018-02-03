@@ -79,8 +79,10 @@ namespace YDock.View
 
             _dockViewParent._mouseInside = true;
             _dockViewParent._mouseDown = e.GetPosition(this);
-            _dockViewParent._rect = DockHelper.CreateChildRectFromParent(VisualParent as Panel, this);
             _dockViewParent._dragItem = Content as IDockElement;
+            if (_dockViewParent._dragItem.Container is LayoutDocumentGroup)
+                _dockViewParent._rect = new Rect();
+            else _dockViewParent._rect = DockHelper.CreateChildRectFromParent(VisualParent as Panel, this);
             _dockViewParent.UpdateChildrenBounds(VisualParent as Panel);
 
             Container.SetActive(_dockViewParent._dragItem);
@@ -106,7 +108,7 @@ namespace YDock.View
                         //TODO Drag
                         var item = _dockViewParent._dragItem;
                         _dockViewParent._dragItem = null;
-                        _dockViewParent.Model.DockManager.DragManager.IntoDragAction(new DragItem(item, DockMode.Normal, _dockViewParent._mouseDown, _dockViewParent._rect));
+                        _dockViewParent.Model.DockManager.DragManager.IntoDragAction(new DragItem(item, item.Mode, _dockViewParent._mouseDown, _dockViewParent._rect));
                     }
                     else
                     {
@@ -157,9 +159,9 @@ namespace YDock.View
         {
             Container.MoveTo(src, des);
             parent.UpdateLayout();
-            _dockViewParent.UpdateChildrenBounds(parent);
             (_dockViewParent as BaseGroupControl).SelectedIndex = des;
             parent.Children[des].CaptureMouse();
+            _dockViewParent.UpdateChildrenBounds(parent);
         }
 
         public void Dispose()

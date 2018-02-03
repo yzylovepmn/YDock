@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Controls;
 using YDock.Enum;
 using YDock.Interface;
+using YDock.View;
 
 namespace YDock.Model
 {
@@ -168,11 +169,7 @@ namespace YDock.Model
             foreach (DockElement child in _children)
             {
                 if (child.Mode != mode)
-                {
-                    if (child.Mode == DockMode.Float || mode == DockMode.Float)
-                        DockManager.ChangeControlMode(child.DockControl);
                     child.Mode = mode;
-                }
             }
         }
 
