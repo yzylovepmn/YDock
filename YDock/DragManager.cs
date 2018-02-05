@@ -61,37 +61,43 @@ namespace YDock
             _dockManager = dockManager;
         }
 
+        #region DockManager
         private DockManager _dockManager;
         public DockManager DockManager
         {
             get { return _dockManager; }
         }
+        #endregion
 
+        #region Drag
+        #region private field
         private ILayoutGroupControl _dragTarget;
         private DragItem _dragItem;
-        private Window _dragHelper;
         private BaseFloatWindow _dragWnd;
         private bool _isDragging = false;
+        #endregion
+
+        #region Property
         public bool IsDragging
         {
             get { return _isDragging; }
         }
+        #endregion
 
-
+        #region Drag Action
         internal void IntoDragAction(DragItem dragItem)
         {
+            _isDragging = true;
             _dragItem = dragItem;
             BeforeDrag();
         }
 
         private void BeforeDrag()
         {
-            _isDragging = true;
             _InitDragItem();
-            _InitDragHelper();
         }
 
-        private void _DoDragDrop()
+        internal void DoDragDrop()
         {
             _isDragging = false;
 
@@ -101,13 +107,14 @@ namespace YDock
 
         private void AfterDrag()
         {
-            if (_dragWnd is DragTabWindow)
-                _dragWnd.Close();
-            else _dragWnd = null;
-            _DestroyDragHelper();
+            if (_dragWnd != null && _dragWnd.NeedReCreate)
+                _dragWnd.Recreate();
+            _dragWnd = null;
             _DestroyDragItem();
         }
+        #endregion
 
+        #region init & destroy
         private void _InitDragItem()
         {
             ILayoutGroup group;
@@ -136,7 +143,7 @@ namespace YDock
                     else if (_dragItem.RelativeObj is IDockElement)
                     {
                         ele = _dragItem.RelativeObj as IDockElement;
-                        if (ele.Container is LayoutDocumentGroup)
+                        if (ele.IsDocument)
                             group = new LayoutDocumentGroup(DockManager);
                         else group = new LayoutGroup(ele.Side, DockManager);
                         //先从逻辑父级中移除
@@ -147,9 +154,22 @@ namespace YDock
                         group.SetDockMode(DockMode.Float);
                         //创建新的浮动窗口，并初始化位置
                         //这里可知引起drag的时DragTabItem故这里创建临时的DragTabWindow
-                        _dragWnd = DragTabWindow.CreateDragTabWindow(_dragItem);
-                        _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y;
-                        _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left;
+                        if (ele.IsDocument)
+                        {
+                            _dragWnd = new DocumentGroupWindow() { NeedReCreate = true };
+                            _dragWnd.AttachChild(new LayoutDocumentGroupControl(group) { IsDraggingFromDock = true, BorderThickness = new Thickness(1) }, 0);
+                            _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowHeaderHeight - Constants.FloatWindowResizeLength;
+                            _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left - Constants.FloatWindowResizeLength - Constants.DocumentWindowPadding;
+                        }
+                        else
+                        {
+                            _dragWnd = new SingleAnchorWindow() { NeedReCreate = true };
+                            _dragWnd.AttachChild(new AnchorSideGroupControl(group) { IsDraggingFromDock = true }, 0);
+                            _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowResizeLength - ele.DesiredHeight + 20;
+                            _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left - Constants.FloatWindowResizeLength;
+                        }
+                        _dragWnd.Background = Brushes.Transparent;
+                        _dragWnd.BorderBrush = Brushes.Transparent;
                         _dragWnd.Show();
                     }
                     break;
@@ -158,7 +178,7 @@ namespace YDock
                     ele = _dragItem.RelativeObj as IDockElement;
                     ele.Container.Detach(ele);
                     //创建新的浮动窗口，并初始化位置
-                   group = new LayoutGroup(ele.Side, DockManager);
+                    group = new LayoutGroup(ele.Side, DockManager);
                     group.Attach(ele);
                     //注意重新设置Mode
                     group.SetDockMode(DockMode.Float);
@@ -174,31 +194,65 @@ namespace YDock
                     if (_dragItem.RelativeObj is IDockElement)
                     {
                         ele = _dragItem.RelativeObj as IDockElement;
-                        if (ele.Container is LayoutDocumentGroup)
-                            group = new LayoutDocumentGroup(DockManager);
-                        else group = new LayoutGroup(ele.Side, DockManager);
-                        //先从逻辑父级中移除
-                        ele.Container.Detach(ele);
-                        //再加入新的逻辑父级
-                        group.Attach(ele);
-                        //创建新的浮动窗口，并初始化位置
-                        //这里可知引起drag的时DragTabItem故这里创建临时的DragTabWindow
-                        _dragWnd = DragTabWindow.CreateDragTabWindow(_dragItem);
-                        _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y;
-                        _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left;
-                        _dragWnd.Show();
-                    }
-                    else if (_dragItem.RelativeObj is ILayoutGroup)
-                    {
-                        group = _dragItem.RelativeObj as ILayoutGroup;
-                        //表示此时的Parent为SingleAnchorWindow
-                        if (group.View.DockViewParent == null)
-                            _dragWnd = (group.View as FrameworkElement).Parent as BaseFloatWindow;
+                        var ctrl = ele.Container.View as BaseGroupControl;
+                        if (ctrl.Items.Count == 1 && ctrl.Parent is BaseFloatWindow)
+                        {
+                            _dragWnd = (ctrl.Parent as BaseFloatWindow);
+                            _dragWnd.Hide();
+                            (ctrl.Parent as BaseFloatWindow).Recreate();
+                            if (ele.IsDocument)
+                            {
+                                _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowHeaderHeight - Constants.FloatWindowResizeLength;
+                                _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left - Constants.FloatWindowResizeLength - Constants.DocumentWindowPadding;
+                            }
+                            else
+                            {
+                                _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowHeaderHeight - Constants.FloatWindowResizeLength;
+                                _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left - Constants.FloatWindowResizeLength - Constants.DocumentWindowPadding;
+                            }
+                            _dragWnd.Show();
+                        }
                         else
                         {
-
+                            if (ele.Container is LayoutDocumentGroup)
+                                group = new LayoutDocumentGroup(DockManager);
+                            else group = new LayoutGroup(ele.Side, DockManager);
+                            //先从逻辑父级中移除
+                            ele.Container.Detach(ele);
+                            //再加入新的逻辑父级
+                            group.Attach(ele);
+                            //创建新的浮动窗口，并初始化位置
+                            //这里可知引起drag的时DragTabItem故这里创建临时的DragTabWindow
+                            if (ele.IsDocument)
+                            {
+                                _dragWnd = new DocumentGroupWindow() { NeedReCreate = true };
+                                _dragWnd.AttachChild(new LayoutDocumentGroupControl(group) { IsDraggingFromDock = true, BorderThickness = new Thickness(1) }, 0);
+                                _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowHeaderHeight - Constants.FloatWindowResizeLength;
+                                _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left - Constants.FloatWindowResizeLength - Constants.DocumentWindowPadding;
+                            }
+                            else
+                            {
+                                _dragWnd = new SingleAnchorWindow() { NeedReCreate = true };
+                                _dragWnd.AttachChild(new AnchorSideGroupControl(group) { IsDraggingFromDock = true }, 0);
+                                _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowHeaderHeight - Constants.FloatWindowResizeLength;
+                                _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left - Constants.FloatWindowResizeLength - Constants.DocumentWindowPadding;
+                            }
+                            _dragWnd.Background = Brushes.Transparent;
+                            _dragWnd.BorderBrush = Brushes.Transparent;
+                            _dragWnd.Show();
                         }
                     }
+                    //else if (_dragItem.RelativeObj is ILayoutGroup)
+                    //{
+                    //    group = _dragItem.RelativeObj as ILayoutGroup;
+                    //    //表示此时的Parent为SingleAnchorWindow
+                    //    if (group.View.DockViewParent == null)
+                    //        _dragWnd = (group.View as FrameworkElement).Parent as BaseFloatWindow;
+                    //    else
+                    //    {
+
+                    //    }
+                    //}
                     break;
             }
         }
@@ -209,55 +263,14 @@ namespace YDock
             _dragItem = null;
             _dragTarget = null;
         }
+        #endregion
+        #endregion
 
-        private void _InitDragHelper()
+        #region DragEvent
+        internal void OnMouseMove(object sender)
         {
-            _dragHelper = DockHelper.CreateTransparentWindow();
-            _dragHelper.MouseMove += OnMouseMove;
-            _dragHelper.MouseLeftButtonUp += OnMouseLeftButtonUp;
-            _dragHelper.Show();
-        }
-
-        private void _DestroyDragHelper()
-        {
-            _dragHelper.MouseLeftButtonUp -= OnMouseLeftButtonUp;
-            _dragHelper.MouseMove -= OnMouseMove;
-            _dragHelper.Close();
-            _dragHelper = null;
-        }
-
-        private void OnMouseMove(object sender, MouseEventArgs e)
-        {
-            _UpdateDragWndPos(DockHelper.GetMousePosition(DockManager.LayoutRootPanel));
-            var p = e.GetPosition(DockManager.LayoutRootPanel.RootGroupPanel);
+            var p = DockHelper.GetMousePositionRelativeTo(DockManager.LayoutRootPanel.RootGroupPanel);
             VisualTreeHelper.HitTest(DockManager.LayoutRootPanel.RootGroupPanel, _HitFilter, _HitRessult, new PointHitTestParameters(p));
-        }
-
-        void _UpdateDragWndPos(Point mouseP)
-        {
-            if (_dragWnd != null)
-            {
-                if (_dragWnd is DocumentGroupWindow)
-                {
-                    _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragWnd.WidthEceeed / 2 - 1;
-                    _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowResizeLength - Constants.FloatWindowHeaderHeight - 1;
-                }
-                else if (_dragWnd is AnchorGroupWindow)
-                {
-                    _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - Constants.FloatWindowResizeLength - 1;
-                    _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowResizeLength - Constants.FloatWindowHeaderHeight - 1;
-                }
-                else if (_dragWnd is SingleAnchorWindow)
-                {
-                    _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - Constants.FloatWindowResizeLength - 1;
-                    _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowResizeLength - 1;
-                }
-                else if (_dragWnd is DragTabWindow)
-                {
-                    _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y;
-                    _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left;
-                }
-            }
         }
 
         private HitTestResultBehavior _HitRessult(HitTestResult result)
@@ -276,9 +289,10 @@ namespace YDock
             return HitTestFilterBehavior.Continue;
         }
 
-        private void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void _CreatDragWindow()
         {
-            _DoDragDrop();
+
         }
+        #endregion
     }
 }

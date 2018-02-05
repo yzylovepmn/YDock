@@ -3,7 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Threading;
+using YDock.Enum;
 using YDock.Interface;
 
 namespace YDock.View
@@ -20,6 +25,68 @@ namespace YDock.View
             AllowsTransparency = true;
             WindowStyle = WindowStyle.None;
             ShowActivated = true;
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+        }
+
+        protected override void OnActivated(EventArgs e)
+        {
+            base.OnActivated(e);
+            if (Mouse.LeftButton == MouseButtonState.Pressed)
+            {
+                IntPtr windowHandle = new WindowInteropHelper(this).Handle;
+                var mousePosition = this.PointToScreenDPI(Mouse.GetPosition(this));
+                IntPtr lParam = new IntPtr(((int)mousePosition.X & (int)0xFFFF) | (((int)mousePosition.Y) << 16));
+
+                Win32Helper.SendMessage(windowHandle, Win32Helper.WM_NCLBUTTONDOWN, new IntPtr(Win32Helper.HT_CAPTION), lParam);
+            }
+        }
+
+        protected HwndSource _hwndSrc;
+        protected HwndSourceHook _hwndSrcHook;
+
+        protected virtual void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            this.Loaded -= new RoutedEventHandler(OnLoaded);
+
+            _hwndSrc = PresentationSource.FromDependencyObject(this) as HwndSource;
+            _hwndSrcHook = new HwndSourceHook(FilterMessage);
+            _hwndSrc.AddHook(_hwndSrcHook);
+        }
+
+        protected virtual IntPtr FilterMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            handled = false;
+            switch (msg)
+            {
+                case Win32Helper.WM_ENTERSIZEMOVE:
+                    if (!DockManager.DragManager.IsDragging)
+                        DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, new Point(), Rect.Empty));
+                    break;
+                case Win32Helper.WM_MOVING:
+                    if (DockManager.DragManager.IsDragging)
+                        DockManager.DragManager.OnMouseMove(this);
+                    break;
+                case Win32Helper.WM_EXITSIZEMOVE:
+                    if (DockManager.DragManager.IsDragging)
+                        DockManager.DragManager.DoDragDrop();
+                    break;
+                default:
+                    break;
+            }
+            return IntPtr.Zero;
+        }
+
+        protected virtual void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            this.Unloaded -= new RoutedEventHandler(OnUnloaded);
+
+            if (_hwndSrc != null)
+            {
+                _hwndSrc.RemoveHook(_hwndSrcHook);
+                _hwndSrc.Dispose();
+                _hwndSrc = null;
+            }
         }
 
         protected double _widthEceeed;
@@ -34,7 +101,7 @@ namespace YDock.View
             get { return _heightEceeed; }
         }
 
-        internal ILayoutViewWithSize Child
+        internal virtual ILayoutViewWithSize Child
         {
             get
             {
@@ -42,14 +109,14 @@ namespace YDock.View
             }
         }
 
-        private bool _needReCreate;
+        protected bool _needReCreate;
         internal bool NeedReCreate
         {
             get { return _needReCreate; }
             set { _needReCreate = value; }
         }
 
-        public DockManager DockManager
+        public virtual DockManager DockManager
         {
             get
             {
@@ -81,5 +148,7 @@ namespace YDock.View
                 Close();
             }
         }
+
+        public virtual void Recreate() { }
     }
 }

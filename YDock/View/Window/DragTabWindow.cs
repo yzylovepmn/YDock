@@ -1,11 +1,14 @@
-﻿using System;
+﻿using Microsoft.Windows.Shell;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
+using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
 
@@ -90,9 +93,7 @@ namespace YDock.View
                 var header = new DragTabItem(null)
                 {
                     Template = ele.DockManager.DocumentHeaderTemplate,
-                    DataContext = ele,
-                    //禁用命中测试
-                    IsHitTestVisible = false
+                    DataContext = ele
                 };
                 _internelGrid.RowDefinitions[0].Height = new GridLength(21, GridUnitType.Pixel);
                 _internelGrid.RowDefinitions[1].Height = new GridLength((ele.Content as FrameworkElement).ActualHeight + 2);
@@ -126,8 +127,27 @@ namespace YDock.View
                 canvas.Children.Add(border);
                 Canvas.SetLeft(border, dragItem.ClickRect.Left);
             }
+            dragTabWindow.SizeToContent = SizeToContent.Height;
+            dragTabWindow._dockManager = ele.DockManager;
             dragTabWindow.Owner = ele.DockManager.MainWindow;
             return dragTabWindow;
+        }
+
+        private DockManager _dockManager;
+        public override DockManager DockManager
+        {
+            get
+            {
+                return _dockManager;
+            }
+        }
+
+        internal override ILayoutViewWithSize Child
+        {
+            get
+            {
+                return null;
+            }
         }
     }
 }

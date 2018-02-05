@@ -43,13 +43,14 @@ namespace YDock.Interface
         void MoveTo(int src, int des);
         int IndexOf(IDockElement child);
         void SetActive(IDockElement element);
+        void SetActive(int index);
         void Detach(IDockElement element);
         void Attach(IDockElement element);
         void SetDockMode(DockMode mode);
         void RaisePropertyChanged(string propertyName);
     }
 
-    public interface ILayoutGroupControl : ILayoutViewWithSize
+    public interface ILayoutGroupControl : ILayoutViewWithSize, INotifyPropertyChanged
     {
         bool TryDeatchFromParent(bool isDispose = true);
         void AttachToParent(ILayoutPanel parent, int index);

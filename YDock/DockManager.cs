@@ -267,7 +267,7 @@ namespace YDock
         /// <summary>
         /// current ActiveElement
         /// </summary>
-        public DockElement ActiveElement
+        public IDockElement ActiveElement
         {
             get { return _activeElement; }
             internal set
@@ -276,7 +276,7 @@ namespace YDock
                 {
                     if (_activeElement != null)
                         _activeElement.IsActive = false;
-                    _activeElement = value;
+                    _activeElement = value as DockElement;
                     if (_activeElement != null)
                     {
                         _activeElement.IsActive = true;

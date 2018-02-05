@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:YDockTest"
         xmlns:ydock="clr-namespace:YDock;assembly=YDock"
         xmlns:ydockmodel="clr-namespace:YDock.Model;assembly=YDock"
+        xmlns:shell="clr-namespace:Microsoft.Windows.Shell;assembly=YDock"
         mc:Ignorable="d" WindowState="Maximized"
         Title="MainWindow" Height="350" Width="525">
     <DockPanel>

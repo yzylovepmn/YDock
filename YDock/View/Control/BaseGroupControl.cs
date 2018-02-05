@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -84,6 +85,9 @@ namespace YDock.View
         }
 
         private IDockModel _model;
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
         public IDockModel Model
         {
             get
@@ -103,6 +107,19 @@ namespace YDock.View
             }
         }
 
+        private bool _isDraggingFromDock = false;
+        public bool IsDraggingFromDock
+        {
+            get { return _isDraggingFromDock; }
+            set
+            {
+                if (_isDraggingFromDock != value)
+                {
+                    _isDraggingFromDock = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs("IsDraggingFromDock"));
+                }
+            }
+        }
 
         public IDockView DockViewParent
         {

@@ -141,7 +141,21 @@ namespace YDock.Model
             {
                 if (element != null && !element.CanSelect)
                     (element as DockElement).CanSelect = true;
-                DockManager.ActiveElement = element as DockElement;
+                DockManager.ActiveElement = element;
+            }
+            else
+            {
+
+            }
+        }
+
+        public virtual void SetActive(int index)
+        {
+            if (index < 0 || index >= _children.Count) throw new ArgumentOutOfRangeException("index out of range!");
+            if (_view != null)
+            {
+                (_children[index] as DockElement).CanSelect = true;
+                DockManager.ActiveElement = _children[index];
             }
             else
             {

@@ -23,21 +23,6 @@ namespace YDock.View
             DataContext = null;
         }
 
-        protected override void OnMouseDoubleClick(MouseButtonEventArgs e)
-        {
-            base.OnMouseDoubleClick(e);
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                var wnd = Window.GetWindow(this);
-                if (wnd is SingleAnchorWindow)
-                {
-                    if (wnd.WindowState == WindowState.Normal)
-                        wnd.WindowState = WindowState.Maximized;
-                    else wnd.WindowState = WindowState.Normal;
-                }
-            }
-        }
-
         Point _mouseDown;
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {

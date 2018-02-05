@@ -187,86 +187,124 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <Style TargetType="{x:Type view:LayoutDocumentGroupControl}">
-        <Setter Property="BorderThickness" Value="1,0,1,1"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
-        <Setter Property="Background" Value="White"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type view:LayoutDocumentGroupControl}">
-                    <Grid KeyboardNavigation.TabNavigation="Local">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Border x:Name="Border" SnapsToDevicePixels="True" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,2">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="15"/>
-                                </Grid.ColumnDefinitions>
-                                <view:DocumentPanel shell:WindowChrome.IsHitTestVisibleInChrome="True" IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
-                                <view:CustomToggleButton shell:WindowChrome.IsHitTestVisibleInChrome="True" IsChecked="{Binding RelativeSource={RelativeSource Self},Path=DropContextMenu.IsOpen}" IsThreeState="False" Height="15" Grid.Column="1" Style="{StaticResource DocumentToggleButtonStyle}">
-                                    <view:CustomToggleButton.DropContextMenu>
-                                        <view:CustomContextMenu ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.ChildrenSorted}">
-                                            <view:CustomContextMenu.Style>
-                                                <Style TargetType="{x:Type view:CustomContextMenu}">
+    <ControlTemplate x:Key="DocumentGroupControlNormal" TargetType="{x:Type view:LayoutDocumentGroupControl}">
+        <Grid KeyboardNavigation.TabNavigation="Local">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Rectangle x:Name="Rect" Height="2" SnapsToDevicePixels="True" Grid.Row="1" Fill="{StaticResource BorderBrush}"/>
+            <Border x:Name="Border" SnapsToDevicePixels="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="15"/>
+                    </Grid.ColumnDefinitions>
+                    <view:DocumentPanel shell:WindowChrome.IsHitTestVisibleInChrome="True" IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
+                    <view:CustomToggleButton shell:WindowChrome.IsHitTestVisibleInChrome="True" IsChecked="{Binding RelativeSource={RelativeSource Self},Path=DropContextMenu.IsOpen}" IsThreeState="False" Height="15" Grid.Column="1" Style="{StaticResource DocumentToggleButtonStyle}">
+                        <view:CustomToggleButton.DropContextMenu>
+                            <view:CustomContextMenu ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.ChildrenSorted}">
+                                <view:CustomContextMenu.Style>
+                                    <Style TargetType="{x:Type view:CustomContextMenu}">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type view:CustomContextMenu}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="2"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="*"/>
+                                                            <RowDefinition Height="2"/>
+                                                        </Grid.RowDefinitions>
+                                                        <Grid.Effect>
+                                                            <DropShadowEffect Opacity="0.4" Color="Black" ShadowDepth="8"/>
+                                                        </Grid.Effect>
+                                                        <Border Background="#FFF6F6F6" Padding="2" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" SnapsToDevicePixels="True">
+                                                            <StackPanel IsItemsHost="True"/>
+                                                        </Border>
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="ItemContainerStyle">
+                                            <Setter.Value>
+                                                <Style TargetType="{x:Type view:CustomMenuItem}">
+                                                    <Setter Property="Background" Value="Transparent"/>
                                                     <Setter Property="Template">
                                                         <Setter.Value>
-                                                            <ControlTemplate TargetType="{x:Type view:CustomContextMenu}">
-                                                                <Grid>
+                                                            <ControlTemplate TargetType="{x:Type view:CustomMenuItem}">
+                                                                <Grid Background="{TemplateBinding Background}" Height="22">
                                                                     <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="32"/>
                                                                         <ColumnDefinition Width="*"/>
-                                                                        <ColumnDefinition Width="2"/>
                                                                     </Grid.ColumnDefinitions>
-                                                                    <Grid.RowDefinitions>
-                                                                        <RowDefinition Height="*"/>
-                                                                        <RowDefinition Height="2"/>
-                                                                    </Grid.RowDefinitions>
-                                                                    <Grid.Effect>
-                                                                        <DropShadowEffect Opacity="0.4" Color="Black" ShadowDepth="8"/>
-                                                                    </Grid.Effect>
-                                                                    <Border Background="#FFF6F6F6" Padding="2" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" SnapsToDevicePixels="True">
-                                                                        <StackPanel IsItemsHost="True"/>
-                                                                    </Border>
+                                                                    <Image Source="{Binding ImageSource}"/>
+                                                                    <TextBlock Foreground="Black" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Title}" Margin="10,0,50,0"/>
                                                                 </Grid>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="Background" Value="#FFC9DEF5"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
                                                             </ControlTemplate>
                                                         </Setter.Value>
                                                     </Setter>
-                                                    <Setter Property="ItemContainerStyle">
-                                                        <Setter.Value>
-                                                            <Style TargetType="{x:Type view:CustomMenuItem}">
-                                                                <Setter Property="Background" Value="Transparent"/>
-                                                                <Setter Property="Template">
-                                                                    <Setter.Value>
-                                                                        <ControlTemplate TargetType="{x:Type view:CustomMenuItem}">
-                                                                            <Grid Background="{TemplateBinding Background}" Height="22">
-                                                                                <Grid.ColumnDefinitions>
-                                                                                    <ColumnDefinition Width="32"/>
-                                                                                    <ColumnDefinition Width="*"/>
-                                                                                </Grid.ColumnDefinitions>
-                                                                                <Image Source="{Binding ImageSource}"/>
-                                                                                <TextBlock Foreground="Black" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Title}" Margin="10,0,50,0"/>
-                                                                            </Grid>
-                                                                            <ControlTemplate.Triggers>
-                                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                                    <Setter Property="Background" Value="#FFC9DEF5"/>
-                                                                                </Trigger>
-                                                                            </ControlTemplate.Triggers>
-                                                                        </ControlTemplate>
-                                                                    </Setter.Value>
-                                                                </Setter>
-                                                            </Style>
-                                                        </Setter.Value>
-                                                    </Setter>
                                                 </Style>
-                                            </view:CustomContextMenu.Style>
-                                        </view:CustomContextMenu>
-                                    </view:CustomToggleButton.DropContextMenu>
-                                </view:CustomToggleButton>
-                            </Grid>
-                        </Border>
-                        <Border x:Name="ContentPanel"
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </view:CustomContextMenu.Style>
+                            </view:CustomContextMenu>
+                        </view:CustomToggleButton.DropContextMenu>
+                    </view:CustomToggleButton>
+                </Grid>
+            </Border>
+            <Border x:Name="ContentPanel"
+                                VerticalAlignment="Stretch"
+                                HorizontalAlignment="Stretch"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}"
+                                KeyboardNavigation.DirectionalNavigation="Contained"
+                                Grid.Row="2" SnapsToDevicePixels="True"
+                                KeyboardNavigation.TabIndex="2"
+                                KeyboardNavigation.TabNavigation="Cycle">
+                <ContentPresenter ContentSource="SelectedContent"
+                                              Margin="{TemplateBinding Padding}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+            </Border>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self},Path=Items.Count}" Value="0">
+                <Setter TargetName="Border" Property="Visibility" Value="Collapsed"/>
+                <Setter TargetName="Rect" Property="Visibility" Value="Collapsed"/>
+                <Setter Property="BorderThickness" Value="1"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self},Path=Model.IsActive}" Value="True">
+                <Setter TargetName="Rect" Property="Fill" Value="{StaticResource ActiveHeaderBackground}"/>
+            </DataTrigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="DocumentGroupControlDrag" TargetType="{x:Type view:LayoutDocumentGroupControl}">
+        <Grid KeyboardNavigation.TabNavigation="Local">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Border x:Name="Border" SnapsToDevicePixels="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="15"/>
+                    </Grid.ColumnDefinitions>
+                    <view:DocumentPanel shell:WindowChrome.IsHitTestVisibleInChrome="True" IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
+                </Grid>
+            </Border>
+            <Border x:Name="ContentPanel"
                                 VerticalAlignment="Stretch"
                                 HorizontalAlignment="Stretch"
                                 BorderBrush="{TemplateBinding BorderBrush}"
@@ -276,23 +314,73 @@
                                 Grid.Row="1" SnapsToDevicePixels="True"
                                 KeyboardNavigation.TabIndex="2"
                                 KeyboardNavigation.TabNavigation="Cycle">
-                            <ContentPresenter ContentSource="SelectedContent"
+                <ContentPresenter ContentSource="SelectedContent"
                                               Margin="{TemplateBinding Padding}"
                                               SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                        </Border>
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self},Path=Items.Count}" Value="0">
-                            <Setter TargetName="Border" Property="Visibility" Value="Collapsed"/>
-                            <Setter Property="BorderThickness" Value="1"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self},Path=Model.IsActive}" Value="True">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource ActiveHeaderBackground}"/>
-                        </DataTrigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+            </Border>
+        </Grid>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="AnchorSideGroupControlNormal" TargetType="{x:Type view:AnchorSideGroupControl}">
+        <Grid KeyboardNavigation.TabNavigation="Local">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Border Background="Transparent" Grid.RowSpan="2"/>
+            <Border x:Name="ContentPanel"
+                                VerticalAlignment="Stretch"
+                                HorizontalAlignment="Stretch"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}"
+                                KeyboardNavigation.DirectionalNavigation="Contained"
+                                KeyboardNavigation.TabIndex="2"
+                                KeyboardNavigation.TabNavigation="Cycle"
+                                SnapsToDevicePixels="True">
+                <ContentPresenter ContentSource="SelectedContent"
+                                              Margin="{TemplateBinding Padding}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+            </Border>
+            <view:AnchorSidePanel Grid.Row="1" x:Name="ItemsHost" Background="{StaticResource WindowBackground}" IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self},Path=Items.Count}" Value="1">
+                <Setter TargetName="ItemsHost" Property="Height" Value="0"/>
+            </DataTrigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="AnchorSideGroupControlDrag" TargetType="{x:Type view:AnchorSideGroupControl}">
+        <Grid KeyboardNavigation.TabNavigation="Local">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Border Background="Transparent" Grid.RowSpan="2"/>
+            <Border x:Name="ContentPanel"
+                                VerticalAlignment="Stretch"
+                                HorizontalAlignment="Stretch"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}"
+                                KeyboardNavigation.DirectionalNavigation="Contained"
+                                KeyboardNavigation.TabIndex="2"
+                                KeyboardNavigation.TabNavigation="Cycle"
+                                SnapsToDevicePixels="True">
+                <ContentPresenter ContentSource="SelectedContent"
+                                              Margin="{TemplateBinding Padding}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+            </Border>
+            <view:AnchorSidePanel Grid.Row="1" x:Name="ItemsHost" Background="Transparent" IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
+        </Grid>
+    </ControlTemplate>
+
+    <Style TargetType="{x:Type view:LayoutDocumentGroupControl}">
+        <Setter Property="BorderThickness" Value="1,0,1,1"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="Template" Value="{StaticResource DocumentGroupControlNormal}"/>
 
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
@@ -310,43 +398,20 @@
                 </DataTemplate>
             </Setter.Value>
         </Setter>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self},Path=IsDraggingFromDock}" Value="True">
+                <Setter Property="Template" Value="{StaticResource DocumentGroupControlDrag}"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self},Path=IsDraggingFromDock}" Value="False">
+                <Setter Property="Template" Value="{StaticResource DocumentGroupControlNormal}"/>
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 
     <Style TargetType="{x:Type view:AnchorSideGroupControl}">
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type view:AnchorSideGroupControl}">
-                    <Grid KeyboardNavigation.TabNavigation="Local">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Border Background="Transparent" Grid.RowSpan="2"/>
-                        <Border x:Name="ContentPanel"
-                                VerticalAlignment="Stretch"
-                                HorizontalAlignment="Stretch"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Background="{TemplateBinding Background}"
-                                KeyboardNavigation.DirectionalNavigation="Contained"
-                                KeyboardNavigation.TabIndex="2"
-                                KeyboardNavigation.TabNavigation="Cycle"
-                                SnapsToDevicePixels="True">
-                            <ContentPresenter ContentSource="SelectedContent"
-                                              Margin="{TemplateBinding Padding}"
-                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                        </Border>
-                        <view:AnchorSidePanel Grid.Row="1" x:Name="ItemsHost" Background="{StaticResource WindowBackground}" IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self},Path=Items.Count}" Value="1">
-                            <Setter TargetName="ItemsHost" Property="Height" Value="0"/>
-                        </DataTrigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
+        <Setter Property="Template" Value="{StaticResource AnchorSideGroupControlNormal}">
         </Setter>
 
         <Setter Property="ItemContainerStyle">
@@ -393,6 +458,11 @@
                 </DataTemplate>
             </Setter.Value>
         </Setter>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self},Path=IsDraggingFromDock}" Value="True">
+                <Setter Property="Template" Value="{StaticResource AnchorSideGroupControlDrag}"/>
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 
     <Style TargetType="{x:Type view:SingleAnchorWindow}">
@@ -403,7 +473,7 @@
             <Setter.Value>
                 <shell:WindowChrome
                     ResizeBorderThickness="9"
-                    CaptionHeight="20"
+                    CaptionHeight="19.5"
                     CornerRadius="0"
                     GlassFrameThickness="0"
                     ShowSystemMenu="False"/>

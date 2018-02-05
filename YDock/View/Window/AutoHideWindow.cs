@@ -51,14 +51,14 @@ namespace YDock.View
                 if (e.HorizontalChange != 0)
                 {
                     double newPos = pToScreen.X + e.HorizontalChange;
-                    if (_dragBound1 + Constants.SideLength / 2 >= _dragBound2 - Constants.SideLength / 2) return;
-                    if ((newPos >= _dragBound1 + Constants.SideLength / 2) && (newPos <= _dragBound2 - Constants.SideLength / 2))
+                    if (_dragBound1 + Constants.SideLength >= _dragBound2 - Constants.SideLength) return;
+                    if ((newPos >= _dragBound1 + Constants.SideLength) && (newPos <= _dragBound2 - Constants.SideLength))
                         _dragPopup.HorizontalOffset = newPos;
                     else
                     {
                         if (e.HorizontalChange > 0)
-                            _dragPopup.HorizontalOffset = _dragBound2 - Constants.SideLength / 2;
-                        else _dragPopup.HorizontalOffset = _dragBound1 + Constants.SideLength / 2;
+                            _dragPopup.HorizontalOffset = _dragBound2 - Constants.SideLength;
+                        else _dragPopup.HorizontalOffset = _dragBound1 + Constants.SideLength;
                     }
                 }
             }
@@ -67,14 +67,14 @@ namespace YDock.View
                 if (e.VerticalChange != 0)
                 {
                     double newPos = pToScreen.Y + e.VerticalChange;
-                    if (_dragBound1 + Constants.SideLength / 2 >= _dragBound2 - Constants.SideLength / 2) return;
-                    if ((newPos >= _dragBound1 + Constants.SideLength / 2) && (newPos <= _dragBound2 - Constants.SideLength / 2))
+                    if (_dragBound1 + Constants.SideLength >= _dragBound2 - Constants.SideLength) return;
+                    if ((newPos >= _dragBound1 + Constants.SideLength) && (newPos <= _dragBound2 - Constants.SideLength))
                         _dragPopup.VerticalOffset = newPos;
                     else
                     {
                         if (e.VerticalChange > 0)
-                            _dragPopup.VerticalOffset = _dragBound2 - Constants.SideLength / 2;
-                        else _dragPopup.VerticalOffset = _dragBound1 + Constants.SideLength / 2;
+                            _dragPopup.VerticalOffset = _dragBound2 - Constants.SideLength;
+                        else _dragPopup.VerticalOffset = _dragBound1 + Constants.SideLength;
                     }
                 }
             }
