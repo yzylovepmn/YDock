@@ -126,7 +126,6 @@
     <Compile Include="DockHelper.cs" />
     <Compile Include="View\Window\BaseFloatWindow.cs" />
     <Compile Include="View\Window\DocumentGroupWindow.cs" />
-    <Compile Include="View\Window\DragTabWindow.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

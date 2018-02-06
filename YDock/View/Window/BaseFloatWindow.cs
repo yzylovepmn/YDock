@@ -143,10 +143,7 @@ namespace YDock.View
         public virtual void DetachChild(IDockView child)
         {
             if (child == Content)
-            {
                 Content = null;
-                Close();
-            }
         }
 
         public virtual void Recreate() { }

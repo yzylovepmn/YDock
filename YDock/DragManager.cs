@@ -131,7 +131,7 @@ namespace YDock
                         {
                             //注意重新设置Mode
                             _layoutGroup.SetDockMode(DockMode.Float);
-                            _dragWnd = new SingleAnchorWindow()
+                            _dragWnd = new AnchorGroupWindow()
                             {
                                 Left = mouseP.X - _dragItem.ClickPos.X - Constants.FloatWindowResizeLength - 1,
                                 Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowResizeLength - 1
@@ -163,7 +163,7 @@ namespace YDock
                         }
                         else
                         {
-                            _dragWnd = new SingleAnchorWindow() { NeedReCreate = true };
+                            _dragWnd = new AnchorGroupWindow() { NeedReCreate = true };
                             _dragWnd.AttachChild(new AnchorSideGroupControl(group) { IsDraggingFromDock = true }, 0);
                             _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowResizeLength - ele.DesiredHeight + 20;
                             _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left - Constants.FloatWindowResizeLength;
@@ -182,7 +182,7 @@ namespace YDock
                     group.Attach(ele);
                     //注意重新设置Mode
                     group.SetDockMode(DockMode.Float);
-                    _dragWnd = new SingleAnchorWindow()
+                    _dragWnd = new AnchorGroupWindow()
                     {
                         Left = mouseP.X - _dragItem.ClickPos.X - Constants.FloatWindowResizeLength - 1,
                         Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowResizeLength - 1
@@ -200,16 +200,8 @@ namespace YDock
                             _dragWnd = (ctrl.Parent as BaseFloatWindow);
                             _dragWnd.Hide();
                             (ctrl.Parent as BaseFloatWindow).Recreate();
-                            if (ele.IsDocument)
-                            {
-                                _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowHeaderHeight - Constants.FloatWindowResizeLength;
-                                _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left - Constants.FloatWindowResizeLength - Constants.DocumentWindowPadding;
-                            }
-                            else
-                            {
-                                _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowHeaderHeight - Constants.FloatWindowResizeLength;
-                                _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left - Constants.FloatWindowResizeLength - Constants.DocumentWindowPadding;
-                            }
+                            _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowHeaderHeight - Constants.FloatWindowResizeLength;
+                            _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left - Constants.FloatWindowResizeLength - Constants.DocumentWindowPadding;
                             _dragWnd.Show();
                         }
                         else
@@ -232,7 +224,7 @@ namespace YDock
                             }
                             else
                             {
-                                _dragWnd = new SingleAnchorWindow() { NeedReCreate = true };
+                                _dragWnd = new AnchorGroupWindow() { NeedReCreate = true };
                                 _dragWnd.AttachChild(new AnchorSideGroupControl(group) { IsDraggingFromDock = true }, 0);
                                 _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowHeaderHeight - Constants.FloatWindowResizeLength;
                                 _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left - Constants.FloatWindowResizeLength - Constants.DocumentWindowPadding;
@@ -242,17 +234,29 @@ namespace YDock
                             _dragWnd.Show();
                         }
                     }
-                    //else if (_dragItem.RelativeObj is ILayoutGroup)
-                    //{
-                    //    group = _dragItem.RelativeObj as ILayoutGroup;
-                    //    //表示此时的Parent为SingleAnchorWindow
-                    //    if (group.View.DockViewParent == null)
-                    //        _dragWnd = (group.View as FrameworkElement).Parent as BaseFloatWindow;
-                    //    else
-                    //    {
-
-                    //    }
-                    //}
+                    else if (_dragItem.RelativeObj is ILayoutGroup)
+                    {
+                        group = _dragItem.RelativeObj as ILayoutGroup;
+                        //表示此时的浮动窗口为IsSingleMode
+                        if (group.View.DockViewParent == null)
+                            _dragWnd = (group.View as BaseGroupControl).Parent as BaseFloatWindow;
+                        else
+                        {
+                            //这里移动的一定是AnchorSideGroup，故将其从父级LayoutGroupPanel移走，但不Dispose留着构造浮动窗口
+                            if ((group.View as ILayoutGroupControl).TryDeatchFromParent(false))
+                            {
+                                _dragWnd = new AnchorGroupWindow()
+                                {
+                                    Left = mouseP.X - _dragItem.ClickPos.X - Constants.FloatWindowResizeLength - 1,
+                                    Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowResizeLength - 1
+                                };
+                                _dragWnd.AttachChild(group.View, 0);
+                                _dragWnd.Show();
+                            }
+                        }
+                    }
+                    else if (_dragItem.RelativeObj is BaseFloatWindow)
+                        _dragWnd = _dragItem.RelativeObj as BaseFloatWindow;
                     break;
             }
         }
@@ -287,11 +291,6 @@ namespace YDock
                 return HitTestFilterBehavior.Stop;
             }
             return HitTestFilterBehavior.Continue;
-        }
-
-        private void _CreatDragWindow()
-        {
-
         }
         #endregion
     }

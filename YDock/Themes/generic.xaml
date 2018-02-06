@@ -279,9 +279,10 @@
         </Grid>
         <ControlTemplate.Triggers>
             <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self},Path=Items.Count}" Value="0">
-                <Setter TargetName="Border" Property="Visibility" Value="Collapsed"/>
+                <!--<Setter TargetName="Border" Property="Visibility" Value="Collapsed"/>
                 <Setter TargetName="Rect" Property="Visibility" Value="Collapsed"/>
-                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderThickness" Value="1"/>-->
+                <Setter Property="Visibility" Value="Hidden"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self},Path=Model.IsActive}" Value="True">
                 <Setter TargetName="Rect" Property="Fill" Value="{StaticResource ActiveHeaderBackground}"/>
@@ -465,56 +466,64 @@
         </Style.Triggers>
     </Style>
 
-    <Style TargetType="{x:Type view:SingleAnchorWindow}">
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
-        <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
-        <Setter Property="shell:WindowChrome.WindowChrome">
-            <Setter.Value>
-                <shell:WindowChrome
-                    ResizeBorderThickness="9"
-                    CaptionHeight="19.5"
-                    CornerRadius="0"
-                    GlassFrameThickness="0"
-                    ShowSystemMenu="False"/>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type view:SingleAnchorWindow}">
-                    <Grid Background="#01FFFFFF" Margin="{TemplateBinding Padding}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="8"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="8"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="8"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="1" Grid.Row="1"
+    <ControlTemplate x:Key="AnchorGroupWindow_Singel" TargetType="{x:Type view:AnchorGroupWindow}">
+        <Grid Background="#01FFFFFF" Margin="{TemplateBinding Padding}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="8"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="8"/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="1" Grid.Row="1"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 Background="{TemplateBinding Background}"
                                 SnapsToDevicePixels="True">
-                            <AdornerDecorator>
-                                <ContentPresenter Content="{TemplateBinding Content}"/>
-                            </AdornerDecorator>
+                <AdornerDecorator>
+                    <ContentPresenter Content="{TemplateBinding Content}"/>
+                </AdornerDecorator>
+            </Border>
+        </Grid>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="AnchorGroupWindow_Multi" TargetType="{x:Type view:AnchorGroupWindow}">
+        <Grid Background="#01FFFFFF">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="8"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="8"/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Row="1" Grid.Column="1" ClipToBounds="True" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="32"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <DockPanel x:Name="HeaderPanel">
+                        <Image DockPanel.Dock="Left" Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
+                        <TextBlock DockPanel.Dock="Left" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
+
+                    </DockPanel>
+                    <AdornerDecorator Grid.Row="1">
+                        <Border>
+                            <ContentPresenter Content="{TemplateBinding Content}"/>
                         </Border>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-        <Style.Triggers>
-            <Trigger Property="WindowState" Value="Maximized">
-                <Setter Property="Padding" Value="-2,-2,-2,38"/>
-            </Trigger>
-            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self},Path=Content.Items.Count}" Value="1">
-                <Setter Property="BorderThickness" Value="0"/>
-            </DataTrigger>
-        </Style.Triggers>
-    </Style>
+                    </AdornerDecorator>
+                </Grid>
+            </Border>
+        </Grid>
+    </ControlTemplate>
 
     <Style TargetType="{x:Type view:DocumentGroupWindow}">
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
@@ -570,7 +579,7 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="WindowState" Value="Maximized">
-                <Setter Property="Padding" Value="-2,-2,-2,38"/>
+                <Setter Property="Padding" Value="-3,-3,-3,38"/>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -582,51 +591,27 @@
         <Setter Property="shell:WindowChrome.WindowChrome">
             <Setter.Value>
                 <shell:WindowChrome
-                    ResizeBorderThickness="8"
-                    CaptionHeight="28"
+                    ResizeBorderThickness="9"
+                    CaptionHeight="19.5"
                     CornerRadius="0"
                     GlassFrameThickness="0"
-                    ShowSystemMenu="True"/>
+                    ShowSystemMenu="False"/>
             </Setter.Value>
         </Setter>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type view:AnchorGroupWindow}">
-                    <Grid Background="#01FFFFFF">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="8"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="8"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="8"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Row="1" Grid.Column="1" ClipToBounds="True" BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Background="{TemplateBinding Background}">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="32"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <DockPanel x:Name="HeaderPanel">
-                                    <Image DockPanel.Dock="Left" Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
-                                    <TextBlock DockPanel.Dock="Left" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
-
-                                </DockPanel>
-                                <AdornerDecorator Grid.Row="1">
-                                    <Border>
-                                        <ContentPresenter Content="{TemplateBinding Content}"/>
-                                    </Border>
-                                </AdornerDecorator>
-                            </Grid>
-                        </Border>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Template" Value="{StaticResource AnchorGroupWindow_Singel}"/>
+        <Style.Triggers>
+            <Trigger Property="WindowState" Value="Maximized">
+                <Setter Property="Padding" Value="-3,-3,-3,38"/>
+            </Trigger>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self},Path=NoBorder}" Value="True">
+                <Setter Property="BorderThickness" Value="0"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self},Path=IsSingleMode}" Value="False">
+                <Setter Property="Template" Value="{StaticResource AnchorGroupWindow_Multi}"/>
+                <Setter Property="shell:WindowChrome.CaptionHeight" Value="28"/>
+                <Setter Property="shell:WindowChrome.ResizeBorderThickness" Value="8"/>
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 
     <Style TargetType="{x:Type ydock:DockManager}">

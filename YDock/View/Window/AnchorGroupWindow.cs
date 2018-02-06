@@ -14,30 +14,69 @@ using YDock.Interface;
 
 namespace YDock.View
 {
-    /// <summary>
-    /// Without WindowHeader
-    /// </summary>
-    public class SingleAnchorWindow : BaseFloatWindow
+    public class AnchorGroupWindow : BaseFloatWindow, INotifyPropertyChanged
     {
-        static SingleAnchorWindow()
+        static AnchorGroupWindow()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(SingleAnchorWindow), new FrameworkPropertyMetadata(typeof(SingleAnchorWindow)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(AnchorGroupWindow), new FrameworkPropertyMetadata(typeof(AnchorGroupWindow)));
         }
 
-        public SingleAnchorWindow()
+        public AnchorGroupWindow()
         {
             ShowInTaskbar = false;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
+        /// <summary>
+        /// 是否Content为<see cref="ILayoutGroupControl"/>
+        /// </summary>
+        public bool IsSingleMode
+        {
+            get
+            {
+                return Content != null && Content is ILayoutGroupControl;
+            }
+        }
+
+        /// <summary>
+        /// 是否需要Border
+        /// </summary>
+        public bool NoBorder
+        {
+            get
+            {
+                return IsSingleMode && (Content as BaseGroupControl).Items.Count == 1;
+            }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="child">为ILayoutGroupControl类型</param>
+        /// <param name="child">为ILayoutPanel类型</param>
         /// <param name="index"></param>
         public override void AttachChild(IDockView child, int index)
         {
+            if (child is ILayoutPanel)
+            {
+                _heightEceeed += Constants.FloatWindowHeaderHeight;
+                Owner = (child as ILayoutPanel).DockManager.MainWindow;
+            }
+            else Owner = (child as ILayoutGroupControl).Model.DockManager.MainWindow;
             base.AttachChild(child, index);
-            Owner = child.Model.DockManager.MainWindow;
+        }
+
+        public override void DetachChild(IDockView child)
+        {
+            base.DetachChild(child);
+            UpdateSize();
+        }
+
+        protected override void OnContentChanged(object oldContent, object newContent)
+        {
+            base.OnContentChanged(oldContent, newContent);
+            if (newContent != null)
+                UpdateTemplate();
         }
 
         protected override IntPtr FilterMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -45,8 +84,8 @@ namespace YDock.View
             switch (msg)
             {
                 case Win32Helper.WM_NCLBUTTONDOWN:
-                    if (Content != null)
-                        ((Content as ILayoutGroupControl).Model as ILayoutGroup).SetActive(0);
+                    if (IsSingleMode)
+                        ((Content as ILayoutGroupControl).Model as ILayoutGroup).SetActive((Content as BaseGroupControl).SelectedIndex);
                     break;
             }
             return base.FilterMessage(hwnd, msg, wParam, lParam, ref handled);
@@ -62,30 +101,18 @@ namespace YDock.View
                 layoutCtrl.IsDraggingFromDock = false;
             }
         }
-    }
 
-    public class AnchorGroupWindow : BaseFloatWindow
-    {
-        static AnchorGroupWindow()
+        public void UpdateTemplate()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(AnchorGroupWindow), new FrameworkPropertyMetadata(typeof(AnchorGroupWindow)));
+            PropertyChanged(this, new PropertyChangedEventArgs("IsSingleMode"));
+            PropertyChanged(this, new PropertyChangedEventArgs("HasBorder"));
         }
 
-        public AnchorGroupWindow()
+        public void UpdateSize()
         {
-            ShowInTaskbar = false;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="child">为ILayoutPanel类型</param>
-        /// <param name="index"></param>
-        public override void AttachChild(IDockView child, int index)
-        {
-            _heightEceeed += Constants.FloatWindowHeaderHeight;
-            base.AttachChild(child, index);
-            Owner = (child as ILayoutPanel).DockManager.MainWindow;
+            if (IsSingleMode)
+                _heightEceeed = Constants.FloatWindowResizeLength * 2;
+            else _heightEceeed = Constants.FloatWindowResizeLength * 2 + Constants.FloatWindowHeaderHeight;
         }
     }
 }

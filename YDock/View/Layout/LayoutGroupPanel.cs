@@ -147,7 +147,16 @@ namespace YDock.View
             internal set
             {
                 if (_side != value)
+                {
                     _side = value;
+                    foreach (var child in Children)
+                    {
+                        if (child is ILayoutPanel)
+                            (child as LayoutGroupPanel).Side = value;
+                        if (child is BaseGroupControl)
+                            ((child as BaseGroupControl).Model as BaseLayoutGroup).Side = value;
+                    }
+                }
             }
         }
 
@@ -1215,6 +1224,35 @@ namespace YDock.View
         {
             if (Children.Contains(child as UIElement))
             {
+                _DetachChild(child);
+                //若元素为空，且不是RootPanel和DocumentPanel，则递归的将其从Parent中移除
+                if (Children.Count == 0 && !IsRootPanel && !IsDocumentPanel)
+                {
+                    (DockViewParent as ILayoutViewParent).DetachChild(this);
+                    Dispose();
+                }
+                //若元素只有一个，则将子元素层次减一
+                if (Children.Count == 1 && !IsRootPanel)
+                {
+                    if (DockViewParent is ILayoutPanel)
+                    {
+                        child = Children[0] as IDockView;
+                        var parent = DockViewParent as LayoutGroupPanel;
+                        var index = parent.Children.IndexOf(this);
+                        //从父容器中移除自己
+                        parent._DetachChild(this);
+                        Children.Clear();
+                        //从父容器中加入自己的子元素
+                        parent.AttachChild(child, Math.Max(index - 1, 0));
+                    }
+                }
+            }
+        }
+
+        public void _DetachChild(IDockView child)
+        {
+            if (Children.Contains(child as UIElement))
+            {
                 int index = Children.IndexOf(child as UIElement);
                 if (index > 0)
                 {
@@ -1235,12 +1273,6 @@ namespace YDock.View
                         _DesstroySplitter(Children[0] as LayoutDragSplitter);
                         Children.RemoveAt(0);
                     }
-                }
-                //若元素为空，且不是RootPanel和DocumentPanel，则递归的将其从Parent中移除
-                if (Children.Count == 0 && !IsRootPanel && !IsDocumentPanel)
-                {
-                    (DockViewParent as ILayoutPanel).DetachChild(this);
-                    Dispose();
                 }
             }
         }
@@ -1335,7 +1367,41 @@ namespace YDock.View
                     }
                     break;
             }
-            _AttachChild(child, index);
+            bool flag = true;
+            //表示child为LayoutGroupPanel
+            if (child.Model == null)
+            {
+                var subpanel = (child as LayoutGroupPanel);
+                if (Direction == subpanel.Direction)
+                    flag = false;
+                else if (IsRootPanel && Children.Count == 1)
+                {
+                    flag = false;
+                    Direction = subpanel.Direction;
+                }
+                if (!flag)
+                {
+                    List<UIElement> children = new List<UIElement>();
+                    foreach (UIElement ele in subpanel.Children)
+                        children.Add(ele);
+                    subpanel.Children.Clear();
+                    if (subpanel.Side == DockSide.Top ||
+                            subpanel.Side == DockSide.Left)
+                        foreach (UIElement ele in children)
+                        {
+                            if (ele is IDockView)
+                                _AttachChild(ele as IDockView, 0);
+                        }
+                    else
+                        foreach (UIElement ele in children)
+                        {
+                            if (ele is IDockView)
+                                _AttachChild(ele as IDockView, Count);
+                        }
+                }
+            }
+            if (flag)
+                _AttachChild(child, index);
         }
 
         internal void _AttachChild(IDockView child, int index)
