@@ -6,12 +6,13 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
 
 namespace YDock.View
 {
-    public class BaseGroupControl : TabControl, ILayoutGroupControl
+    public class BaseGroupControl : TabControl, ILayoutGroupControl, IDragTarget
     {
         internal BaseGroupControl(ILayoutGroup model)
         {
@@ -129,6 +130,19 @@ namespace YDock.View
             }
         }
 
+        public virtual DragMode Mode
+        {
+            get;
+        }
+
+        public bool IsDragWndHide
+        {
+            get
+            {
+                return _dragWnd == null || !_dragWnd.IsVisible;
+            }
+        }
+
         protected override void OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonDown(e);
@@ -180,6 +194,34 @@ namespace YDock.View
             _dragItem = null;
             _childrenBounds.Clear();
             _childrenBounds = null;
+        }
+
+
+        Window _dragWnd;
+        public virtual void OnDrop(DragItem source, int flag)
+        {
+            
+        }
+
+        public virtual void CreateDropWindow()
+        {
+            
+        }
+
+        public void CloseDropWindow()
+        {
+            if (_dragWnd != null)
+                _dragWnd.Close();
+        }
+
+        public void HideDropWindow()
+        {
+            
+        }
+
+        public void ShowDropWindow()
+        {
+
         }
     }
 }

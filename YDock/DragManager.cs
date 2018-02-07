@@ -71,7 +71,27 @@ namespace YDock
 
         #region Drag
         #region private field
-        private ILayoutGroupControl _dragTarget;
+        private Rect _rootRect;
+        private IDragTarget _rootTarget;
+        private IDragTarget _dragTarget;
+        internal IDragTarget DragTarget
+        {
+            get { return _dragTarget; }
+            set
+            {
+                if (_dragTarget != value)
+                {
+                    if (_dragTarget != null)
+                        _dragTarget.CloseDropWindow();
+                    _dragTarget = value;
+                    if (_dragTarget != null)
+                    {
+                        _dragTarget.CreateDropWindow();
+                        _dragTarget.ShowDropWindow();
+                    }
+                }
+            }
+        }
         private DragItem _dragItem;
         private BaseFloatWindow _dragWnd;
         private bool _isDragging = false;
@@ -94,6 +114,8 @@ namespace YDock
 
         private void BeforeDrag()
         {
+            _rootRect = DockManager.LayoutRootPanel.RootGroupPanel.CreateRect();
+            _rootTarget = DockManager.LayoutRootPanel.RootGroupPanel;
             _InitDragItem();
         }
 
@@ -110,6 +132,9 @@ namespace YDock
             if (_dragWnd != null && _dragWnd.NeedReCreate)
                 _dragWnd.Recreate();
             _dragWnd = null;
+            _rootTarget.CloseDropWindow();
+            _rootTarget = null;
+            DragTarget = null;
             _DestroyDragItem();
         }
         #endregion
@@ -270,24 +295,39 @@ namespace YDock
         #endregion
         #endregion
 
+        #region Flag
+        internal const int LEFT = 0x0001;
+        internal const int TOP = 0x0002;
+        internal const int RIGHT = 0x0004;
+        internal const int BOTTOM = 0x0008;
+        internal const int CENTER = 0x0010;
+        internal const int SPLIT = 0x1000;
+        #endregion
+
         #region DragEvent
         internal void OnMouseMove(object sender)
         {
             var p = DockHelper.GetMousePositionRelativeTo(DockManager.LayoutRootPanel.RootGroupPanel);
-            VisualTreeHelper.HitTest(DockManager.LayoutRootPanel.RootGroupPanel, _HitFilter, _HitRessult, new PointHitTestParameters(p));
+            if (_rootRect.Contains(p))
+            {
+                if (_rootTarget.IsDragWndHide)
+                    _rootTarget.ShowDropWindow();
+                VisualTreeHelper.HitTest(DockManager.LayoutRootPanel.RootGroupPanel, _HitFilter, _HitRessult, new PointHitTestParameters(p));
+            }
+            else _rootTarget.HideDropWindow();
         }
 
         private HitTestResultBehavior _HitRessult(HitTestResult result)
         {
-            _dragTarget = null;
+            DragTarget = null;
             return HitTestResultBehavior.Stop;
         }
 
         private HitTestFilterBehavior _HitFilter(DependencyObject potentialHitTestTarget)
         {
-            if (potentialHitTestTarget is ILayoutGroupControl)
+            if (potentialHitTestTarget is BaseGroupControl)
             {
-                _dragTarget = potentialHitTestTarget as ILayoutGroupControl;
+                DragTarget = potentialHitTestTarget as IDragTarget;
                 return HitTestFilterBehavior.Stop;
             }
             return HitTestFilterBehavior.Continue;

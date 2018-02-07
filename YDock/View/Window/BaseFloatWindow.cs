@@ -135,6 +135,7 @@ namespace YDock.View
             if (Content != child)
             {
                 Content = child;
+                DockManager.AddFloatWindow(this);
                 Height = (child as ILayoutSize).DesiredHeight + _heightEceeed;
                 Width = (child as ILayoutSize).DesiredWidth + _widthEceeed;
             }
@@ -143,7 +144,10 @@ namespace YDock.View
         public virtual void DetachChild(IDockView child)
         {
             if (child == Content)
+            {
+                DockManager.RemoveFloatWindow(this);
                 Content = null;
+            }
         }
 
         public virtual void Recreate() { }

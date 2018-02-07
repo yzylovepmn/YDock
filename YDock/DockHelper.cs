@@ -17,17 +17,19 @@ namespace YDock
             return (T)template.FindName(name, templateParent);
         }
 
-        public static Window CreateTransparentWindow()
+        public static Window CreateTransparentWindow(Rect rect)
         {
             return new Window()
             {
-                Height = SystemParameters.FullPrimaryScreenHeight,
-                Width = SystemParameters.FullPrimaryScreenWidth,
+                Left = rect.Left,
+                Top = rect.Top,
+                Height = rect.Height,
+                Width = rect.Width,
                 AllowsTransparency = true,
-                Background = new SolidColorBrush(new Color() { A = 1 }),
+                Background = Brushes.Transparent,
                 WindowStyle = WindowStyle.None,
-                WindowState = WindowState.Maximized,
-                ShowInTaskbar = false
+                ShowInTaskbar = false,
+                ShowActivated = false
             };
         }
 
@@ -528,9 +530,9 @@ namespace YDock
         {
             SplitterBrushVertical = new SolidColorBrush(new Color()
             {
-                R = 0xF6,
-                G = 0xF6,
-                B = 0xF6,
+                R = 0xEE,
+                G = 0xEE,
+                B = 0xF2,
                 A = 0xFF
             });
 

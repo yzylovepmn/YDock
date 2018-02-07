@@ -29,6 +29,7 @@ namespace YDock
             Root = new DockRoot();
             _dragManager = new DragManager(this);
             _dockControls = new List<IDockControl>();
+            _floatWindows = new List<BaseFloatWindow>();
         }
 
         #region Root
@@ -304,6 +305,12 @@ namespace YDock
             }
         }
 
+        private List<BaseFloatWindow> _floatWindows;
+        public IEnumerable<BaseFloatWindow> FloatWindows
+        {
+            get { return _floatWindows; }
+        }
+
         /// <summary>
         /// all registed DockControl
         /// </summary>
@@ -435,9 +442,24 @@ namespace YDock
                 (view as LayoutGroupPanel).Side = side;
         }
 
+        internal void AddFloatWindow(BaseFloatWindow window)
+        {
+            _floatWindows.Add(window);
+        }
+
+        internal void RemoveFloatWindow(BaseFloatWindow window)
+        {
+            if (_floatWindows.Contains(window))
+                _floatWindows.Remove(window);
+        }
+
 
         public void Dispose()
         {
+            foreach (var wnd in _floatWindows)
+                wnd.Close();
+            _floatWindows.Clear();
+            _floatWindows = null;
             foreach (var ctrl in _dockControls)
                 ctrl.Dispose();
             _dockControls.Clear();

@@ -17,7 +17,7 @@ namespace YDock.View
     /// <summary>
     /// the core class for layout and resize region
     /// </summary>
-    public class LayoutGroupPanel : Panel, ILayoutPanel
+    public class LayoutGroupPanel : Panel, ILayoutPanel, IDragTarget
     {
         public LayoutGroupPanel(DockSide side = DockSide.None)
         {
@@ -97,6 +97,7 @@ namespace YDock.View
                 {
                     if (parent.DockViewParent is DockManager)
                         return parent.DockViewParent as DockManager;
+                    else parent = parent.DockViewParent;
                 }
                 return null;
             }
@@ -173,6 +174,22 @@ namespace YDock.View
             get
             {
                 return Parent == null ? null : Parent as IDockView;
+            }
+        }
+
+        public DragMode Mode
+        {
+            get
+            {
+                return DragMode.RootPanel;
+            }
+        }
+
+        public bool IsDragWndHide
+        {
+            get
+            {
+                return _dragWnd == null || !_dragWnd.IsVisible;
             }
         }
 
@@ -1384,20 +1401,11 @@ namespace YDock.View
                     List<UIElement> children = new List<UIElement>();
                     foreach (UIElement ele in subpanel.Children)
                         children.Add(ele);
+                    children.Reverse();
                     subpanel.Children.Clear();
-                    if (subpanel.Side == DockSide.Top ||
-                            subpanel.Side == DockSide.Left)
-                        foreach (UIElement ele in children)
-                        {
-                            if (ele is IDockView)
-                                _AttachChild(ele as IDockView, 0);
-                        }
-                    else
-                        foreach (UIElement ele in children)
-                        {
-                            if (ele is IDockView)
-                                _AttachChild(ele as IDockView, Count);
-                        }
+                    foreach (UIElement ele in children)
+                        if (ele is IDockView)
+                            _AttachChild(ele as IDockView, index);
                 }
             }
             if (flag)
@@ -1423,6 +1431,40 @@ namespace YDock.View
                         break;
                 }
             }
+        }
+
+        Window _dragWnd;
+        public void OnDrop(DragItem source, int flag)
+        {
+            
+        }
+
+        public void CreateDropWindow()
+        {
+            
+        }
+
+        public void CloseDropWindow()
+        {
+            if (_dragWnd != null)
+                _dragWnd.Close();
+        }
+
+        public void HideDropWindow()
+        {
+            if (_dragWnd != null)
+                _dragWnd.Hide();
+        }
+
+        public void ShowDropWindow()
+        {
+            if (_dragWnd != null)
+                _dragWnd.Show();
+        }
+
+        internal Rect CreateRect()
+        {
+            return new Rect(this.PointToScreenDPIWithoutFlowDirection(new Point()), new Size(ActualWidth, ActualHeight));
         }
 
         public void Dispose()

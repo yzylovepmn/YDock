@@ -87,6 +87,10 @@ namespace YDock.View
                     if (IsSingleMode)
                         ((Content as ILayoutGroupControl).Model as ILayoutGroup).SetActive((Content as BaseGroupControl).SelectedIndex);
                     break;
+                case Win32Helper.WM_NCRBUTTONDOWN:
+                    if (IsSingleMode)
+                        ((Content as ILayoutGroupControl).Model as ILayoutGroup).SetActive((Content as BaseGroupControl).SelectedIndex);
+                    break;
             }
             return base.FilterMessage(hwnd, msg, wParam, lParam, ref handled);
         }

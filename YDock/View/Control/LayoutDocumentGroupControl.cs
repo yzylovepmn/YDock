@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
 
@@ -18,8 +19,26 @@ namespace YDock.View
             FocusableProperty.OverrideMetadata(typeof(LayoutDocumentGroupControl), new FrameworkPropertyMetadata(false));
         }
 
-        public LayoutDocumentGroupControl(ILayoutGroup model) : base(model)
+        internal LayoutDocumentGroupControl(ILayoutGroup model) : base(model)
         {
+        }
+
+        public override DragMode Mode
+        {
+            get
+            {
+                return DragMode.Anchor;
+            }
+        }
+
+        public override void OnDrop(DragItem source, int flag)
+        {
+
+        }
+
+        public override void CreateDropWindow()
+        {
+            
         }
     }
 }

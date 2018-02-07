@@ -11,7 +11,7 @@
     <converters:NullToDoNothingConverter x:Key="NullToDoNothingConverter"/>
     <converters:SideToAngleConverter x:Key="SideToAngleConverter"/>
 
-    <SolidColorBrush x:Key="WindowBackground" Color="#FFF6F6F6"/>
+    <SolidColorBrush x:Key="WindowBackground" Color="#FFEEEEF2"/>
     <SolidColorBrush x:Key="MouseOnBackground" Color="#FF1C97EA"/>
     <SolidColorBrush x:Key="SelectedBackground" Color="#FFD4D4D4"/>
     <SolidColorBrush x:Key="BorderBrush" Color="#FFCCCEDB"/>
@@ -466,7 +466,7 @@
         </Style.Triggers>
     </Style>
 
-    <ControlTemplate x:Key="AnchorGroupWindow_Singel" TargetType="{x:Type view:AnchorGroupWindow}">
+    <ControlTemplate x:Key="AnchorGroupWindow_Single" TargetType="{x:Type view:AnchorGroupWindow}">
         <Grid Background="#01FFFFFF" Margin="{TemplateBinding Padding}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="8"/>
@@ -598,7 +598,7 @@
                     ShowSystemMenu="False"/>
             </Setter.Value>
         </Setter>
-        <Setter Property="Template" Value="{StaticResource AnchorGroupWindow_Singel}"/>
+        <Setter Property="Template" Value="{StaticResource AnchorGroupWindow_Single}"/>
         <Style.Triggers>
             <Trigger Property="WindowState" Value="Maximized">
                 <Setter Property="Padding" Value="-3,-3,-3,38"/>

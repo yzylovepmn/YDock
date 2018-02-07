@@ -63,6 +63,8 @@
     <Compile Include="Enum\Direction.cs" />
     <Compile Include="Enum\DockSide.cs" />
     <Compile Include="Enum\DockMode.cs" />
+    <Compile Include="Enum\DragMode.cs" />
+    <Compile Include="Interface\IDrag.cs" />
     <Compile Include="Interface\ILayout.cs" />
     <Compile Include="Interface\IModel.cs" />
     <Compile Include="Interface\IView.cs" />
@@ -115,6 +117,7 @@
     <Compile Include="View\Layout\LayoutGroupPanel.cs" />
     <Compile Include="View\Layout\LayoutRootPanel.cs" />
     <Compile Include="View\Control\DockBarGroupControl.cs" />
+    <Compile Include="View\Render\BaseDropPanel.cs" />
     <Compile Include="View\ViewExtensions.cs" />
     <Compile Include="View\Layout\SingelLinePanel.cs" />
     <Compile Include="View\Render\BaseVisual.cs" />
