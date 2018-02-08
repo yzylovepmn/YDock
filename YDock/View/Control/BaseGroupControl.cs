@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Threading;
 using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
@@ -100,10 +102,16 @@ namespace YDock.View
                 if (_model != value)
                 {
                     if (_model != null)
+                    {
                         (_model as LayoutGroup).View = null;
+                        _model.DockManager.DragManager.OnDragStatusChanged -= OnDragStatusChanged;
+                    }
                     _model = value;
                     if (_model != null)
+                    {
                         (_model as LayoutGroup).View = this;
+                        _model.DockManager.DragManager.OnDragStatusChanged += OnDragStatusChanged;
+                    }
                 }
             }
         }
@@ -216,12 +224,23 @@ namespace YDock.View
 
         public void HideDropWindow()
         {
-            
+            if (_dragWnd != null)
+                _dragWnd.Hide();
         }
 
         public void ShowDropWindow()
         {
+            if (_dragWnd != null)
+                _dragWnd.Show();
+        }
 
+        private void OnDragStatusChanged(DragStatusChangedEventArgs args)
+        {
+            if (Parent is BaseFloatWindow && (Parent as BaseFloatWindow).IsDragging)
+                return;
+            if (args.IsDragging)
+                CreateDropWindow();
+            else CloseDropWindow();
         }
     }
 }

@@ -1441,13 +1441,17 @@ namespace YDock.View
 
         public void CreateDropWindow()
         {
-            
+            _dragWnd = DockHelper.CreateTransparentWindow(CreateRect());
+            _dragWnd.Content = new RootDropPanel(this, DockManager.DragManager.DragItem);
         }
 
         public void CloseDropWindow()
         {
             if (_dragWnd != null)
+            {
                 _dragWnd.Close();
+                _dragWnd = null;
+            }
         }
 
         public void HideDropWindow()
@@ -1464,7 +1468,7 @@ namespace YDock.View
 
         internal Rect CreateRect()
         {
-            return new Rect(this.PointToScreenDPIWithoutFlowDirection(new Point()), new Size(ActualWidth, ActualHeight));
+            return new Rect(this.PointToScreenDPIWithoutFlowDirection(new Point()), this.TransformActualSizeToAncestor());
         }
 
         public void Dispose()

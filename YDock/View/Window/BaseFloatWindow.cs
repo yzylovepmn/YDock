@@ -61,15 +61,26 @@ namespace YDock.View
             {
                 case Win32Helper.WM_ENTERSIZEMOVE:
                     if (!DockManager.DragManager.IsDragging)
-                        DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, new Point(), Rect.Empty));
+                    {
+                        _isDragging = true;
+                        DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, new Point(), Rect.Empty), true);
+                    }
                     break;
                 case Win32Helper.WM_MOVING:
                     if (DockManager.DragManager.IsDragging)
                         DockManager.DragManager.OnMouseMove(this);
+                    else
+                    {
+                        _isDragging = true;
+                        DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, new Point(), Rect.Empty), true);
+                    }
                     break;
                 case Win32Helper.WM_EXITSIZEMOVE:
                     if (DockManager.DragManager.IsDragging)
+                    {
                         DockManager.DragManager.DoDragDrop();
+                        _isDragging = false;
+                    }
                     break;
                 default:
                     break;
@@ -114,6 +125,12 @@ namespace YDock.View
         {
             get { return _needReCreate; }
             set { _needReCreate = value; }
+        }
+
+        protected bool _isDragging = false;
+        public bool IsDragging
+        {
+            get { return _isDragging; }
         }
 
         public virtual DockManager DockManager

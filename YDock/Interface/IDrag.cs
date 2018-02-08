@@ -7,14 +7,14 @@ using YDock.Enum;
 
 namespace YDock.Interface
 {
-    internal interface IDragTarget
+    public interface IDragTarget
     {
         bool IsDragWndHide { get; }
         DragMode Mode { get; }
         void OnDrop(DragItem source, int flag);
-        void CreateDropWindow();
-        void CloseDropWindow();
         void HideDropWindow();
         void ShowDropWindow();
+        void CreateDropWindow();
+        void CloseDropWindow();
     }
 }

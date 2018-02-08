@@ -16,6 +16,9 @@ namespace YDock
         public const double FloatWindowHeaderHeight = 32;
         public const double FloatWindowResizeLength = 8;
         public const double DocumentWindowPadding = 6;
+        public const double DropUnitLength = 40;
+        public const double DropCornerLength = 10;
+        public const double DropGlassLength = 3;
         #endregion
     }
 }

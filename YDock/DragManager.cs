@@ -71,9 +71,36 @@ namespace YDock
 
         #region Drag
         #region private field
-        private Rect _rootRect;
+        private Size _rootSize;
         private IDragTarget _rootTarget;
         private IDragTarget _dragTarget;
+        private DragItem _dragItem;
+        private BaseDropVisual _dropVisual;
+        private BaseFloatWindow _dragWnd;
+        private bool _isDragging = false;
+        #endregion
+
+        #region Property
+        internal BaseDropVisual DropVisual
+        {
+            get { return _dropVisual; }
+            set
+            {
+                if (_dropVisual != value)
+                    _dropVisual = value;
+            }
+        }
+
+        internal DragItem DragItem
+        {
+            get { return _dragItem; }
+            set
+            {
+                if (_dragItem != value)
+                    _dragItem = value;
+            }
+        }
+
         internal IDragTarget DragTarget
         {
             get { return _dragTarget; }
@@ -82,47 +109,65 @@ namespace YDock
                 if (_dragTarget != value)
                 {
                     if (_dragTarget != null)
-                        _dragTarget.CloseDropWindow();
+                        _dragTarget.HideDropWindow();
                     _dragTarget = value;
                     if (_dragTarget != null)
-                    {
-                        _dragTarget.CreateDropWindow();
                         _dragTarget.ShowDropWindow();
-                    }
                 }
             }
         }
-        private DragItem _dragItem;
-        private BaseFloatWindow _dragWnd;
-        private bool _isDragging = false;
-        #endregion
 
-        #region Property
         public bool IsDragging
         {
             get { return _isDragging; }
+            set
+            {
+                if (_isDragging != value)
+                {
+                    _isDragging = value;
+                    OnDragStatusChanged(new DragStatusChangedEventArgs(value));
+                }
+            }
         }
+
+        public event DragStatusChanged OnDragStatusChanged = delegate { };
         #endregion
 
         #region Drag Action
-        internal void IntoDragAction(DragItem dragItem)
+        internal void IntoDragAction(DragItem dragItem, bool _isInvokeByFloatWnd = false)
         {
-            _isDragging = true;
             _dragItem = dragItem;
-            BeforeDrag();
+            //被浮动窗口调用则不需要调用BeforeDrag()
+            if (_isInvokeByFloatWnd)
+            {
+                IsDragging = true;
+                if (_dragWnd == null)
+                    _dragWnd = _dragItem.RelativeObj as BaseFloatWindow;
+            }
+            else BeforeDrag();
+            //初始化最外层的_rootTarget
+            _rootSize = DockManager.LayoutRootPanel.RootGroupPanel.TransformActualSizeToAncestor();
+            _rootTarget = DockManager.LayoutRootPanel.RootGroupPanel;
+            _rootTarget.CreateDropWindow();
         }
 
         private void BeforeDrag()
         {
-            _rootRect = DockManager.LayoutRootPanel.RootGroupPanel.CreateRect();
-            _rootTarget = DockManager.LayoutRootPanel.RootGroupPanel;
             _InitDragItem();
         }
 
         internal void DoDragDrop()
         {
-            _isDragging = false;
-
+            IsDragging = false;
+            //TODO Drop
+            if (_dropVisual != null)
+            {
+                var parent = VisualTreeHelper.GetParent(_dropVisual) as BaseDropPanel;
+                if (parent.Target == _rootTarget)
+                    _rootTarget.OnDrop(_dragItem, _dropVisual.Flag);
+                else if (parent.Target == DragTarget)
+                    DragTarget.OnDrop(_dragItem, _dropVisual.Flag);
+            }
 
             AfterDrag();
         }
@@ -280,8 +325,6 @@ namespace YDock
                             }
                         }
                     }
-                    else if (_dragItem.RelativeObj is BaseFloatWindow)
-                        _dragWnd = _dragItem.RelativeObj as BaseFloatWindow;
                     break;
             }
         }
@@ -293,9 +336,11 @@ namespace YDock
             _dragTarget = null;
         }
         #endregion
+
         #endregion
 
         #region Flag
+        internal const int NONE = 0x0000;
         internal const int LEFT = 0x0001;
         internal const int TOP = 0x0002;
         internal const int RIGHT = 0x0004;
@@ -308,13 +353,15 @@ namespace YDock
         internal void OnMouseMove(object sender)
         {
             var p = DockHelper.GetMousePositionRelativeTo(DockManager.LayoutRootPanel.RootGroupPanel);
-            if (_rootRect.Contains(p))
+            if (p.X >= 0 && p.Y >= 0
+                && p.X <= _rootSize.Width
+                && p.Y <= _rootSize.Height)
             {
                 if (_rootTarget.IsDragWndHide)
                     _rootTarget.ShowDropWindow();
                 VisualTreeHelper.HitTest(DockManager.LayoutRootPanel.RootGroupPanel, _HitFilter, _HitRessult, new PointHitTestParameters(p));
             }
-            else _rootTarget.HideDropWindow();
+            else if(!_rootTarget.IsDragWndHide) _rootTarget.HideDropWindow();
         }
 
         private HitTestResultBehavior _HitRessult(HitTestResult result)
@@ -327,6 +374,12 @@ namespace YDock
         {
             if (potentialHitTestTarget is BaseGroupControl)
             {
+                //表示此时potentialHitTestTarget在浮动窗口中
+                if ((potentialHitTestTarget as BaseGroupControl).DockViewParent == null)
+                    if (!_rootTarget.IsDragWndHide)
+                        _rootTarget.HideDropWindow();
+
+                //设置DragTarget，以实时显示TargetWnd
                 DragTarget = potentialHitTestTarget as IDragTarget;
                 return HitTestFilterBehavior.Stop;
             }
@@ -334,4 +387,20 @@ namespace YDock
         }
         #endregion
     }
+
+    public class DragStatusChangedEventArgs : EventArgs
+    {
+        public DragStatusChangedEventArgs(bool status)
+        {
+            _isDragging = status;
+        }
+
+        private bool _isDragging;
+        public bool IsDragging
+        {
+            get { return _isDragging; }
+        }
+    }
+
+    public delegate void DragStatusChanged(DragStatusChangedEventArgs args);
 }

@@ -279,9 +279,6 @@
         </Grid>
         <ControlTemplate.Triggers>
             <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self},Path=Items.Count}" Value="0">
-                <!--<Setter TargetName="Border" Property="Visibility" Value="Collapsed"/>
-                <Setter TargetName="Rect" Property="Visibility" Value="Collapsed"/>
-                <Setter Property="BorderThickness" Value="1"/>-->
                 <Setter Property="Visibility" Value="Hidden"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self},Path=Model.IsActive}" Value="True">

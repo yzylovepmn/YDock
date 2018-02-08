@@ -118,6 +118,7 @@
     <Compile Include="View\Layout\LayoutRootPanel.cs" />
     <Compile Include="View\Control\DockBarGroupControl.cs" />
     <Compile Include="View\Render\BaseDropPanel.cs" />
+    <Compile Include="View\Render\BaseDropVisual.cs" />
     <Compile Include="View\ViewExtensions.cs" />
     <Compile Include="View\Layout\SingelLinePanel.cs" />
     <Compile Include="View\Render\BaseVisual.cs" />
