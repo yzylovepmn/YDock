@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Threading;
 using YDock.Interface;
 
 namespace YDock.View
@@ -27,7 +29,6 @@ namespace YDock.View
 
         public override void Recreate()
         {
-            base.Recreate();
             if (_needReCreate)
             {
                 _needReCreate = false;

@@ -6,7 +6,9 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Media;
 using System.Windows.Threading;
 using YDock.Enum;
 using YDock.Interface;
@@ -143,11 +145,11 @@ namespace YDock.View
             get;
         }
 
-        public bool IsDragWndHide
+        public DockManager DockManager
         {
             get
             {
-                return _dragWnd == null || !_dragWnd.IsVisible;
+                return _model.DockManager;
             }
         }
 
@@ -205,42 +207,66 @@ namespace YDock.View
         }
 
 
-        Window _dragWnd;
+        DropWindow _dragWnd;
+        bool _isFirstShow;
         public virtual void OnDrop(DragItem source, int flag)
         {
             
         }
 
-        public virtual void CreateDropWindow()
+        internal virtual void CreateDropWindow()
         {
-            
+            if (_dragWnd == null)
+            {
+                _isFirstShow = true;
+                _dragWnd = new DropWindow(this);
+            }
         }
 
         public void CloseDropWindow()
         {
             if (_dragWnd != null)
-                _dragWnd.Close();
+            {
+                _dragWnd.IsOpen = false;
+                _dragWnd = null;
+            }
         }
 
         public void HideDropWindow()
         {
-            if (_dragWnd != null)
-                _dragWnd.Hide();
+            _dragWnd?.Hide();
         }
 
         public void ShowDropWindow()
         {
-            if (_dragWnd != null)
-                _dragWnd.Show();
+            if (_dragWnd == null)
+            {
+                CreateDropWindow();
+                _dragWnd.IsOpen = true;
+            }
+            if (_isFirstShow)
+            {
+                _isFirstShow = false;
+                var p = this.PointToScreenDPIWithoutFlowDirection(new Point());
+                _dragWnd.HorizontalOffset = p.X;
+                _dragWnd.VerticalOffset = p.Y;
+                _dragWnd.Height = ActualHeight;
+                _dragWnd.Width = ActualWidth;
+            }
+            _dragWnd.Show();
+        }
+
+        public void Update()
+        {
+            _dragWnd?.Update();
         }
 
         private void OnDragStatusChanged(DragStatusChangedEventArgs args)
         {
             if (Parent is BaseFloatWindow && (Parent as BaseFloatWindow).IsDragging)
                 return;
-            if (args.IsDragging)
-                CreateDropWindow();
-            else CloseDropWindow();
+            if (!args.IsDragging)
+                CloseDropWindow();
         }
     }
 }

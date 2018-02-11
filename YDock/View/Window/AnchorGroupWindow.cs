@@ -97,7 +97,6 @@ namespace YDock.View
 
         public override void Recreate()
         {
-            base.Recreate();
             if (_needReCreate)
             {
                 _needReCreate = false;

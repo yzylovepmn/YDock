@@ -65,6 +65,7 @@
     <Compile Include="Enum\DockMode.cs" />
     <Compile Include="Enum\DragMode.cs" />
     <Compile Include="Interface\IDrag.cs" />
+    <Compile Include="Interface\IDrop.cs" />
     <Compile Include="Interface\ILayout.cs" />
     <Compile Include="Interface\IModel.cs" />
     <Compile Include="Interface\IView.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="DockHelper.cs" />
     <Compile Include="View\Window\BaseFloatWindow.cs" />
     <Compile Include="View\Window\DocumentGroupWindow.cs" />
+    <Compile Include="View\Window\DropWindow.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

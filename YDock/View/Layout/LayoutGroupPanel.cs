@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
@@ -182,14 +184,6 @@ namespace YDock.View
             get
             {
                 return DragMode.RootPanel;
-            }
-        }
-
-        public bool IsDragWndHide
-        {
-            get
-            {
-                return _dragWnd == null || !_dragWnd.IsVisible;
             }
         }
 
@@ -1433,42 +1427,58 @@ namespace YDock.View
             }
         }
 
-        Window _dragWnd;
+        DropWindow _dragWnd;
+        bool _isFirstShow;
         public void OnDrop(DragItem source, int flag)
         {
             
         }
 
-        public void CreateDropWindow()
+        void CreateDropWindow()
         {
-            _dragWnd = DockHelper.CreateTransparentWindow(CreateRect());
-            _dragWnd.Content = new RootDropPanel(this, DockManager.DragManager.DragItem);
+            if (_dragWnd == null)
+            {
+                _isFirstShow = true;
+                _dragWnd = new DropWindow(this);
+            }
         }
 
         public void CloseDropWindow()
         {
             if (_dragWnd != null)
             {
-                _dragWnd.Close();
+                _dragWnd.IsOpen = false;
                 _dragWnd = null;
             }
         }
 
         public void HideDropWindow()
         {
-            if (_dragWnd != null)
-                _dragWnd.Hide();
+            _dragWnd?.Hide();
         }
 
         public void ShowDropWindow()
         {
-            if (_dragWnd != null)
-                _dragWnd.Show();
+            if (_dragWnd == null)
+            {
+                CreateDropWindow();
+                _dragWnd.IsOpen = true;
+            }
+            if (_isFirstShow)
+            {
+                _isFirstShow = false;
+                var p = this.PointToScreenDPIWithoutFlowDirection(new Point());
+                _dragWnd.HorizontalOffset = p.X;
+                _dragWnd.VerticalOffset = p.Y;
+                _dragWnd.Height = ActualHeight;
+                _dragWnd.Width = ActualWidth;
+            }
+            _dragWnd.Show();
         }
 
-        internal Rect CreateRect()
+        public void Update()
         {
-            return new Rect(this.PointToScreenDPIWithoutFlowDirection(new Point()), this.TransformActualSizeToAncestor());
+            _dragWnd?.Update();
         }
 
         public void Dispose()

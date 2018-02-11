@@ -17,16 +17,12 @@ namespace YDock
             return (T)template.FindName(name, templateParent);
         }
 
-        public static Window CreateTransparentWindow(Rect rect)
+        public static Window CreateTransparentWindow()
         {
             return new Window()
             {
-                Left = rect.Left,
-                Top = rect.Top,
-                Height = rect.Height,
-                Width = rect.Width,
                 AllowsTransparency = true,
-                Background = Brushes.Transparent,
+                Background = Brushes.LightSkyBlue,
                 WindowStyle = WindowStyle.None,
                 ShowInTaskbar = false,
                 ShowActivated = false
@@ -522,9 +518,12 @@ namespace YDock
     {
         public static readonly SolidColorBrush SplitterBrushVertical;
         public static readonly SolidColorBrush SplitterBrushHorizontal;
-        public static readonly SolidColorBrush TextBlockActiveForeground;
+        public static readonly SolidColorBrush DropRectBrush;
         public static readonly Pen ActiveDashPen;
         public static readonly Pen DisActiveDashPen;
+        public static readonly Pen BorderPen;
+        public static readonly Pen DropRectPen_Heavy;
+        public static readonly Pen DropRectPen;
 
         static ResourceManager()
         {
@@ -544,13 +543,31 @@ namespace YDock
                 A = 0xFF
             });
 
-            TextBlockActiveForeground = new SolidColorBrush(new Color()
+            DropRectBrush = new SolidColorBrush(new Color()
             {
                 R = 0x00,
                 G = 0x7A,
                 B = 0xCC,
                 A = 0xFF
             });
+
+            BorderPen = new Pen()
+            {
+                Brush = Brushes.Gray,
+                Thickness = 1
+            };
+
+            DropRectPen_Heavy = new Pen()
+            {
+                Brush = DropRectBrush,
+                Thickness = 3
+            };
+
+            DropRectPen = new Pen()
+            {
+                Brush = DropRectBrush,
+                Thickness = 1
+            };
 
             ActiveDashPen = new Pen()
             {

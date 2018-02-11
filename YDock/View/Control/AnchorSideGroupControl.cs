@@ -36,10 +36,5 @@ namespace YDock.View
         {
             
         }
-
-        public override void CreateDropWindow()
-        {
-            
-        }
     }
 }

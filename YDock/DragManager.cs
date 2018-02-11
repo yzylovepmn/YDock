@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
@@ -14,10 +16,11 @@ namespace YDock
 {
     public class DragItem : IDisposable
     {
-        public DragItem(object relativeObj, DockMode mode, Point clickPos, Rect clickRect)
+        public DragItem(object relativeObj, DockMode dockMode, DragMode dragMode, Point clickPos, Rect clickRect)
         {
             _relativeObj = relativeObj;
-            _mode = mode;
+            _dockMode = dockMode;
+            _dragMode = dragMode;
             _clickPos = clickPos;
             _clickRect = clickRect;
         }
@@ -30,11 +33,18 @@ namespace YDock
         /// <summary>
         /// 拖动前的Mode
         /// </summary>
-        public DockMode Mode
+        public DockMode DockMode
         {
-            get { return _mode; }
+            get { return _dockMode; }
         }
-        private DockMode _mode;
+        private DockMode _dockMode;
+
+        
+        public DragMode DragMode
+        {
+            get { return _dragMode; }
+        }
+        private DragMode _dragMode;
 
         public Point ClickPos
         {
@@ -114,6 +124,8 @@ namespace YDock
                     if (_dragTarget != null)
                         _dragTarget.ShowDropWindow();
                 }
+                else if (_dragTarget != null)
+                    _dragTarget.Update();
             }
         }
 
@@ -145,10 +157,14 @@ namespace YDock
                     _dragWnd = _dragItem.RelativeObj as BaseFloatWindow;
             }
             else BeforeDrag();
-            //初始化最外层的_rootTarget
-            _rootSize = DockManager.LayoutRootPanel.RootGroupPanel.TransformActualSizeToAncestor();
-            _rootTarget = DockManager.LayoutRootPanel.RootGroupPanel;
-            _rootTarget.CreateDropWindow();
+            if (_rootTarget == null)
+            {
+                //初始化最外层的_rootTarget
+                _rootSize = DockManager.LayoutRootPanel.RootGroupPanel.TransformActualSizeToAncestor();
+                _rootTarget = DockManager.LayoutRootPanel.RootGroupPanel;
+            }
+            else if (!_isInvokeByFloatWnd && _dragWnd is DocumentGroupWindow)
+                _dragWnd.Recreate();
         }
 
         private void BeforeDrag()
@@ -190,7 +206,7 @@ namespace YDock
             ILayoutGroup group;
             IDockElement ele;
             var mouseP = DockHelper.GetMousePosition(DockManager);
-            switch (_dragItem.Mode)
+            switch (_dragItem.DockMode)
             {
                 case DockMode.Normal:
                     if (_dragItem.RelativeObj is ILayoutGroup)
@@ -347,21 +363,26 @@ namespace YDock
         internal const int BOTTOM = 0x0008;
         internal const int CENTER = 0x0010;
         internal const int SPLIT = 0x1000;
+        internal const int ACTIVE = 0x2000;
         #endregion
 
         #region DragEvent
-        internal void OnMouseMove(object sender)
+        internal void OnMouseMove()
         {
             var p = DockHelper.GetMousePositionRelativeTo(DockManager.LayoutRootPanel.RootGroupPanel);
             if (p.X >= 0 && p.Y >= 0
                 && p.X <= _rootSize.Width
                 && p.Y <= _rootSize.Height)
             {
-                if (_rootTarget.IsDragWndHide)
-                    _rootTarget.ShowDropWindow();
+                _rootTarget.ShowDropWindow();
+                _rootTarget.Update();
                 VisualTreeHelper.HitTest(DockManager.LayoutRootPanel.RootGroupPanel, _HitFilter, _HitRessult, new PointHitTestParameters(p));
             }
-            else if(!_rootTarget.IsDragWndHide) _rootTarget.HideDropWindow();
+            else
+            {
+                _rootTarget.HideDropWindow();
+                DragTarget = null;
+            }
         }
 
         private HitTestResultBehavior _HitRessult(HitTestResult result)
@@ -376,8 +397,7 @@ namespace YDock
             {
                 //表示此时potentialHitTestTarget在浮动窗口中
                 if ((potentialHitTestTarget as BaseGroupControl).DockViewParent == null)
-                    if (!_rootTarget.IsDragWndHide)
-                        _rootTarget.HideDropWindow();
+                    _rootTarget.HideDropWindow();
 
                 //设置DragTarget，以实时显示TargetWnd
                 DragTarget = potentialHitTestTarget as IDragTarget;

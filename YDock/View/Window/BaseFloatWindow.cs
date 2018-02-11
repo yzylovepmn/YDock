@@ -63,16 +63,20 @@ namespace YDock.View
                     if (!DockManager.DragManager.IsDragging)
                     {
                         _isDragging = true;
-                        DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, new Point(), Rect.Empty), true);
+                        if (this is AnchorGroupWindow)
+                            DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Anchor, new Point(), Rect.Empty), true);
+                        else DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Document, new Point(), Rect.Empty), true);
                     }
                     break;
                 case Win32Helper.WM_MOVING:
                     if (DockManager.DragManager.IsDragging)
-                        DockManager.DragManager.OnMouseMove(this);
+                        DockManager.DragManager.OnMouseMove();
                     else
                     {
                         _isDragging = true;
-                        DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, new Point(), Rect.Empty), true);
+                        if (this is AnchorGroupWindow)
+                            DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Anchor, new Point(), Rect.Empty), true);
+                        else DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Document, new Point(), Rect.Empty), true);
                     }
                     break;
                 case Win32Helper.WM_EXITSIZEMOVE:

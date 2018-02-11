@@ -9,12 +9,12 @@ namespace YDock.Interface
 {
     public interface IDragTarget
     {
-        bool IsDragWndHide { get; }
+        DockManager DockManager { get; }
         DragMode Mode { get; }
         void OnDrop(DragItem source, int flag);
         void HideDropWindow();
         void ShowDropWindow();
-        void CreateDropWindow();
         void CloseDropWindow();
+        void Update();
     }
 }

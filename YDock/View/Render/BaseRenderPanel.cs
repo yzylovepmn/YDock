@@ -31,6 +31,7 @@ namespace YDock.View
         {
             get
             {
+                if (_children == null) return 0;
                 return _children.Count;
             }
         }

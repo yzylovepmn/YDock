@@ -11,6 +11,7 @@ namespace YDock.View
         internal BaseDropPanel(IDragTarget target, DragItem source)
         {
             _target = target;
+            _source = source;
         }
 
         protected IDragTarget _target;
@@ -33,9 +34,9 @@ namespace YDock.View
 
         public override void Dispose()
         {
-            base.Dispose();
             _target = null;
             _source = null;
+            base.Dispose();
         }
     }
 
@@ -43,6 +44,8 @@ namespace YDock.View
     {
         internal RootDropPanel(IDragTarget target, DragItem source) : base(target, source)
         {
+            //绘制停靠的区域
+            AddChild(new ActiveRectDropVisual(DragManager.NONE));
             //绘制左边的拖放区域
             AddChild(new UnitDropVisual(DragManager.LEFT));
             //绘制顶部的拖放区域
@@ -54,29 +57,12 @@ namespace YDock.View
         }
     }
 
-    public class AnchorDropPanel : BaseDropPanel
+    public class DropPanel : BaseDropPanel
     {
-        internal AnchorDropPanel(IDragTarget target, DragItem source) : base(target, source)
+        internal DropPanel(IDragTarget target, DragItem source) : base(target, source)
         {
-            //绘制拖放区域的玻璃外观
-            AddChild(new GlassDropVisual(DragManager.NONE));
-            //绘制中心的拖放区域
-            AddChild(new UnitDropVisual(DragManager.CENTER));
-            //绘制左边的拖放区域
-            AddChild(new UnitDropVisual(DragManager.LEFT));
-            //绘制顶部的拖放区域
-            AddChild(new UnitDropVisual(DragManager.TOP));
-            //绘制右边的拖放区域
-            AddChild(new UnitDropVisual(DragManager.RIGHT));
-            //绘制底部的拖放区域
-            AddChild(new UnitDropVisual(DragManager.BOTTOM));
-        }
-    }
-
-    public class DocumentDropPanel : BaseDropPanel
-    {
-        internal DocumentDropPanel(IDragTarget target, DragItem source) : base(target, source)
-        {
+            //绘制停靠的区域
+            AddChild(new ActiveRectDropVisual(DragManager.NONE));
             //绘制拖放区域的玻璃外观
             AddChild(new GlassDropVisual(DragManager.NONE));
             //绘制中心的拖放区域

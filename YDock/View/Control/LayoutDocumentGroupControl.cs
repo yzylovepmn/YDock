@@ -27,18 +27,13 @@ namespace YDock.View
         {
             get
             {
-                return DragMode.Anchor;
+                return DragMode.Document;
             }
         }
 
         public override void OnDrop(DragItem source, int flag)
         {
 
-        }
-
-        public override void CreateDropWindow()
-        {
-            
         }
     }
 }

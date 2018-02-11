@@ -51,8 +51,8 @@ namespace YDock.View
                     if (!ele.DockManager.DragManager.IsDragging)
                     {
                         if (ele.Mode == DockMode.DockBar)
-                            ele.DockManager.DragManager.IntoDragAction(new DragItem(ele, ele.Mode, _mouseDown, Rect.Empty));
-                        else ele.DockManager.DragManager.IntoDragAction(new DragItem(ele.Container, ele.Mode, _mouseDown, Rect.Empty));
+                            ele.DockManager.DragManager.IntoDragAction(new DragItem(ele, ele.Mode, DragMode.Anchor, _mouseDown, Rect.Empty));
+                        else ele.DockManager.DragManager.IntoDragAction(new DragItem(ele.Container, ele.Mode, DragMode.Anchor, _mouseDown, Rect.Empty));
                     }
                 }
             }

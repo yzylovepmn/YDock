@@ -201,7 +201,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="15"/>
                     </Grid.ColumnDefinitions>
-                    <view:DocumentPanel shell:WindowChrome.IsHitTestVisibleInChrome="True" IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
+                    <view:DocumentPanel IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
                     <view:CustomToggleButton shell:WindowChrome.IsHitTestVisibleInChrome="True" IsChecked="{Binding RelativeSource={RelativeSource Self},Path=DropContextMenu.IsOpen}" IsThreeState="False" Height="15" Grid.Column="1" Style="{StaticResource DocumentToggleButtonStyle}">
                         <view:CustomToggleButton.DropContextMenu>
                             <view:CustomContextMenu ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.ChildrenSorted}">
@@ -294,13 +294,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Border x:Name="Border" SnapsToDevicePixels="True">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="15"/>
-                    </Grid.ColumnDefinitions>
-                    <view:DocumentPanel shell:WindowChrome.IsHitTestVisibleInChrome="True" IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
-                </Grid>
+                <view:DocumentPanel IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
             </Border>
             <Border x:Name="ContentPanel"
                                 VerticalAlignment="Stretch"
@@ -383,6 +377,7 @@
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="{x:Type view:DragTabItem}">
+                    <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
                     <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
                     <Setter Property="Template" Value="{Binding DockManager.DocumentHeaderTemplate}"/>
                 </Style>
