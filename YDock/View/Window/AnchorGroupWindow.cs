@@ -84,12 +84,8 @@ namespace YDock.View
             switch (msg)
             {
                 case Win32Helper.WM_NCLBUTTONDOWN:
-                    if (IsSingleMode)
-                        ((Content as ILayoutGroupControl).Model as ILayoutGroup).SetActive((Content as BaseGroupControl).SelectedIndex);
-                    break;
                 case Win32Helper.WM_NCRBUTTONDOWN:
-                    if (IsSingleMode)
-                        ((Content as ILayoutGroupControl).Model as ILayoutGroup).SetActive((Content as BaseGroupControl).SelectedIndex);
+                    ActiveSelf();
                     break;
             }
             return base.FilterMessage(hwnd, msg, wParam, lParam, ref handled);
@@ -116,6 +112,13 @@ namespace YDock.View
             if (IsSingleMode)
                 _heightEceeed = Constants.FloatWindowResizeLength * 2;
             else _heightEceeed = Constants.FloatWindowResizeLength * 2 + Constants.FloatWindowHeaderHeight;
+        }
+
+        private void ActiveSelf()
+        {
+            if (IsSingleMode)
+                ((Content as ILayoutGroupControl).Model as ILayoutGroup).SetActive((Content as BaseGroupControl).SelectedIndex);
+            DockManager.MainWindow.Activate();
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Threading;
 using YDock.Enum;
 using YDock.Interface;
@@ -131,6 +132,14 @@ namespace YDock.View
             set { _needReCreate = value; }
         }
 
+        internal Rect Location
+        {
+            get
+            {
+                return new Rect(Left, Top, Width, Height);
+            }
+        }
+
         protected bool _isDragging = false;
         public bool IsDragging
         {
@@ -172,5 +181,28 @@ namespace YDock.View
         }
 
         public virtual void Recreate() { }
+
+        public void HitTest(Point p)
+        {
+            var p1 = (Content as FrameworkElement).PointToScreenDPIWithoutFlowDirection(new Point());
+            VisualTreeHelper.HitTest(Content as FrameworkElement, _HitFilter, _HitRessult, new PointHitTestParameters(new Point(p.X - p1.X, p.Y - p1.Y)));
+        }
+
+        private HitTestResultBehavior _HitRessult(HitTestResult result)
+        {
+            DockManager.DragManager.DragTarget = null;
+            return HitTestResultBehavior.Stop;
+        }
+
+        private HitTestFilterBehavior _HitFilter(DependencyObject potentialHitTestTarget)
+        {
+            if (potentialHitTestTarget is BaseGroupControl)
+            {
+                //设置DragTarget，以实时显示TargetWnd
+                DockManager.DragManager.DragTarget = potentialHitTestTarget as IDragTarget;
+                return HitTestFilterBehavior.Stop;
+            }
+            return HitTestFilterBehavior.Continue;
+        }
     }
 }

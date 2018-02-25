@@ -27,6 +27,7 @@ namespace YDock.View
         //Popup在全屏时显示不全，这里将PopupRoot的高度强制为ScreenHeight
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            (Child as FrameworkElement).SizeChanged -= OnSizeChanged;
             DependencyObject parent = Child;
             do
             {

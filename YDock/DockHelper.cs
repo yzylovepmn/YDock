@@ -38,9 +38,7 @@ namespace YDock
 
         public static Point GetMousePosition(FrameworkElement relativeTo)
         {
-            var mouseP = Mouse.GetPosition(relativeTo);
-            var pToScreen = relativeTo.PointToScreenDPIWithoutFlowDirection(new Point());
-            return new Point(pToScreen.X + mouseP.X, pToScreen.Y + mouseP.Y);
+            return relativeTo.TransformToDeviceDPI(Win32Helper.GetMousePosition());
         }
 
         public static Point GetMousePositionRelativeTo(FrameworkElement relativeTo)
@@ -521,6 +519,7 @@ namespace YDock
         public static readonly SolidColorBrush DropRectBrush;
         public static readonly Pen ActiveDashPen;
         public static readonly Pen DisActiveDashPen;
+        public static readonly Pen BlueDashPen;
         public static readonly Pen BorderPen;
         public static readonly Pen DropRectPen_Heavy;
         public static readonly Pen DropRectPen;
@@ -583,6 +582,14 @@ namespace YDock
                 Thickness = 0.8,
                 DashCap = PenLineCap.Flat,
                 DashStyle = new DashStyle(new List<double>() { 1, 4 }, 0)
+            };
+
+            BlueDashPen = new Pen()
+            {
+                Brush = Brushes.Blue,
+                Thickness = 0.8,
+                DashCap = PenLineCap.Flat,
+                DashStyle = new DashStyle(new List<double>() { 1, 3 }, 0)
             };
         }
     }

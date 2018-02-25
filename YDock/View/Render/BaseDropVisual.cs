@@ -140,178 +140,352 @@ namespace YDock.View
         {
             using (var ctx = RenderOpen())
             {
+                double hoffset = 0, voffset = 0;
                 if (DropPanel is RootDropPanel)
                 {
-                    double hoffeset = 0, voffeset = 0;
                     if ((Flag & DragManager.LEFT) != 0)
-                    {
-                        hoffeset = Constants.DropGlassLength;
-                        voffeset = (size.Height - Constants.DropUnitLength) / 2;
-                        //绘制玻璃外观
-                        ctx.PushOpacity(Constants.DragOpacity);
-                        ctx.DrawRectangle(Brushes.White, ResourceManager.BorderPen, new Rect(hoffeset, voffeset, Constants.DropUnitLength, Constants.DropUnitLength));
-                        ctx.Pop();
-                        if ((Flag & DragManager.ACTIVE) == 0)
-                            ctx.PushOpacity(Constants.DragOpacity * 2);
-                        ctx.DrawRectangle(Brushes.White, null, new Rect(hoffeset += Constants.DropGlassLength, voffeset += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
-                        hoffeset += Constants.DropGlassLength;
-                        voffeset += Constants.DropGlassLength;
-                        ctx.DrawLine(ResourceManager.DropRectPen_Heavy, new Point(hoffeset - 0.5, voffeset), new Point(hoffeset + 12.5, voffeset));
-
-                        //绘制小窗口
-                        StreamGeometry stream = new StreamGeometry();
-                        using (var sctx = stream.Open())
-                        {
-                            double currentX = hoffeset, currentY = voffeset;
-                            sctx.BeginFigure(new Point(currentX, currentY), true, false);
-                            sctx.LineTo(new Point(currentX, currentY += Constants.DropUnitLength - Constants.DropGlassLength * 4), true, true);
-                            sctx.LineTo(new Point(currentX += 12, currentY), true, true);
-                            sctx.LineTo(new Point(currentX, currentY -= Constants.DropUnitLength - Constants.DropGlassLength * 4), true, true);
-                            sctx.Close();
-                        }
-                        ctx.DrawGeometry(null, ResourceManager.DropRectPen, stream);
-
-                        //绘制方向箭头
-                        stream = new StreamGeometry();
-                        using (var sctx = stream.Open())
-                        {
-                            double currentX = hoffeset + 20, currentY = voffeset + (Constants.DropUnitLength - Constants.DropGlassLength * 4) / 2;
-                            sctx.BeginFigure(new Point(currentX, currentY), true, true);
-                            sctx.LineTo(new Point(currentX += 5, currentY -= 5), true, true);
-                            sctx.LineTo(new Point(currentX, currentY += 10), true, true);
-                            sctx.Close();
-                        }
-                        ctx.DrawGeometry(Brushes.Black, null, stream);
-                    }
+                        _DrawLeft(ctx, Constants.DropGlassLength, (size.Height - Constants.DropUnitLength) / 2);
                     else if ((Flag & DragManager.TOP) != 0)
-                    {
-                        hoffeset = (size.Width - Constants.DropUnitLength) / 2;
-                        voffeset = Constants.DropGlassLength;
-                        //绘制玻璃外观
-                        ctx.PushOpacity(Constants.DragOpacity);
-                        ctx.DrawRectangle(Brushes.White, ResourceManager.BorderPen, new Rect(hoffeset, voffeset, Constants.DropUnitLength, Constants.DropUnitLength));
-                        ctx.Pop();
-                        if ((Flag & DragManager.ACTIVE) == 0)
-                            ctx.PushOpacity(Constants.DragOpacity * 2);
-
-                        ctx.DrawRectangle(Brushes.White, null, new Rect(hoffeset += Constants.DropGlassLength, voffeset += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
-                        hoffeset += Constants.DropGlassLength;
-                        voffeset += Constants.DropGlassLength;
-
-                        ctx.DrawLine(ResourceManager.DropRectPen_Heavy, new Point(hoffeset - 0.5, voffeset), new Point(hoffeset + Constants.DropUnitLength - Constants.DropGlassLength * 4 + 0.5, voffeset));
-
-                        //绘制小窗口
-                        StreamGeometry stream = new StreamGeometry();
-                        using (var sctx = stream.Open())
-                        {
-                            double currentX = hoffeset, currentY = voffeset;
-                            sctx.BeginFigure(new Point(currentX, currentY), true, false);
-                            sctx.LineTo(new Point(currentX, currentY += 12), true, true);
-                            sctx.LineTo(new Point(currentX += Constants.DropUnitLength - Constants.DropGlassLength * 4, currentY), true, true);
-                            sctx.LineTo(new Point(currentX, currentY -= 12), true, true);
-                            sctx.Close();
-                        }
-                        ctx.DrawGeometry(null, ResourceManager.DropRectPen, stream);
-
-                        //绘制方向箭头
-                        stream = new StreamGeometry();
-                        using (var sctx = stream.Open())
-                        {
-                            double currentX = hoffeset + (Constants.DropUnitLength - Constants.DropGlassLength * 4) / 2, currentY = voffeset + 20;
-                            sctx.BeginFigure(new Point(currentX, currentY), true, true);
-                            sctx.LineTo(new Point(currentX += 5, currentY += 5), true, true);
-                            sctx.LineTo(new Point(currentX -= 10, currentY), true, true);
-                            sctx.Close();
-                        }
-                        ctx.DrawGeometry(Brushes.Black, null, stream);
-                    }
+                        _DrawTop(ctx, (size.Width - Constants.DropUnitLength) / 2, Constants.DropGlassLength);
                     else if ((Flag & DragManager.RIGHT) != 0)
-                    {
-                        hoffeset = size.Width - Constants.DropGlassLength;
-                        voffeset = (size.Height - Constants.DropUnitLength) / 2;
-                        //绘制玻璃外观
-                        ctx.PushOpacity(Constants.DragOpacity);
-                        ctx.DrawRectangle(Brushes.White, ResourceManager.BorderPen, new Rect(hoffeset - Constants.DropUnitLength, voffeset, Constants.DropUnitLength, Constants.DropUnitLength));
-                        ctx.Pop();
-                        if ((Flag & DragManager.ACTIVE) == 0)
-                            ctx.PushOpacity(Constants.DragOpacity * 2);
-                        ctx.DrawRectangle(Brushes.White, null, new Rect((hoffeset -= Constants.DropGlassLength) - (Constants.DropUnitLength - Constants.DropGlassLength * 2), voffeset += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
-                        hoffeset -= Constants.DropGlassLength;
-                        voffeset += Constants.DropGlassLength;
-                        ctx.DrawLine(ResourceManager.DropRectPen_Heavy, new Point(hoffeset + 0.5, voffeset), new Point(hoffeset - 12.5, voffeset));
-
-                        //绘制小窗口
-                        StreamGeometry stream = new StreamGeometry();
-                        using (var sctx = stream.Open())
-                        {
-                            double currentX = hoffeset, currentY = voffeset;
-                            sctx.BeginFigure(new Point(currentX, currentY), true, false);
-                            sctx.LineTo(new Point(currentX, currentY += Constants.DropUnitLength - Constants.DropGlassLength * 4), true, true);
-                            sctx.LineTo(new Point(currentX -= 12, currentY), true, true);
-                            sctx.LineTo(new Point(currentX, currentY -= Constants.DropUnitLength - Constants.DropGlassLength * 4), true, true);
-                            sctx.Close();
-                        }
-                        ctx.DrawGeometry(null, ResourceManager.DropRectPen, stream);
-
-                        //绘制方向箭头
-                        stream = new StreamGeometry();
-                        using (var sctx = stream.Open())
-                        {
-                            double currentX = hoffeset - 20, currentY = voffeset + (Constants.DropUnitLength - Constants.DropGlassLength * 4) / 2;
-                            sctx.BeginFigure(new Point(currentX, currentY), true, true);
-                            sctx.LineTo(new Point(currentX -= 5, currentY -= 5), true, true);
-                            sctx.LineTo(new Point(currentX, currentY += 10), true, true);
-                            sctx.Close();
-                        }
-                        ctx.DrawGeometry(Brushes.Black, null, stream);
-                    }
+                        _DrawRight(ctx, size.Width - Constants.DropGlassLength, (size.Height - Constants.DropUnitLength) / 2);
                     else if ((Flag & DragManager.BOTTOM) != 0)
-                    {
-                        hoffeset = (size.Width - Constants.DropUnitLength) / 2;
-                        voffeset = size.Height - Constants.DropGlassLength;
-                        //绘制玻璃外观
-                        ctx.PushOpacity(Constants.DragOpacity);
-                        ctx.DrawRectangle(Brushes.White, ResourceManager.BorderPen, new Rect(hoffeset, voffeset - Constants.DropUnitLength, Constants.DropUnitLength, Constants.DropUnitLength));
-                        ctx.Pop();
-                        if ((Flag & DragManager.ACTIVE) == 0)
-                            ctx.PushOpacity(Constants.DragOpacity * 2);
-
-                        ctx.DrawRectangle(Brushes.White, null, new Rect(hoffeset += Constants.DropGlassLength, (voffeset -= Constants.DropGlassLength) - (Constants.DropUnitLength - Constants.DropGlassLength * 2), Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
-                        hoffeset += Constants.DropGlassLength;
-                        voffeset -= Constants.DropGlassLength;
-
-                        ctx.DrawLine(ResourceManager.DropRectPen_Heavy, new Point(hoffeset - 0.5, voffeset - 12), new Point(hoffeset + Constants.DropUnitLength - Constants.DropGlassLength * 4 + 0.5, voffeset - 12));
-
-                        //绘制小窗口
-                        StreamGeometry stream = new StreamGeometry();
-                        using (var sctx = stream.Open())
-                        {
-                            double currentX = hoffeset, currentY = voffeset - 12;
-                            sctx.BeginFigure(new Point(currentX, currentY), true, false);
-                            sctx.LineTo(new Point(currentX, currentY += 12), true, true);
-                            sctx.LineTo(new Point(currentX += Constants.DropUnitLength - Constants.DropGlassLength * 4, currentY), true, true);
-                            sctx.LineTo(new Point(currentX, currentY -= 12), true, true);
-                            sctx.Close();
-                        }
-                        ctx.DrawGeometry(null, ResourceManager.DropRectPen, stream);
-
-                        //绘制方向箭头
-                        stream = new StreamGeometry();
-                        using (var sctx = stream.Open())
-                        {
-                            double currentX = hoffeset + (Constants.DropUnitLength - Constants.DropGlassLength * 4) / 2, currentY = voffeset - 20;
-                            sctx.BeginFigure(new Point(currentX, currentY), true, true);
-                            sctx.LineTo(new Point(currentX += 5, currentY -= 5), true, true);
-                            sctx.LineTo(new Point(currentX -= 10, currentY), true, true);
-                            sctx.Close();
-                        }
-                        ctx.DrawGeometry(Brushes.Black, null, stream);
-                    }
+                        _DrawBottom(ctx, (size.Width - Constants.DropUnitLength) / 2, size.Height - Constants.DropGlassLength);
                 }
                 else
                 {
+                    if ((Flag & DragManager.CENTER) != 0)
+                    {
+                        bool flag = false;
+                        if (DropPanel.Target.Mode == DragMode.Document)
+                            flag = true;
+                        if (DropPanel.Source.DragMode != DragMode.Document
+                            && DropPanel.Target.Mode == DragMode.Anchor)
+                            flag = true;
 
+                        if (flag)
+                            _DrawCenter(ctx, (size.Width - Constants.DropUnitLength) / 2, (size.Height - Constants.DropUnitLength) / 2);
+                    }
+
+                    if ((Flag & DragManager.LEFT) != 0)
+                    {
+                        if ((Flag & DragManager.SPLIT) != 0)
+                        {
+                            if (DropPanel.Target.Mode == DragMode.Document)
+                            {
+                                hoffset = (size.Width - Constants.DropUnitLength) / 2 - Constants.DropUnitLength;
+                                voffset = (size.Height - Constants.DropUnitLength) / 2;
+                                _DrawCenter(ctx, hoffset, voffset, true, true);
+                            }
+                        }
+                        else
+                        {
+                            if (DropPanel.Target.Mode == DragMode.Document)
+                            {
+                                hoffset = (size.Width - Constants.DropUnitLength) / 2 - Constants.DropUnitLength * 2;
+                                voffset = (size.Height - Constants.DropUnitLength) / 2;
+                            }
+                            else
+                            {
+                                hoffset = (size.Width - Constants.DropUnitLength) / 2 - Constants.DropUnitLength;
+                                voffset = (size.Height - Constants.DropUnitLength) / 2;
+                            }
+                            if (DropPanel.Source.DragMode == DragMode.Anchor)
+                                _DrawLeft(ctx, hoffset, voffset, false);
+                        }
+                    }
+
+                    if ((Flag & DragManager.RIGHT) != 0)
+                    {
+                        if ((Flag & DragManager.SPLIT) != 0)
+                        {
+                            if (DropPanel.Target.Mode == DragMode.Document)
+                            {
+                                hoffset = (size.Width + Constants.DropUnitLength) / 2;
+                                voffset = (size.Height - Constants.DropUnitLength) / 2;
+                                _DrawCenter(ctx, hoffset, voffset, true, true);
+                            }
+                        }
+                        else
+                        {
+                            if (DropPanel.Target.Mode == DragMode.Document)
+                            {
+                                hoffset = size.Width / 2 + Constants.DropUnitLength * 2.5;
+                                voffset = (size.Height - Constants.DropUnitLength) / 2;
+                            }
+                            else
+                            {
+                                hoffset = size.Width / 2 + Constants.DropUnitLength * 1.5;
+                                voffset = (size.Height - Constants.DropUnitLength) / 2;
+                            }
+                            if (DropPanel.Source.DragMode == DragMode.Anchor)
+                                _DrawRight(ctx, hoffset, voffset, false);
+                        }
+                    }
+
+                    if ((Flag & DragManager.TOP) != 0)
+                    {
+                        if ((Flag & DragManager.SPLIT) != 0)
+                        {
+                            if (DropPanel.Target.Mode == DragMode.Document)
+                            {
+                                hoffset = (size.Width - Constants.DropUnitLength) / 2;
+                                voffset = size.Height / 2 - Constants.DropUnitLength * 1.5;
+                                _DrawCenter(ctx, hoffset, voffset, true);
+                            }
+                        }
+                        else
+                        {
+                            if (DropPanel.Target.Mode == DragMode.Document)
+                            {
+                                hoffset = (size.Width - Constants.DropUnitLength) / 2;
+                                voffset = size.Height / 2 - Constants.DropUnitLength * 2.5;
+                            }
+                            else
+                            {
+                                hoffset = (size.Width - Constants.DropUnitLength) / 2;
+                                voffset = size.Height / 2 - Constants.DropUnitLength * 1.5;
+                            }
+                            if (DropPanel.Source.DragMode == DragMode.Anchor)
+                                _DrawTop(ctx, hoffset, voffset, false);
+                        }
+                    }
+
+                    if ((Flag & DragManager.BOTTOM) != 0)
+                    {
+                        if ((Flag & DragManager.SPLIT) != 0)
+                        {
+                            if (DropPanel.Target.Mode == DragMode.Document)
+                            {
+                                hoffset = (size.Width - Constants.DropUnitLength) / 2;
+                                voffset = (size.Height + Constants.DropUnitLength) / 2;
+                                _DrawCenter(ctx, hoffset, voffset, true);
+                            }
+                        }
+                        else
+                        {
+                            if (DropPanel.Target.Mode == DragMode.Document)
+                            {
+                                hoffset = (size.Width - Constants.DropUnitLength) / 2;
+                                voffset = size.Height / 2 + Constants.DropUnitLength * 2.5;
+                            }
+                            else
+                            {
+                                hoffset = (size.Width - Constants.DropUnitLength) / 2;
+                                voffset = size.Height / 2 + Constants.DropUnitLength * 1.5;
+                            }
+                            if (DropPanel.Source.DragMode == DragMode.Anchor)
+                                _DrawBottom(ctx, hoffset, voffset, false);
+                        }
+                    }
                 }
+            }
+        }
+
+        private void _DrawLeft(DrawingContext ctx, double hoffeset, double voffeset, bool hasGlassBorder = true)
+        {
+            if (hasGlassBorder)
+            {
+                //绘制玻璃外观
+                ctx.PushOpacity(Constants.DragOpacity);
+                ctx.DrawRectangle(Brushes.White, ResourceManager.BorderPen, new Rect(hoffeset, voffeset, Constants.DropUnitLength, Constants.DropUnitLength));
+                ctx.Pop();
+            }
+            if ((Flag & DragManager.ACTIVE) == 0)
+                ctx.PushOpacity(Constants.DragOpacity * 2);
+            ctx.DrawRectangle(Brushes.White, null, new Rect(hoffeset += Constants.DropGlassLength, voffeset += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
+            hoffeset += Constants.DropGlassLength;
+            voffeset += Constants.DropGlassLength;
+            ctx.DrawLine(ResourceManager.DropRectPen_Heavy, new Point(hoffeset - 0.5, voffeset), new Point(hoffeset + 12.5, voffeset));
+
+            //绘制小窗口
+            StreamGeometry stream = new StreamGeometry();
+            using (var sctx = stream.Open())
+            {
+                double currentX = hoffeset, currentY = voffeset;
+                sctx.BeginFigure(new Point(currentX, currentY), true, false);
+                sctx.LineTo(new Point(currentX, currentY += Constants.DropUnitLength - Constants.DropGlassLength * 4), true, true);
+                sctx.LineTo(new Point(currentX += 12, currentY), true, true);
+                sctx.LineTo(new Point(currentX, currentY -= Constants.DropUnitLength - Constants.DropGlassLength * 4), true, true);
+                sctx.Close();
+            }
+            ctx.DrawGeometry(null, ResourceManager.DropRectPen, stream);
+
+            //绘制方向箭头
+            stream = new StreamGeometry();
+            using (var sctx = stream.Open())
+            {
+                double currentX = hoffeset + 20, currentY = voffeset + (Constants.DropUnitLength - Constants.DropGlassLength * 4) / 2;
+                sctx.BeginFigure(new Point(currentX, currentY), true, true);
+                sctx.LineTo(new Point(currentX += 5, currentY -= 5), true, true);
+                sctx.LineTo(new Point(currentX, currentY += 10), true, true);
+                sctx.Close();
+            }
+            ctx.DrawGeometry(Brushes.Black, null, stream);
+        }
+
+        private void _DrawTop(DrawingContext ctx, double hoffeset, double voffeset, bool hasGlassBorder = true)
+        {
+            if (hasGlassBorder)
+            {
+                //绘制玻璃外观
+                ctx.PushOpacity(Constants.DragOpacity);
+                ctx.DrawRectangle(Brushes.White, ResourceManager.BorderPen, new Rect(hoffeset, voffeset, Constants.DropUnitLength, Constants.DropUnitLength));
+                ctx.Pop();
+            }
+            if ((Flag & DragManager.ACTIVE) == 0)
+                ctx.PushOpacity(Constants.DragOpacity * 2);
+
+            ctx.DrawRectangle(Brushes.White, null, new Rect(hoffeset += Constants.DropGlassLength, voffeset += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
+            hoffeset += Constants.DropGlassLength;
+            voffeset += Constants.DropGlassLength;
+
+            ctx.DrawLine(ResourceManager.DropRectPen_Heavy, new Point(hoffeset - 0.5, voffeset), new Point(hoffeset + Constants.DropUnitLength - Constants.DropGlassLength * 4 + 0.5, voffeset));
+
+            //绘制小窗口
+            StreamGeometry stream = new StreamGeometry();
+            using (var sctx = stream.Open())
+            {
+                double currentX = hoffeset, currentY = voffeset;
+                sctx.BeginFigure(new Point(currentX, currentY), true, false);
+                sctx.LineTo(new Point(currentX, currentY += 12), true, true);
+                sctx.LineTo(new Point(currentX += Constants.DropUnitLength - Constants.DropGlassLength * 4, currentY), true, true);
+                sctx.LineTo(new Point(currentX, currentY -= 12), true, true);
+                sctx.Close();
+            }
+            ctx.DrawGeometry(null, ResourceManager.DropRectPen, stream);
+
+            //绘制方向箭头
+            stream = new StreamGeometry();
+            using (var sctx = stream.Open())
+            {
+                double currentX = hoffeset + (Constants.DropUnitLength - Constants.DropGlassLength * 4) / 2, currentY = voffeset + 20;
+                sctx.BeginFigure(new Point(currentX, currentY), true, true);
+                sctx.LineTo(new Point(currentX += 5, currentY += 5), true, true);
+                sctx.LineTo(new Point(currentX -= 10, currentY), true, true);
+                sctx.Close();
+            }
+            ctx.DrawGeometry(Brushes.Black, null, stream);
+        }
+
+        private void _DrawRight(DrawingContext ctx, double hoffeset, double voffeset, bool hasGlassBorder = true)
+        {
+            if (hasGlassBorder)
+            {
+                //绘制玻璃外观
+                ctx.PushOpacity(Constants.DragOpacity);
+                ctx.DrawRectangle(Brushes.White, ResourceManager.BorderPen, new Rect(hoffeset - Constants.DropUnitLength, voffeset, Constants.DropUnitLength, Constants.DropUnitLength));
+                ctx.Pop();
+            }
+
+            if ((Flag & DragManager.ACTIVE) == 0)
+                ctx.PushOpacity(Constants.DragOpacity * 2);
+            ctx.DrawRectangle(Brushes.White, null, new Rect((hoffeset -= Constants.DropGlassLength) - (Constants.DropUnitLength - Constants.DropGlassLength * 2), voffeset += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
+            hoffeset -= Constants.DropGlassLength;
+            voffeset += Constants.DropGlassLength;
+            ctx.DrawLine(ResourceManager.DropRectPen_Heavy, new Point(hoffeset + 0.5, voffeset), new Point(hoffeset - 12.5, voffeset));
+
+            //绘制小窗口
+            StreamGeometry stream = new StreamGeometry();
+            using (var sctx = stream.Open())
+            {
+                double currentX = hoffeset, currentY = voffeset;
+                sctx.BeginFigure(new Point(currentX, currentY), true, false);
+                sctx.LineTo(new Point(currentX, currentY += Constants.DropUnitLength - Constants.DropGlassLength * 4), true, true);
+                sctx.LineTo(new Point(currentX -= 12, currentY), true, true);
+                sctx.LineTo(new Point(currentX, currentY -= Constants.DropUnitLength - Constants.DropGlassLength * 4), true, true);
+                sctx.Close();
+            }
+            ctx.DrawGeometry(null, ResourceManager.DropRectPen, stream);
+
+            //绘制方向箭头
+            stream = new StreamGeometry();
+            using (var sctx = stream.Open())
+            {
+                double currentX = hoffeset - 20, currentY = voffeset + (Constants.DropUnitLength - Constants.DropGlassLength * 4) / 2;
+                sctx.BeginFigure(new Point(currentX, currentY), true, true);
+                sctx.LineTo(new Point(currentX -= 5, currentY -= 5), true, true);
+                sctx.LineTo(new Point(currentX, currentY += 10), true, true);
+                sctx.Close();
+            }
+            ctx.DrawGeometry(Brushes.Black, null, stream);
+        }
+
+        private void _DrawBottom(DrawingContext ctx, double hoffeset, double voffeset, bool hasGlassBorder = true)
+        {
+            if (hasGlassBorder)
+            {
+                //绘制玻璃外观
+                ctx.PushOpacity(Constants.DragOpacity);
+                ctx.DrawRectangle(Brushes.White, ResourceManager.BorderPen, new Rect(hoffeset, voffeset - Constants.DropUnitLength, Constants.DropUnitLength, Constants.DropUnitLength));
+                ctx.Pop();
+            }
+
+            if ((Flag & DragManager.ACTIVE) == 0)
+                ctx.PushOpacity(Constants.DragOpacity * 2);
+
+            ctx.DrawRectangle(Brushes.White, null, new Rect(hoffeset += Constants.DropGlassLength, (voffeset -= Constants.DropGlassLength) - (Constants.DropUnitLength - Constants.DropGlassLength * 2), Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
+            hoffeset += Constants.DropGlassLength;
+            voffeset -= Constants.DropGlassLength;
+
+            ctx.DrawLine(ResourceManager.DropRectPen_Heavy, new Point(hoffeset - 0.5, voffeset - 12), new Point(hoffeset + Constants.DropUnitLength - Constants.DropGlassLength * 4 + 0.5, voffeset - 12));
+
+            //绘制小窗口
+            StreamGeometry stream = new StreamGeometry();
+            using (var sctx = stream.Open())
+            {
+                double currentX = hoffeset, currentY = voffeset - 12;
+                sctx.BeginFigure(new Point(currentX, currentY), true, false);
+                sctx.LineTo(new Point(currentX, currentY += 12), true, true);
+                sctx.LineTo(new Point(currentX += Constants.DropUnitLength - Constants.DropGlassLength * 4, currentY), true, true);
+                sctx.LineTo(new Point(currentX, currentY -= 12), true, true);
+                sctx.Close();
+            }
+            ctx.DrawGeometry(null, ResourceManager.DropRectPen, stream);
+
+            //绘制方向箭头
+            stream = new StreamGeometry();
+            using (var sctx = stream.Open())
+            {
+                double currentX = hoffeset + (Constants.DropUnitLength - Constants.DropGlassLength * 4) / 2, currentY = voffeset - 20;
+                sctx.BeginFigure(new Point(currentX, currentY), true, true);
+                sctx.LineTo(new Point(currentX += 5, currentY -= 5), true, true);
+                sctx.LineTo(new Point(currentX -= 10, currentY), true, true);
+                sctx.Close();
+            }
+            ctx.DrawGeometry(Brushes.Black, null, stream);
+        }
+
+        private void _DrawCenter(DrawingContext ctx, double hoffset, double voffset, bool withSpliterLine = false, bool isVertical = false)
+        {
+            double currentX = hoffset, currentY = voffset;
+
+            if ((Flag & DragManager.ACTIVE) == 0)
+                ctx.PushOpacity(Constants.DragOpacity * 2);
+
+            ctx.DrawRectangle(Brushes.White, null, new Rect(currentX += Constants.DropGlassLength, currentY += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
+            currentX += Constants.DropGlassLength;
+            currentY += Constants.DropGlassLength + 2;
+
+            ctx.DrawLine(ResourceManager.DropRectPen_Heavy, new Point(currentX - 0.5, currentY), new Point(currentX + Constants.DropUnitLength - Constants.DropGlassLength * 4 + 0.5, currentY));
+
+            //绘制小窗口
+            StreamGeometry stream = new StreamGeometry();
+            using (var sctx = stream.Open())
+            {
+                sctx.BeginFigure(new Point(currentX, currentY), true, false);
+                sctx.LineTo(new Point(currentX, currentY += 22), true, true);
+                sctx.LineTo(new Point(currentX += Constants.DropUnitLength - Constants.DropGlassLength * 4, currentY), true, true);
+                sctx.LineTo(new Point(currentX, currentY -= 22), true, true);
+                sctx.Close();
+            }
+            ctx.DrawGeometry(null, ResourceManager.DropRectPen, stream);
+
+            if (withSpliterLine)
+            {
+                if (isVertical)
+                    ctx.DrawLine(ResourceManager.BlueDashPen, new Point(hoffset + Constants.DropUnitLength / 2, voffset + Constants.DropGlassLength * 2 + 3), new Point(hoffset + Constants.DropUnitLength / 2, voffset + Constants.DropUnitLength - 2 * Constants.DropGlassLength));
+                else ctx.DrawLine(ResourceManager.BlueDashPen, new Point(hoffset + Constants.DropGlassLength * 2, voffset + Constants.DropUnitLength / 2), new Point(hoffset + Constants.DropUnitLength - 2 * Constants.DropGlassLength, voffset + Constants.DropUnitLength / 2));
             }
         }
     }

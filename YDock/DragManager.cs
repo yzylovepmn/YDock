@@ -87,6 +87,7 @@ namespace YDock
         private DragItem _dragItem;
         private BaseDropVisual _dropVisual;
         private BaseFloatWindow _dragWnd;
+        private BaseFloatWindow _currentWnd;
         private bool _isDragging = false;
         #endregion
 
@@ -195,6 +196,7 @@ namespace YDock
             _dragWnd = null;
             _rootTarget.CloseDropWindow();
             _rootTarget = null;
+            _currentWnd = null;
             DragTarget = null;
             _DestroyDragItem();
         }
@@ -369,19 +371,49 @@ namespace YDock
         #region DragEvent
         internal void OnMouseMove()
         {
-            var p = DockHelper.GetMousePositionRelativeTo(DockManager.LayoutRootPanel.RootGroupPanel);
-            if (p.X >= 0 && p.Y >= 0
-                && p.X <= _rootSize.Width
-                && p.Y <= _rootSize.Height)
+            bool flag = false;
+            Point p = DockHelper.GetMousePosition(DockManager);
+            foreach (var wnd in DockManager.FloatWindows)
             {
-                _rootTarget.ShowDropWindow();
-                _rootTarget.Update();
-                VisualTreeHelper.HitTest(DockManager.LayoutRootPanel.RootGroupPanel, _HitFilter, _HitRessult, new PointHitTestParameters(p));
+                if (wnd != _dragWnd
+                    && wnd.Location.Contains(p)
+                    && !(wnd is DocumentGroupWindow && _dragItem.DragMode == DragMode.Anchor))
+                {
+                    if (_currentWnd != wnd)
+                    {
+
+                    }
+                    else
+                    {
+
+                    }
+                    wnd.HitTest(p);
+
+                    _rootTarget.HideDropWindow();
+                    flag = true;
+                    break;
+                }
             }
-            else
+            if (!flag)
             {
-                _rootTarget.HideDropWindow();
-                DragTarget = null;
+                p = DockHelper.GetMousePositionRelativeTo(DockManager.LayoutRootPanel.RootGroupPanel);
+                if (p.X >= 0 && p.Y >= 0
+                    && p.X <= _rootSize.Width
+                    && p.Y <= _rootSize.Height)
+                {
+                    if (_dragItem.DragMode != DragMode.Document)
+                    {
+                        _rootTarget.ShowDropWindow();
+                        _rootTarget.Update();
+                    }
+                    VisualTreeHelper.HitTest(DockManager.LayoutRootPanel.RootGroupPanel, _HitFilter, _HitRessult, new PointHitTestParameters(p));
+                }
+                else
+                {
+                    if (_dragItem.DragMode != DragMode.Document)
+                        _rootTarget.HideDropWindow();
+                    DragTarget = null;
+                }
             }
         }
 
@@ -395,10 +427,6 @@ namespace YDock
         {
             if (potentialHitTestTarget is BaseGroupControl)
             {
-                //表示此时potentialHitTestTarget在浮动窗口中
-                if ((potentialHitTestTarget as BaseGroupControl).DockViewParent == null)
-                    _rootTarget.HideDropWindow();
-
                 //设置DragTarget，以实时显示TargetWnd
                 DragTarget = potentialHitTestTarget as IDragTarget;
                 return HitTestFilterBehavior.Stop;
