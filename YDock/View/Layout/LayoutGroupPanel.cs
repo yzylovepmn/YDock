@@ -1468,10 +1468,7 @@ namespace YDock.View
             {
                 _isFirstShow = false;
                 var p = this.PointToScreenDPIWithoutFlowDirection(new Point());
-                _dragWnd.HorizontalOffset = p.X;
-                _dragWnd.VerticalOffset = p.Y;
-                _dragWnd.Height = ActualHeight;
-                _dragWnd.Width = ActualWidth;
+                DockHelper.UpdateLocation(_dragWnd, p.X, p.Y, ActualWidth, ActualHeight);
             }
             _dragWnd.Show();
         }

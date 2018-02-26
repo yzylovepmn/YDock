@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using YDock.View;
@@ -46,6 +47,54 @@ namespace YDock
             var mouseP = relativeTo.TransformToDeviceDPI(Win32Helper.GetMousePosition());
             var pToScreen = relativeTo.PointToScreenDPIWithoutFlowDirection(new Point());
             return new Point(mouseP.X - pToScreen.X, mouseP.Y - pToScreen.Y);
+        }
+
+        public static void UpdateLocation(DropWindow wnd, double left, double top, double width, double heigth)
+        {
+            wnd.Width = width;
+            wnd.Height = heigth;
+            if (wnd.MinWidth > width)
+            {
+                left -= (wnd.MinWidth - width) / 2;
+                width = wnd.MinWidth;
+            }
+            if (wnd.MinHeight > heigth)
+            {
+                top -= (wnd.MinHeight - heigth) / 2;
+                heigth = wnd.MinHeight;
+            }
+
+            if (left < 0)
+            {
+                wnd.HorizontalOffset = 0;
+                wnd.DropPanel.Hoffset = left;
+            }
+            else if (left + width > SystemParameters.PrimaryScreenWidth)
+            {
+                wnd.HorizontalOffset = SystemParameters.PrimaryScreenWidth - width;
+                wnd.DropPanel.Hoffset = left + width - SystemParameters.PrimaryScreenWidth;
+            }
+            else
+            {
+                wnd.HorizontalOffset = left;
+                wnd.DropPanel.Hoffset = 0;
+            }
+
+            if (top < 0)
+            {
+                wnd.VerticalOffset = 0;
+                wnd.DropPanel.Voffset = top;
+            }
+            else if (top + heigth > SystemParameters.PrimaryScreenHeight)
+            {
+                wnd.VerticalOffset = SystemParameters.PrimaryScreenHeight - heigth;
+                wnd.DropPanel.Voffset = top + heigth - SystemParameters.PrimaryScreenHeight;
+            }
+            else
+            {
+                wnd.VerticalOffset = top;
+                wnd.DropPanel.Voffset = 0;
+            }
         }
     }
 

@@ -32,6 +32,20 @@ namespace YDock.View
             get { return _source; }
         }
 
+        private double _hoffset;
+        public double Hoffset
+        {
+            get { return _hoffset; }
+            set { _hoffset = value; }
+        }
+
+        private double _voffset;
+        public double Voffset
+        {
+            get { return _voffset; }
+            set { _voffset = value; }
+        }
+
         public override void Dispose()
         {
             _target = null;

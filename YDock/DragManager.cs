@@ -199,6 +199,7 @@ namespace YDock
             _currentWnd = null;
             DragTarget = null;
             _DestroyDragItem();
+            GC.Collect();
         }
         #endregion
 

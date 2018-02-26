@@ -18,16 +18,36 @@ namespace YDock.View
             _host = host;
             if (host.Mode == DragMode.RootPanel)
             {
-                Child = new RootDropPanel(host, host.DockManager.DragManager.DragItem);
-                (Child as FrameworkElement).SizeChanged += OnSizeChanged;
+                _dropPanel = new RootDropPanel(host, host.DockManager.DragManager.DragItem);
+                _dropPanel.SizeChanged += OnSizeChanged;
             }
-            else Child = new DropPanel(host, host.DockManager.DragManager.DragItem);
+            else _dropPanel = new DropPanel(host, host.DockManager.DragManager.DragItem);
+            Child = _dropPanel;
+            if (host.Mode != DragMode.RootPanel)
+            {
+                if (host.Mode == DragMode.Document
+                    && host.DockManager.DragManager.DragItem.DragMode == DragMode.Anchor)
+                {
+                    MinWidth = Constants.DropUnitLength * 5;
+                    MinHeight = Constants.DropUnitLength * 5;
+                }
+                else
+                {
+                    MinWidth = Constants.DropUnitLength * 3;
+                    MinHeight = Constants.DropUnitLength * 3;
+                }
+            }
+            else
+            {
+                MinWidth = 0;
+                MinHeight = 0;
+            }
         }
 
         //Popup在全屏时显示不全，这里将PopupRoot的高度强制为ScreenHeight
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            (Child as FrameworkElement).SizeChanged -= OnSizeChanged;
+            _dropPanel.SizeChanged -= OnSizeChanged;
             DependencyObject parent = Child;
             do
             {
@@ -40,6 +60,12 @@ namespace YDock.View
                 }
             }
             while (parent != null);
+        }
+
+        private BaseDropPanel _dropPanel;
+        public BaseDropPanel DropPanel
+        {
+            get { return _dropPanel; }
         }
 
         private IDragTarget _host;

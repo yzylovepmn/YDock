@@ -68,6 +68,12 @@ namespace YDock.View
                 child.Update(new Size(ActualWidth, ActualHeight));
         }
 
+        public virtual void UpdateChildren(Size size)
+        {
+            foreach (var child in _children)
+                child.Update(size);
+        }
+
         public virtual void Dispose()
         {
             DataContext = null;
