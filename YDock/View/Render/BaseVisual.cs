@@ -13,6 +13,7 @@ namespace YDock.View
         {
 
         }
+
         public abstract void Update(Size size);
     }
 }

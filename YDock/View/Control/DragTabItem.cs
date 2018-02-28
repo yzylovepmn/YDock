@@ -109,8 +109,8 @@ namespace YDock.View
                         var item = _dockViewParent._dragItem;
                         _dockViewParent._dragItem = null;
                         if (_dockViewParent is AnchorSideGroupControl)
-                            _dockViewParent.Model.DockManager.DragManager.IntoDragAction(new DragItem(item, item.Mode, DragMode.Anchor, _dockViewParent._mouseDown, _dockViewParent._rect));
-                        else _dockViewParent.Model.DockManager.DragManager.IntoDragAction(new DragItem(item, item.Mode, DragMode.Document, _dockViewParent._mouseDown, _dockViewParent._rect));
+                            _dockViewParent.Model.DockManager.DragManager.IntoDragAction(new DragItem(item, item.Mode, DragMode.Anchor, _dockViewParent._mouseDown, _dockViewParent._rect, new Size(item.DesiredWidth, item.DesiredHeight)));
+                        else _dockViewParent.Model.DockManager.DragManager.IntoDragAction(new DragItem(item, item.Mode, DragMode.Document, _dockViewParent._mouseDown, _dockViewParent._rect, new Size(item.DesiredWidth, item.DesiredHeight)));
                     }
                     else
                     {

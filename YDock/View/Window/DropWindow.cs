@@ -84,15 +84,20 @@ namespace YDock.View
             Child.Visibility = Visibility.Visible;
         }
 
-        public void Update()
+        public void Close()
         {
+            IsOpen = false;
+        }
 
+        public void Update(Point mouseP)
+        {
+            _dropPanel.Update(mouseP);
         }
 
         public void Dispose()
         {
-            (Child as BaseDropPanel).Dispose();
-            Child = null;
+            _dropPanel.Dispose();
+            _dropPanel = null;
             _host = null;
         }
 

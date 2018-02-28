@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -7,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using YDock.Interface;
 using YDock.View;
 
 namespace YDock
@@ -95,6 +97,11 @@ namespace YDock
                 wnd.VerticalOffset = top;
                 wnd.DropPanel.Voffset = 0;
             }
+        }
+
+        public static double GetTextWidth(string text)
+        {
+            return new FormattedText(text, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface(new FontFamily("微软 雅黑"), FontStyles.Normal, FontWeights.Normal, FontStretches.Normal), 12, Brushes.Black).Width;
         }
     }
 
@@ -566,10 +573,12 @@ namespace YDock
         public static readonly SolidColorBrush SplitterBrushVertical;
         public static readonly SolidColorBrush SplitterBrushHorizontal;
         public static readonly SolidColorBrush DropRectBrush;
+        public static readonly SolidColorBrush RectBrush;
         public static readonly Pen ActiveDashPen;
         public static readonly Pen DisActiveDashPen;
         public static readonly Pen BlueDashPen;
         public static readonly Pen BorderPen;
+        public static readonly Pen RectBorderPen;
         public static readonly Pen DropRectPen_Heavy;
         public static readonly Pen DropRectPen;
 
@@ -599,10 +608,24 @@ namespace YDock
                 A = 0xFF
             });
 
+            RectBrush = new SolidColorBrush(new Color()
+            {
+                R = 0x1D,
+                G = 0x7A,
+                B = 0xEE,
+                A = 0xFF
+            });
+
             BorderPen = new Pen()
             {
                 Brush = Brushes.Gray,
                 Thickness = 1
+            };
+
+            RectBorderPen = new Pen()
+            {
+                Brush = Brushes.LightGray,
+                Thickness = 6
             };
 
             DropRectPen_Heavy = new Pen()

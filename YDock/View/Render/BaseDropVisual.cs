@@ -104,29 +104,135 @@ namespace YDock.View
 
         public override void Update(Size size)
         {
-            
+            using (var ctx = RenderOpen())
+            {
+                if (Flag != DragManager.NONE)
+                {
+                    ctx.PushOpacity(Constants.DragOpacity);
+                    if (Rect.IsEmpty)
+                    {
+                        if ((Flag & DragManager.LEFT) != 0)
+                        {
+                            if ((Flag & DragManager.SPLIT) != 0)
+                                ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.Hoffset, DropPanel.Voffset, size.Width / 2, size.Height));
+                            else ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.Hoffset, DropPanel.Voffset, Math.Min(size.Width / 2, DropPanel.Source.Size.Width), size.Height));
+                        }
+                        if ((Flag & DragManager.TOP) != 0)
+                        {
+                            if ((Flag & DragManager.SPLIT) != 0)
+                                ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.Hoffset, DropPanel.Voffset, size.Width, size.Height / 2));
+                            else ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.Hoffset, DropPanel.Voffset, size.Width, Math.Min(size.Height / 2, DropPanel.Source.Size.Height)));
+                        }
+                        if ((Flag & DragManager.RIGHT) != 0)
+                        {
+                            if ((Flag & DragManager.SPLIT) != 0)
+                                ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.Hoffset + size.Width / 2, DropPanel.Voffset, size.Width / 2, size.Height));
+                            else
+                            {
+                                double length = Math.Min(size.Width / 2, DropPanel.Source.Size.Width);
+                                ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.Hoffset + size.Width - length, DropPanel.Voffset, length, size.Height));
+                            }
+                        }
+                        if ((Flag & DragManager.BOTTOM) != 0)
+                        {
+                            if ((Flag & DragManager.SPLIT) != 0)
+                                ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.Hoffset, DropPanel.Voffset + size.Height / 2, size.Width, size.Height / 2));
+                            else
+                            {
+                                double length = Math.Min(size.Height / 2, DropPanel.Source.Size.Height);
+                                ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.Hoffset, DropPanel.Voffset + size.Height - length, size.Width, length));
+                            }
+                        }
+                        if ((Flag & DragManager.CENTER) != 0)
+                        {
+                            StreamGeometry stream = new StreamGeometry();
+                            using (var sctx = stream.Open())
+                            {
+                                double currentX = DropPanel.Hoffset, currentY = DropPanel.Voffset;
+                                sctx.BeginFigure(new Point(currentX, currentY), true, false);
+                                if (DropPanel.Target.Mode == DragMode.Anchor)
+                                {
+                                    sctx.LineTo(new Point(currentX += size.Width, currentY), true, false);
+                                    if (size.Width < 60)
+                                    {
+                                        sctx.LineTo(new Point(currentX, currentY += size.Height), true, false);
+                                        sctx.LineTo(new Point(currentX -= size.Width, currentY), true, false);
+                                    }
+                                    else
+                                    {
+                                        sctx.LineTo(new Point(currentX, currentY += size.Height - 20), true, false);
+                                        sctx.LineTo(new Point(currentX -= size.Width - 60, currentY), true, false);
+                                        sctx.LineTo(new Point(currentX, currentY += 20), true, false);
+                                        sctx.LineTo(new Point(currentX -= 60, currentY), true, false);
+                                    }
+                                    sctx.LineTo(new Point(currentX, currentY -= size.Height), true, false);
+                                }
+                                else
+                                {
+                                    if (size.Width < 120)
+                                    {
+                                        sctx.LineTo(new Point(currentX += size.Width, currentY), true, false);
+                                        sctx.LineTo(new Point(currentX, currentY += size.Height), true, false);
+                                    }
+                                    else
+                                    {
+                                        sctx.LineTo(new Point(currentX += 120, currentY), true, false);
+                                        sctx.LineTo(new Point(currentX, currentY += 22), true, false);
+                                        sctx.LineTo(new Point(currentX += size.Width - 120, currentY), true, false);
+                                        sctx.LineTo(new Point(currentX, currentY += size.Height - 22), true, false);
+                                    }
+                                    sctx.LineTo(new Point(currentX -= size.Width, currentY), true, false);
+                                    sctx.LineTo(new Point(currentX, currentY -= size.Height), true, false);
+                                }
+                                sctx.Close();
+                            }
+                            ctx.DrawGeometry(ResourceManager.RectBrush, ResourceManager.RectBorderPen, stream);
+                        }
+                    }
+                    else
+                    {
+                        StreamGeometry stream = new StreamGeometry();
+                        using (var sctx = stream.Open())
+                        {
+                            double currentX = DropPanel.Hoffset, currentY = DropPanel.Voffset;
+                            if (DropPanel.Target.Mode == DragMode.Anchor)
+                            {
+                                sctx.BeginFigure(new Point(currentX, currentY), true, false);
+                                if (size.Width < Rect.X + Rect.Width)
+                                    Rect.Width = size.Width - Rect.X;
+                                sctx.LineTo(new Point(currentX, currentY += size.Height - 20), true, false);
+                                sctx.LineTo(new Point(currentX += Rect.X, currentY), true, false);
+                                sctx.LineTo(new Point(currentX, currentY += 20), true, false);
+                                sctx.LineTo(new Point(currentX += Rect.Width, currentY), true, false);
+                                sctx.LineTo(new Point(currentX, currentY -= 20), true, false);
+                                sctx.LineTo(new Point(currentX += size.Width - Rect.Width - Rect.X, currentY), true, false);
+                                sctx.LineTo(new Point(currentX, currentY -= size.Height - 20), true, false);
+                                sctx.LineTo(new Point(currentX -= size.Width, currentY), true, false);
+                            }
+                            else
+                            {
+                                currentY += size.Height;
+                                sctx.BeginFigure(new Point(currentX, currentY), true, false);
+                                if (size.Width < Rect.X + Rect.Width)
+                                    Rect.Width = size.Width - Rect.X;
+                                sctx.LineTo(new Point(currentX, currentY -= size.Height - 22), true, false);
+                                sctx.LineTo(new Point(currentX += Rect.X, currentY), true, false);
+                                sctx.LineTo(new Point(currentX, currentY -= 22), true, false);
+                                sctx.LineTo(new Point(currentX += Rect.Width, currentY), true, false);
+                                sctx.LineTo(new Point(currentX, currentY += 22), true, false);
+                                sctx.LineTo(new Point(currentX += size.Width - Rect.Width - Rect.X, currentY), true, false);
+                                sctx.LineTo(new Point(currentX, currentY += size.Height - 22), true, false);
+                                sctx.LineTo(new Point(currentX -= Rect.Width, currentY), true, false);
+                            }
+                            sctx.Close();
+                        }
+                        ctx.DrawGeometry(ResourceManager.RectBrush, ResourceManager.RectBorderPen, stream);
+                    }
+                }
+            }
         }
 
-        private double _length;
-        public double Length
-        {
-            get { return _length; }
-            set { _length = value; }
-        }
-
-        private double? _headerLength;
-        public double? HeaderLength
-        {
-            get { return _headerLength; }
-            set { _headerLength = value; }
-        }
-
-        private double? _offset;
-        new public double? Offset
-        {
-            get { return _offset; }
-            set { _offset = value; }
-        }
+        internal Rect Rect;
     }
 
     public class UnitDropVisual: BaseDropVisual
@@ -138,6 +244,7 @@ namespace YDock.View
 
         public override void Update(Size size)
         {
+            if (DropPanel.Target == null) return;
             using (var ctx = RenderOpen())
             {
                 double hoffset = 0, voffset = 0;
@@ -285,7 +392,7 @@ namespace YDock.View
         private void _DrawLeft(DrawingContext ctx, double hoffset, double voffset, bool hasGlassBorder = true)
         {
             hoffset += DropPanel.Hoffset;
-            voffset += +DropPanel.Voffset;
+            voffset += DropPanel.Voffset;
             if (hasGlassBorder)
             {
                 //绘制玻璃外观
@@ -294,7 +401,7 @@ namespace YDock.View
                 ctx.Pop();
             }
             if ((Flag & DragManager.ACTIVE) == 0)
-                ctx.PushOpacity(Constants.DragOpacity * 2);
+                ctx.PushOpacity(Constants.DragOpacity * 1.8);
             ctx.DrawRectangle(Brushes.White, null, new Rect(hoffset += Constants.DropGlassLength, voffset += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
             hoffset += Constants.DropGlassLength;
             voffset += Constants.DropGlassLength;
@@ -329,7 +436,7 @@ namespace YDock.View
         private void _DrawTop(DrawingContext ctx, double hoffset, double voffset, bool hasGlassBorder = true)
         {
             hoffset += DropPanel.Hoffset;
-            voffset += +DropPanel.Voffset;
+            voffset += DropPanel.Voffset;
             if (hasGlassBorder)
             {
                 //绘制玻璃外观
@@ -338,7 +445,7 @@ namespace YDock.View
                 ctx.Pop();
             }
             if ((Flag & DragManager.ACTIVE) == 0)
-                ctx.PushOpacity(Constants.DragOpacity * 2);
+                ctx.PushOpacity(Constants.DragOpacity * 1.8);
 
             ctx.DrawRectangle(Brushes.White, null, new Rect(hoffset += Constants.DropGlassLength, voffset += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
             hoffset += Constants.DropGlassLength;
@@ -375,7 +482,7 @@ namespace YDock.View
         private void _DrawRight(DrawingContext ctx, double hoffset, double voffset, bool hasGlassBorder = true)
         {
             hoffset += DropPanel.Hoffset;
-            voffset += +DropPanel.Voffset;
+            voffset += DropPanel.Voffset;
             if (hasGlassBorder)
             {
                 //绘制玻璃外观
@@ -385,7 +492,7 @@ namespace YDock.View
             }
 
             if ((Flag & DragManager.ACTIVE) == 0)
-                ctx.PushOpacity(Constants.DragOpacity * 2);
+                ctx.PushOpacity(Constants.DragOpacity * 1.8);
             ctx.DrawRectangle(Brushes.White, null, new Rect((hoffset -= Constants.DropGlassLength) - (Constants.DropUnitLength - Constants.DropGlassLength * 2), voffset += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
             hoffset -= Constants.DropGlassLength;
             voffset += Constants.DropGlassLength;
@@ -420,7 +527,7 @@ namespace YDock.View
         private void _DrawBottom(DrawingContext ctx, double hoffset, double voffset, bool hasGlassBorder = true)
         {
             hoffset += DropPanel.Hoffset;
-            voffset += +DropPanel.Voffset;
+            voffset += DropPanel.Voffset;
             if (hasGlassBorder)
             {
                 //绘制玻璃外观
@@ -430,7 +537,7 @@ namespace YDock.View
             }
 
             if ((Flag & DragManager.ACTIVE) == 0)
-                ctx.PushOpacity(Constants.DragOpacity * 2);
+                ctx.PushOpacity(Constants.DragOpacity * 1.8);
 
             ctx.DrawRectangle(Brushes.White, null, new Rect(hoffset += Constants.DropGlassLength, (voffset -= Constants.DropGlassLength) - (Constants.DropUnitLength - Constants.DropGlassLength * 2), Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
             hoffset += Constants.DropGlassLength;
@@ -471,7 +578,7 @@ namespace YDock.View
             double currentX = hoffset, currentY = voffset;
 
             if ((Flag & DragManager.ACTIVE) == 0)
-                ctx.PushOpacity(Constants.DragOpacity * 2);
+                ctx.PushOpacity(Constants.DragOpacity * 1.8);
 
             ctx.DrawRectangle(Brushes.White, null, new Rect(currentX += Constants.DropGlassLength, currentY += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
             currentX += Constants.DropGlassLength;

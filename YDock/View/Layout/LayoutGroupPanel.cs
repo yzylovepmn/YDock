@@ -1427,27 +1427,31 @@ namespace YDock.View
             }
         }
 
+        #region Drag
+        private int _flag;
+        public int Flag
+        {
+            get { return _flag; }
+            set { _flag = value; }
+        }
         DropWindow _dragWnd;
-        bool _isFirstShow;
-        public void OnDrop(DragItem source, int flag)
+        public void OnDrop(DragItem source)
         {
             
         }
 
-        void CreateDropWindow()
+        public void CreateDropWindow()
         {
             if (_dragWnd == null)
-            {
-                _isFirstShow = true;
                 _dragWnd = new DropWindow(this);
-            }
         }
 
         public void CloseDropWindow()
         {
             if (_dragWnd != null)
             {
-                _dragWnd.IsOpen = false;
+                Flag = DragManager.NONE;
+                _dragWnd.Close();
                 _dragWnd = null;
             }
         }
@@ -1464,19 +1468,16 @@ namespace YDock.View
                 CreateDropWindow();
                 _dragWnd.IsOpen = true;
             }
-            if (_isFirstShow)
-            {
-                _isFirstShow = false;
-                var p = this.PointToScreenDPIWithoutFlowDirection(new Point());
-                DockHelper.UpdateLocation(_dragWnd, p.X, p.Y, ActualWidth, ActualHeight);
-            }
+            var p = this.PointToScreenDPIWithoutFlowDirection(new Point());
+            DockHelper.UpdateLocation(_dragWnd, p.X, p.Y, ActualWidth, ActualHeight);
             _dragWnd.Show();
         }
 
-        public void Update()
+        public void Update(Point mouseP)
         {
-            _dragWnd?.Update();
+            _dragWnd?.Update(mouseP);
         }
+        #endregion
 
         public void Dispose()
         {

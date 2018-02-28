@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 
 namespace YDock.Interface
 {
@@ -9,5 +10,7 @@ namespace YDock.Interface
     {
         void Hide();
         void Show();
+        void Close();
+        void Update(Point mouseP);
     }
 }

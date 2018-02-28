@@ -65,8 +65,8 @@ namespace YDock.View
                     {
                         _isDragging = true;
                         if (this is AnchorGroupWindow)
-                            DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Anchor, new Point(), Rect.Empty), true);
-                        else DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Document, new Point(), Rect.Empty), true);
+                            DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Anchor, new Point(), Rect.Empty, new Size(ActualWidth, ActualWidth)), true);
+                        else DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Document, new Point(), Rect.Empty, new Size(ActualWidth, ActualWidth)), true);
                     }
                     break;
                 case Win32Helper.WM_MOVING:
@@ -76,8 +76,8 @@ namespace YDock.View
                     {
                         _isDragging = true;
                         if (this is AnchorGroupWindow)
-                            DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Anchor, new Point(), Rect.Empty), true);
-                        else DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Document, new Point(), Rect.Empty), true);
+                            DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Anchor, new Point(), Rect.Empty, new Size(ActualWidth, ActualWidth)), true);
+                        else DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Document, new Point(), Rect.Empty, new Size(ActualWidth, ActualWidth)), true);
                     }
                     break;
                 case Win32Helper.WM_EXITSIZEMOVE:

@@ -11,10 +11,11 @@ namespace YDock.Interface
     {
         DockManager DockManager { get; }
         DragMode Mode { get; }
-        void OnDrop(DragItem source, int flag);
+        void OnDrop(DragItem source);
         void HideDropWindow();
         void ShowDropWindow();
         void CloseDropWindow();
-        void Update();
+        void Update(Point mouseP);
+        int Flag { get; set; }
     }
 }

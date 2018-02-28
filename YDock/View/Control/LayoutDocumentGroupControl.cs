@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
 using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
@@ -31,7 +32,7 @@ namespace YDock.View
             }
         }
 
-        public override void OnDrop(DragItem source, int flag)
+        public override void OnDrop(DragItem source)
         {
 
         }

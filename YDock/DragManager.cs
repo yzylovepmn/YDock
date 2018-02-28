@@ -16,13 +16,14 @@ namespace YDock
 {
     public class DragItem : IDisposable
     {
-        public DragItem(object relativeObj, DockMode dockMode, DragMode dragMode, Point clickPos, Rect clickRect)
+        public DragItem(object relativeObj, DockMode dockMode, DragMode dragMode, Point clickPos, Rect clickRect, Size size)
         {
             _relativeObj = relativeObj;
             _dockMode = dockMode;
             _dragMode = dragMode;
             _clickPos = clickPos;
             _clickRect = clickRect;
+            _size = size;
         }
 
         private object _relativeObj;
@@ -58,6 +59,12 @@ namespace YDock
         }
         private Rect _clickRect;
 
+        private Size _size;
+        public Size Size
+        {
+            get { return _size; }
+        }
+
         public void Dispose()
         {
             _relativeObj = null;
@@ -81,27 +88,16 @@ namespace YDock
 
         #region Drag
         #region private field
+        private Point _mouseP;
         private Size _rootSize;
         private IDragTarget _rootTarget;
         private IDragTarget _dragTarget;
         private DragItem _dragItem;
-        private BaseDropVisual _dropVisual;
         private BaseFloatWindow _dragWnd;
-        private BaseFloatWindow _currentWnd;
         private bool _isDragging = false;
         #endregion
 
         #region Property
-        internal BaseDropVisual DropVisual
-        {
-            get { return _dropVisual; }
-            set
-            {
-                if (_dropVisual != value)
-                    _dropVisual = value;
-            }
-        }
-
         internal DragItem DragItem
         {
             get { return _dragItem; }
@@ -125,8 +121,8 @@ namespace YDock
                     if (_dragTarget != null)
                         _dragTarget.ShowDropWindow();
                 }
-                else if (_dragTarget != null)
-                    _dragTarget.Update();
+                else if (_dragTarget != null && !_isDragOverRoot)
+                    _dragTarget.Update(_mouseP);
             }
         }
 
@@ -141,6 +137,13 @@ namespace YDock
                     OnDragStatusChanged(new DragStatusChangedEventArgs(value));
                 }
             }
+        }
+
+        private bool _isDragOverRoot = false;
+        public bool IsDragOverRoot
+        {
+            get { return _isDragOverRoot; }
+            set { _isDragOverRoot = value; }
         }
 
         public event DragStatusChanged OnDragStatusChanged = delegate { };
@@ -177,14 +180,10 @@ namespace YDock
         {
             IsDragging = false;
             //TODO Drop
-            if (_dropVisual != null)
-            {
-                var parent = VisualTreeHelper.GetParent(_dropVisual) as BaseDropPanel;
-                if (parent.Target == _rootTarget)
-                    _rootTarget.OnDrop(_dragItem, _dropVisual.Flag);
-                else if (parent.Target == DragTarget)
-                    DragTarget.OnDrop(_dragItem, _dropVisual.Flag);
-            }
+            if (_rootTarget.Flag != NONE)
+                _rootTarget.OnDrop(_dragItem);
+            else if (DragTarget.Flag != NONE)
+                DragTarget.OnDrop(_dragItem);
 
             AfterDrag();
         }
@@ -196,10 +195,10 @@ namespace YDock
             _dragWnd = null;
             _rootTarget.CloseDropWindow();
             _rootTarget = null;
-            _currentWnd = null;
-            DragTarget = null;
             _DestroyDragItem();
-            GC.Collect();
+
+            BaseDropPanel.ActiveVisual = null;
+            BaseDropPanel.CurrentRect = null;
         }
         #endregion
 
@@ -352,7 +351,7 @@ namespace YDock
         {
             _dragItem.Dispose();
             _dragItem = null;
-            _dragTarget = null;
+            DragTarget = null;
         }
         #endregion
 
@@ -365,6 +364,8 @@ namespace YDock
         internal const int RIGHT = 0x0004;
         internal const int BOTTOM = 0x0008;
         internal const int CENTER = 0x0010;
+        internal const int TAB = 0x0020;
+        internal const int HEAD = 0x0040;
         internal const int SPLIT = 0x1000;
         internal const int ACTIVE = 0x2000;
         #endregion
@@ -373,22 +374,15 @@ namespace YDock
         internal void OnMouseMove()
         {
             bool flag = false;
-            Point p = DockHelper.GetMousePosition(DockManager);
+            _mouseP = DockHelper.GetMousePosition(DockManager);
             foreach (var wnd in DockManager.FloatWindows)
             {
                 if (wnd != _dragWnd
-                    && wnd.Location.Contains(p)
+                    && wnd.Location.Contains(_mouseP)
                     && !(wnd is DocumentGroupWindow && _dragItem.DragMode == DragMode.Anchor))
                 {
-                    if (_currentWnd != wnd)
-                    {
-
-                    }
-                    else
-                    {
-
-                    }
-                    wnd.HitTest(p);
+                    DockManager.MoveFloatTo(wnd);
+                    wnd.HitTest(_mouseP);
 
                     _rootTarget.HideDropWindow();
                     flag = true;
@@ -397,7 +391,7 @@ namespace YDock
             }
             if (!flag)
             {
-                p = DockHelper.GetMousePositionRelativeTo(DockManager.LayoutRootPanel.RootGroupPanel);
+                var p = DockHelper.GetMousePositionRelativeTo(DockManager.LayoutRootPanel.RootGroupPanel);
                 if (p.X >= 0 && p.Y >= 0
                     && p.X <= _rootSize.Width
                     && p.Y <= _rootSize.Height)
@@ -405,7 +399,7 @@ namespace YDock
                     if (_dragItem.DragMode != DragMode.Document)
                     {
                         _rootTarget.ShowDropWindow();
-                        _rootTarget.Update();
+                        _rootTarget.Update(_mouseP);
                     }
                     VisualTreeHelper.HitTest(DockManager.LayoutRootPanel.RootGroupPanel, _HitFilter, _HitRessult, new PointHitTestParameters(p));
                 }

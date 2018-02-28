@@ -311,6 +311,12 @@ namespace YDock
             get { return _floatWindows; }
         }
 
+        public void MoveFloatTo(BaseFloatWindow wnd, bool istofirst = true)
+        {
+            _floatWindows.Remove(wnd);
+            _floatWindows.Insert(0, wnd);
+        }
+
         /// <summary>
         /// all registed DockControl
         /// </summary>

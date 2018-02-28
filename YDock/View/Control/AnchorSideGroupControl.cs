@@ -32,7 +32,7 @@ namespace YDock.View
             }
         }
 
-        public override void OnDrop(DragItem source, int flag)
+        public override void OnDrop(DragItem source)
         {
             
         }

@@ -206,10 +206,15 @@ namespace YDock.View
             _childrenBounds = null;
         }
 
-
+        #region Drag
+        private int _flag;
+        public int Flag
+        {
+            get { return _flag; }
+            set { _flag = value; }
+        }
         DropWindow _dragWnd;
-        bool _isFirstShow;
-        public virtual void OnDrop(DragItem source, int flag)
+        public virtual void OnDrop(DragItem source)
         {
             
         }
@@ -217,16 +222,14 @@ namespace YDock.View
         internal virtual void CreateDropWindow()
         {
             if (_dragWnd == null)
-            {
-                _isFirstShow = true;
                 _dragWnd = new DropWindow(this);
-            }
         }
 
         public void CloseDropWindow()
         {
             if (_dragWnd != null)
             {
+                Flag = DragManager.NONE;
                 _dragWnd.IsOpen = false;
                 _dragWnd = null;
             }
@@ -244,26 +247,67 @@ namespace YDock.View
                 CreateDropWindow();
                 _dragWnd.IsOpen = true;
             }
-            if (_isFirstShow)
-            {
-                _isFirstShow = false;
-                var p = this.PointToScreenDPIWithoutFlowDirection(new Point());
-                DockHelper.UpdateLocation(_dragWnd, p.X, p.Y, ActualWidth, ActualHeight);
-            }
+            var p = this.PointToScreenDPIWithoutFlowDirection(new Point());
+            DockHelper.UpdateLocation(_dragWnd, p.X, p.Y, ActualWidth, ActualHeight);
             _dragWnd.Show();
         }
 
-        public void Update()
+        public void Update(Point mouseP)
         {
-            _dragWnd?.Update();
+            _dragWnd?.Update(mouseP);
         }
 
         private void OnDragStatusChanged(DragStatusChangedEventArgs args)
         {
-            if (Parent is BaseFloatWindow && (Parent as BaseFloatWindow).IsDragging)
-                return;
             if (!args.IsDragging)
                 CloseDropWindow();
+        }
+        #endregion
+
+        private ActiveRectDropVisual _activeRect;
+        Point _mouseP;
+        public void HitTest(Point mouseP, ActiveRectDropVisual activeRect)
+        {
+            _mouseP = mouseP;
+            _activeRect = activeRect;
+            _activeRect.Flag = DragManager.NONE;
+            var p = this.PointToScreenDPIWithoutFlowDirection(new Point());
+            p = new Point(mouseP.X - p.X, mouseP.Y - p.Y);
+            VisualTreeHelper.HitTest(this, _HitFilter, _HitRessult, new PointHitTestParameters(p));
+            _activeRect = null;
+        }
+
+        private HitTestFilterBehavior _HitFilter(DependencyObject potentialHitTestTarget)
+        {
+            if (potentialHitTestTarget is AnchorHeaderControl)
+            {
+                _activeRect.Flag = DragManager.CENTER;
+                _activeRect.Rect = new Rect(0, 0, 60, 20);
+            }
+            else if (potentialHitTestTarget is AnchorSidePanel
+                || potentialHitTestTarget is DocumentPanel)
+            {
+                UpdateChildrenBounds(potentialHitTestTarget as Panel);
+                _activeRect.Flag = DragManager.CENTER;
+                var p = (potentialHitTestTarget as Panel).PointToScreenDPIWithoutFlowDirection(new Point());
+                var index = _childrenBounds.FindIndex(new Point(_mouseP.X - p.X, _mouseP.Y - p.Y));
+                Rect rect;
+                if (index < 0)
+                {
+                    rect = _childrenBounds.Last();
+                    rect = new Rect(rect.X + rect.Width, 0, 0, rect.Height);
+                }
+                else rect = _childrenBounds[index];
+                _activeRect.Rect = new Rect(rect.X, 0, this is AnchorSideGroupControl ? 60 : 120, rect.Height);
+
+                return HitTestFilterBehavior.Stop;
+            }
+            return HitTestFilterBehavior.Continue;
+        }
+
+        private HitTestResultBehavior _HitRessult(HitTestResult result)
+        {
+            return HitTestResultBehavior.Stop;
         }
     }
 }
