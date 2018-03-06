@@ -51,51 +51,108 @@ namespace YDock
             return new Point(mouseP.X - pToScreen.X, mouseP.Y - pToScreen.Y);
         }
 
-        public static void UpdateLocation(DropWindow wnd, double left, double top, double width, double heigth)
+        public static void UpdateLocation(DropWindow wnd, double left, double top, double width, double height)
         {
-            wnd.Width = width;
-            wnd.Height = heigth;
-            if (wnd.MinWidth > width)
+            double hrectoffset = 0, vrectoffset = 0;
+            if (wnd.Host is LayoutDocumentGroupControl)
             {
-                left -= (wnd.MinWidth - width) / 2;
-                width = wnd.MinWidth;
-            }
-            if (wnd.MinHeight > heigth)
-            {
-                top -= (wnd.MinHeight - heigth) / 2;
-                heigth = wnd.MinHeight;
-            }
+                var dcrt = wnd.Host as LayoutDocumentGroupControl;
+                int index = dcrt.IndexOf();
+                wnd.Width = width;
+                wnd.Height = height;
+                if (wnd.DropPanel.InnerRect.Width < wnd.MinWidth)
+                {
+                    hrectoffset = (wnd.MinWidth - wnd.DropPanel.InnerRect.Width) / 2;
+                    if (index == 0)
+                    {
+                        wnd.Width += hrectoffset;
+                        left -= hrectoffset;
+                    }
+                    if (index == dcrt.ChildrenCount - 1)
+                        wnd.Width += hrectoffset;
+                }
+                if (wnd.DropPanel.InnerRect.Height < wnd.MinHeight)
+                {
+                    vrectoffset = (wnd.MinHeight - wnd.DropPanel.InnerRect.Height) / 2;
+                    if (index == 0)
+                    {
+                        wnd.Height += vrectoffset;
+                        top -= vrectoffset;
+                    }
+                    if (index == dcrt.ChildrenCount - 1)
+                        wnd.Height += vrectoffset;
+                }
 
-            if (left < 0)
-            {
-                wnd.HorizontalOffset = 0;
-                wnd.DropPanel.Hoffset = left;
-            }
-            else if (left + width > SystemParameters.PrimaryScreenWidth)
-            {
-                wnd.HorizontalOffset = SystemParameters.PrimaryScreenWidth - width;
-                wnd.DropPanel.Hoffset = left + width - SystemParameters.PrimaryScreenWidth;
+
+                if (left < 0)
+                {
+                    wnd.HorizontalOffset = 0;
+                    hrectoffset += left;
+                }
+                else if (left + wnd.Width > SystemParameters.PrimaryScreenWidth)
+                {
+                    wnd.HorizontalOffset = SystemParameters.PrimaryScreenWidth - wnd.Width;
+                    hrectoffset += left + wnd.Width - SystemParameters.PrimaryScreenWidth;
+                }
+                else wnd.HorizontalOffset = left;
+
+                if (top < 0)
+                {
+                    wnd.VerticalOffset = 0;
+                    vrectoffset += top;
+                }
+                else if (top + wnd.Height > SystemParameters.PrimaryScreenHeight)
+                {
+                    wnd.VerticalOffset = SystemParameters.PrimaryScreenHeight - wnd.Height;
+                    vrectoffset += top + wnd.Height - SystemParameters.PrimaryScreenHeight;
+                }
+                else wnd.VerticalOffset = top;
+
+                wnd.DropPanel.OuterRect = new Rect(hrectoffset, vrectoffset, width, height);
             }
             else
             {
-                wnd.HorizontalOffset = left;
-                wnd.DropPanel.Hoffset = 0;
-            }
+                wnd.Width = width;
+                wnd.Height = height;
+                if (wnd.MinWidth > width)
+                {
+                    hrectoffset = (wnd.MinWidth - width) / 2;
+                    left -= hrectoffset;
+                    width = wnd.MinWidth;
+                }
+                if (wnd.MinHeight > height)
+                {
+                    vrectoffset = (wnd.MinHeight - height) / 2;
+                    top -= vrectoffset;
+                    height = wnd.MinHeight;
+                }
 
-            if (top < 0)
-            {
-                wnd.VerticalOffset = 0;
-                wnd.DropPanel.Voffset = top;
-            }
-            else if (top + heigth > SystemParameters.PrimaryScreenHeight)
-            {
-                wnd.VerticalOffset = SystemParameters.PrimaryScreenHeight - heigth;
-                wnd.DropPanel.Voffset = top + heigth - SystemParameters.PrimaryScreenHeight;
-            }
-            else
-            {
-                wnd.VerticalOffset = top;
-                wnd.DropPanel.Voffset = 0;
+
+                if (left < 0)
+                {
+                    wnd.HorizontalOffset = 0;
+                    hrectoffset += left;
+                }
+                else if (left + width > SystemParameters.PrimaryScreenWidth)
+                {
+                    wnd.HorizontalOffset = SystemParameters.PrimaryScreenWidth - width;
+                    hrectoffset += left + width - SystemParameters.PrimaryScreenWidth;
+                }
+                else wnd.HorizontalOffset = left;
+
+                if (top < 0)
+                {
+                    wnd.VerticalOffset = 0;
+                    vrectoffset += top;
+                }
+                else if (top + height > SystemParameters.PrimaryScreenHeight)
+                {
+                    wnd.VerticalOffset = SystemParameters.PrimaryScreenHeight - height;
+                    vrectoffset += top + height - SystemParameters.PrimaryScreenHeight;
+                }
+                else wnd.VerticalOffset = top;
+                wnd.DropPanel.InnerRect = new Rect(hrectoffset, vrectoffset, wnd.Width, wnd.Height);
+                wnd.DropPanel.OuterRect = new Rect(0, 0, 0, 0);
             }
         }
 

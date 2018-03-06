@@ -65,6 +65,7 @@
     <Compile Include="Enum\DockSide.cs" />
     <Compile Include="Enum\DockMode.cs" />
     <Compile Include="Enum\DragMode.cs" />
+    <Compile Include="Enum\DropMode.cs" />
     <Compile Include="Interface\IDrag.cs" />
     <Compile Include="Interface\IDrop.cs" />
     <Compile Include="Interface\ILayout.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="View\Layout\DocumentPanel.cs" />
     <Compile Include="View\Control\LayoutDocumentGroupControl.cs" />
     <Compile Include="View\Layout\LayoutDragSplitter.cs" />
+    <Compile Include="View\Layout\LayoutGroupDocumentPanel.cs" />
     <Compile Include="View\Layout\LayoutGroupPanel.cs" />
     <Compile Include="View\Layout\LayoutRootPanel.cs" />
     <Compile Include="View\Control\DockBarGroupControl.cs" />

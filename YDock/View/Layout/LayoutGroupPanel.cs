@@ -33,15 +33,9 @@ namespace YDock.View
         {
             get
             {
-                return _isDocumentPanel;
-            }
-            internal set
-            {
-                if (_isDocumentPanel != value)
-                    _isDocumentPanel = value;
+                return this is LayoutGroupDocumentPanel;
             }
         }
-        private bool _isDocumentPanel = false;
 
 
         /// <summary>
@@ -133,7 +127,7 @@ namespace YDock.View
             }
         }
 
-        private Direction _direction = Direction.LeftToRight;
+        private Direction _direction = Direction.None;
         public Direction Direction
         {
             get { return _direction; }
@@ -191,7 +185,7 @@ namespace YDock.View
         protected override Size MeasureOverride(Size availableSize)
         {
             if (InternalChildren.Count == 0) return availableSize;
-            if ((IsAnchorPanel || IsDocumentPanel) && !IsRootPanel)
+            if (IsAnchorPanel || IsDocumentPanel)
                 return _MeasureOverrideFull(availableSize);
             else return _MeasureOverrideSplit(availableSize);
         }
@@ -307,6 +301,9 @@ namespace YDock.View
                             return _ClipToBounds_Measure(availableSize);
                         }
                     }
+                    break;
+                case Direction.None:
+                    InternalChildren[0].Measure(availableSize);
                     break;
             }
 
@@ -557,7 +554,7 @@ namespace YDock.View
         protected override Size ArrangeOverride(Size finalSize)
         {
             if (InternalChildren.Count == 0) return finalSize;
-            if ((IsAnchorPanel || IsDocumentPanel) && !IsRootPanel)
+            if (IsAnchorPanel || IsDocumentPanel)
                 return _ArrangeOverrideFull(finalSize);
             else return _ArrangeOverrideSplit(finalSize);
         }
@@ -672,6 +669,9 @@ namespace YDock.View
                             return _ClipToBounds_Arrange(finalSize);
                         }
                     }
+                    break;
+                case Direction.None:
+                    InternalChildren[0].Arrange(new Rect(new Point(), finalSize));
                     break;
             }
 
@@ -1231,36 +1231,50 @@ namespace YDock.View
         }
         #endregion
 
-        public void DetachChild(IDockView child)
+        public virtual void DetachChild(IDockView child)
         {
             if (Children.Contains(child as UIElement))
             {
                 _DetachChild(child);
-                //若元素为空，且不是RootPanel和DocumentPanel，则递归的将其从Parent中移除
-                if (Children.Count == 0 && !IsRootPanel && !IsDocumentPanel)
+                //若元素为空，且不是RootPanel，则递归的将其从Parent中移除
+                if (Children.Count == 0 && !IsRootPanel)
                 {
                     (DockViewParent as ILayoutViewParent).DetachChild(this);
                     Dispose();
                 }
                 //若元素只有一个，则将子元素层次减一
-                if (Children.Count == 1 && !IsRootPanel)
+                if (Children.Count == 1)
                 {
+                    child = Children[0] as IDockView;
                     if (DockViewParent is ILayoutPanel)
                     {
-                        child = Children[0] as IDockView;
                         var parent = DockViewParent as LayoutGroupPanel;
                         var index = parent.Children.IndexOf(this);
+                        //_DetachChild会重置Direction，故这里保存下来
+                        var direction = parent.Direction;
                         //从父容器中移除自己
                         parent._DetachChild(this);
                         Children.Clear();
+                        parent.Direction = direction;
                         //从父容器中加入自己的子元素
                         parent.AttachChild(child, Math.Max(index - 1, 0));
+                    }
+                    else if (IsRootPanel)
+                    {
+                        if (child is ILayoutPanel)
+                        {
+                            var dockManager = DockManager;
+                            //首先从Parent移除此Panel
+                            DockManager.LayoutRootPanel.DetachChild(this);
+                            Children.Clear();
+                            dockManager.LayoutRootPanel.AttachChild(child, 0);
+                        }
                     }
                 }
             }
         }
 
-        public void _DetachChild(IDockView child)
+        protected void _DetachChild(IDockView child)
         {
             if (Children.Contains(child as UIElement))
             {
@@ -1285,6 +1299,11 @@ namespace YDock.View
                         Children.RemoveAt(0);
                     }
                 }
+                if (Children.Count < 2)
+                {
+                    Direction = Direction.None;
+                    _isAnchorPanel = false;
+                }
             }
         }
 
@@ -1293,94 +1312,98 @@ namespace YDock.View
         /// </summary>
         /// <param name="child"></param>
         /// <param name="index">要插入的索引（不包括Spliter）</param>
-        public void AttachChild(IDockView child, int index)
+        public virtual void AttachChild(IDockView child, int index)
         {
             switch (Direction)
             {
+                case Direction.None:
+                    if (child.Model != null)
+                    {
+                        switch (child.Model.Side)
+                        {
+                            case DockSide.Left:
+                            case DockSide.Right:
+                                Direction = Direction.LeftToRight;
+                                break;
+                            case DockSide.Top:
+                            case DockSide.Bottom:
+                                Direction = Direction.UpToDown;
+                                break;
+                        }
+                    }
+                    break;
                 case Direction.LeftToRight:
                     if (child.Model != null && (child.Model.Side == DockSide.Top
                             || child.Model.Side == DockSide.Bottom))
                     {
-                        if (Children.Count == 1)
-                            Direction = Direction.UpToDown;
-                        else
+                        if (IsRootPanel)
                         {
-                            if (IsRootPanel)
+                            var dockManager = DockManager;
+                            //首先从Parent移除此Panel
+                            DockManager.LayoutRootPanel.DetachChild(this);
+                            var pparent = new LayoutGroupPanel() { Direction = Direction.UpToDown };
+                            if (child.Model.Side == DockSide.Top)
                             {
-                                var dockManager = DockManager;
-                                //首先从Parent移除此Panel
-                                DockManager.LayoutRootPanel.DetachChild(this);
-                                if (IsDocumentPanel) IsDocumentPanel = false;
-                                var pparent = new LayoutGroupPanel() { Direction = Direction.UpToDown };
-                                if (child.Model.Side == DockSide.Top)
-                                {
-                                    pparent._AttachChild(this, 0);
-                                    pparent._AttachChild(child, 0);
-                                }
-                                else
-                                {
-                                    pparent._AttachChild(child, 0);
-                                    pparent._AttachChild(this, 0);
-                                }
-                                dockManager.LayoutRootPanel.AttachChild(pparent, 0);
+                                pparent._AttachChild(this, 0);
+                                pparent._AttachChild(child, 0);
                             }
                             else
                             {
-                                int pindex = (DockViewParent as LayoutGroupPanel).Children.IndexOf(this);
-                                if (child.Model.Side == DockSide.Top)
-                                    (DockViewParent as ILayoutPanel).AttachChild(child, pindex);
-                                else (DockViewParent as ILayoutPanel).AttachChild(child, pindex + 1);
-                                if (Side != DockSide.None)
-                                    DockManager.ChangeSide(child, Side);
+                                pparent._AttachChild(child, 0);
+                                pparent._AttachChild(this, 0);
                             }
-                            return;
+                            dockManager.LayoutRootPanel.AttachChild(pparent, 0);
                         }
+                        else
+                        {
+                            int pindex = (DockViewParent as LayoutGroupPanel).Children.IndexOf(this);
+                            if (child.Model.Side == DockSide.Top)
+                                (DockViewParent as ILayoutPanel).AttachChild(child, pindex);
+                            else (DockViewParent as ILayoutPanel).AttachChild(child, pindex + 1);
+                            if (Side != DockSide.None)
+                                DockManager.ChangeSide(child, Side);
+                        }
+                        return;
                     }
                     break;
                 case Direction.UpToDown:
                     if (child.Model != null && (child.Model.Side == DockSide.Left
                             || child.Model.Side == DockSide.Right))
                     {
-                        if (Children.Count == 1)
-                            Direction = Direction.LeftToRight;
-                        else
+                        if (IsRootPanel)
                         {
-                            if (IsRootPanel)
+                            var dockManager = DockManager;
+                            //首先从Parent移除此Panel
+                            DockManager.LayoutRootPanel.DetachChild(this);
+                            var pparent = new LayoutGroupPanel() { Direction = Direction.LeftToRight };
+                            if (child.Model.Side == DockSide.Left)
                             {
-                                var dockManager = DockManager;
-                                //首先从Parent移除此Panel
-                                DockManager.LayoutRootPanel.DetachChild(this);
-                                if (IsDocumentPanel) IsDocumentPanel = false;
-                                var pparent = new LayoutGroupPanel() { Direction = Direction.LeftToRight };
-                                if (child.Model.Side == DockSide.Left)
-                                {
-                                    pparent._AttachChild(this, 0);
-                                    pparent._AttachChild(child, 0);
-                                }
-                                else
-                                {
-                                    pparent._AttachChild(child, 0);
-                                    pparent._AttachChild(this, 0);
-                                }
-                                dockManager.LayoutRootPanel.AttachChild(pparent, 0);
+                                pparent._AttachChild(this, 0);
+                                pparent._AttachChild(child, 0);
                             }
                             else
                             {
-                                int pindex = (DockViewParent as LayoutGroupPanel).Children.IndexOf(this);
-                                if (child.Model.Side == DockSide.Left)
-                                    (DockViewParent as ILayoutPanel).AttachChild(child, pindex);
-                                else (DockViewParent as ILayoutPanel).AttachChild(child, pindex + 1);
-                                if (Side != DockSide.None)
-                                    DockManager.ChangeSide(child, Side);
+                                pparent._AttachChild(child, 0);
+                                pparent._AttachChild(this, 0);
                             }
-                            return;
+                            dockManager.LayoutRootPanel.AttachChild(pparent, 0);
                         }
+                        else
+                        {
+                            int pindex = (DockViewParent as LayoutGroupPanel).Children.IndexOf(this);
+                            if (child.Model.Side == DockSide.Left)
+                                (DockViewParent as ILayoutPanel).AttachChild(child, pindex);
+                            else (DockViewParent as ILayoutPanel).AttachChild(child, pindex + 1);
+                            if (Side != DockSide.None)
+                                DockManager.ChangeSide(child, Side);
+                        }
+                        return;
                     }
                     break;
             }
             bool flag = true;
             //表示child为LayoutGroupPanel
-            if (child.Model == null)
+            if (child.Model == null && !(child as LayoutGroupPanel).IsDocumentPanel)
             {
                 var subpanel = (child as LayoutGroupPanel);
                 if (Direction == subpanel.Direction)
@@ -1428,16 +1451,39 @@ namespace YDock.View
         }
 
         #region Drag
-        private int _flag;
-        public int Flag
+        private DropMode _dropMode = DropMode.None;
+        public DropMode DropMode
         {
-            get { return _flag; }
-            set { _flag = value; }
+            get { return _dropMode; }
+            set { _dropMode = value; }
         }
         DropWindow _dragWnd;
         public void OnDrop(DragItem source)
         {
-            
+            var child = (source.RelativeObj as BaseFloatWindow).Child;
+            (source.RelativeObj as BaseFloatWindow).DetachChild(child);
+
+            switch (DropMode)
+            {
+                case DropMode.Left:
+                    DockManager.ChangeSide(child, DockSide.Left);
+                    AttachChild(child, 0);
+                    break;
+                case DropMode.Top:
+                    DockManager.ChangeSide(child, DockSide.Top);
+                    AttachChild(child, 0);
+                    break;
+                case DropMode.Right:
+                    DockManager.ChangeSide(child, DockSide.Right);
+                    AttachChild(child, Count);
+                    break;
+                case DropMode.Bottom:
+                    DockManager.ChangeSide(child, DockSide.Bottom);
+                    AttachChild(child, Count);
+                    break;
+            }
+
+            (source.RelativeObj as BaseFloatWindow).Close();
         }
 
         public void CreateDropWindow()
@@ -1450,7 +1496,7 @@ namespace YDock.View
         {
             if (_dragWnd != null)
             {
-                Flag = DragManager.NONE;
+                _dropMode = DropMode.None;
                 _dragWnd.Close();
                 _dragWnd = null;
             }
@@ -1464,12 +1510,10 @@ namespace YDock.View
         public void ShowDropWindow()
         {
             if (_dragWnd == null)
-            {
                 CreateDropWindow();
-                _dragWnd.IsOpen = true;
-            }
             var p = this.PointToScreenDPIWithoutFlowDirection(new Point());
             DockHelper.UpdateLocation(_dragWnd, p.X, p.Y, ActualWidth, ActualHeight);
+            if (!_dragWnd.IsOpen) _dragWnd.IsOpen = true;
             _dragWnd.Show();
         }
 

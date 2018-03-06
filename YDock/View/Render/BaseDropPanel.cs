@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using YDock.Enum;
 using YDock.Interface;
 
 namespace YDock.View
@@ -43,6 +44,7 @@ namespace YDock.View
                 {
                     if (_currentRect != null)
                     {
+                        _currentRect.DropPanel._target.DropMode = DropMode.None;
                         _currentRect.Flag = DragManager.NONE;
                         _currentRect.Update();
                     }
@@ -84,18 +86,18 @@ namespace YDock.View
         private ActiveRectDropVisual _activeRect;
         public ActiveRectDropVisual ActiveRect { get { return _activeRect; } }
 
-        private double _hoffset;
-        public double Hoffset
+        private Rect _innerRect;
+        public Rect InnerRect
         {
-            get { return _hoffset; }
-            set { _hoffset = value; }
+            get { return _innerRect; }
+            set { _innerRect = value; }
         }
 
-        private double _voffset;
-        public double Voffset
+        private Rect _outerRect;
+        public Rect OuterRect
         {
-            get { return _voffset; }
-            set { _voffset = value; }
+            get { return _outerRect; }
+            set { _outerRect = value; }
         }
 
         public void Update(Point mouseP)
@@ -106,7 +108,10 @@ namespace YDock.View
             {
                 UnitDropVisual visual = result?.VisualHit as UnitDropVisual;
                 ActiveVisual = visual;
-                _target.Flag = visual.Flag;
+                var mode = _GetMode(visual.Flag);
+                if (mode == _target.DropMode)
+                    return;
+                _target.DropMode = mode;
 
                 _activeRect.Flag = visual.Flag;
                 _activeRect.Rect = Rect.Empty;
@@ -117,19 +122,61 @@ namespace YDock.View
                 if (_target is BaseGroupControl)
                 {
                     (_target as BaseGroupControl).HitTest(mouseP, _activeRect);
-                    _target.Flag = _activeRect.Flag;
+                    if (!(_target as BaseGroupControl).canUpdate)
+                        return;
+                    _target.DropMode = _GetMode(_activeRect.Flag);
                 }
                 else
                 {
-                    _target.Flag = DragManager.NONE;
+                    _target.DropMode = DropMode.None;
                     _activeRect.Flag = DragManager.NONE;
                 }
             }
 
             if (this is RootDropPanel)
+            {
                 _target.DockManager.DragManager.IsDragOverRoot = ActiveVisual != null;
+                if (_target.DropMode != DropMode.None && _currentRect != null)
+                {
+                    _currentRect.Flag = DragManager.NONE;
+                    _currentRect.DropPanel._target.DropMode = DropMode.None;
+                    _currentRect.Update();
+                }
+                _activeRect.Update();
+            }
+            if (!(this is RootDropPanel))
+                CurrentRect = _activeRect;
+        }
 
-            CurrentRect = _activeRect;
+        DropMode _GetMode(int flag)
+        {
+            if ((flag & DragManager.LEFT) != 0)
+            {
+                if ((flag & DragManager.SPLIT) != 0)
+                    return DropMode.Left_WithSplit;
+                else return DropMode.Left;
+            }
+            if ((flag & DragManager.RIGHT) != 0)
+            {
+                if ((flag & DragManager.SPLIT) != 0)
+                    return DropMode.Right_WithSplit;
+                else return DropMode.Right;
+            }
+            if ((flag & DragManager.TOP) != 0)
+            {
+                if ((flag & DragManager.SPLIT) != 0)
+                    return DropMode.Top_WithSplit;
+                else return DropMode.Top;
+            }
+            if ((flag & DragManager.BOTTOM) != 0)
+            {
+                if ((flag & DragManager.SPLIT) != 0)
+                    return DropMode.Bottom_WithSplit;
+                else return DropMode.Bottom;
+            }
+            if ((flag & DragManager.CENTER) != 0)
+                return DropMode.Center;
+            return DropMode.None;
         }
 
         public override void Dispose()

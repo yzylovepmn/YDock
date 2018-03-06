@@ -311,10 +311,10 @@ namespace YDock
             get { return _floatWindows; }
         }
 
-        public void MoveFloatTo(BaseFloatWindow wnd, bool istofirst = true)
+        public void MoveFloatTo(BaseFloatWindow wnd, int index = 0)
         {
             _floatWindows.Remove(wnd);
-            _floatWindows.Insert(0, wnd);
+            _floatWindows.Insert(index, wnd);
         }
 
         /// <summary>
@@ -439,7 +439,7 @@ namespace YDock
         }
         #endregion
 
-        internal void ChangeSide(IDockView view, DockSide side)
+        internal static void ChangeSide(IDockView view, DockSide side)
         {
             if (view.Model.Side == side) return;
             if (view is BaseGroupControl)

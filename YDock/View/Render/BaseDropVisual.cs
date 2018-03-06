@@ -44,12 +44,12 @@ namespace YDock.View
         {
             using (var ctx = RenderOpen())
             {
-                double hoffeset = 0, voffeset = 0, sideLength = 0;
+                double hoffset = 0, voffset = 0, sideLength = 0;
                 if (DropPanel.Target.Mode == DragMode.Document
                     && DropPanel.Source.DragMode == DragMode.Anchor)
                 {
-                    hoffeset = size.Width / 2 - Constants.DropUnitLength * 5 / 2 + DropPanel.Hoffset;
-                    voffeset = size.Height / 2 - Constants.DropUnitLength / 2 + DropPanel.Voffset;
+                    hoffset = DropPanel.InnerRect.Size.Width / 2 - Constants.DropUnitLength * 5 / 2 + DropPanel.InnerRect.Left + DropPanel.OuterRect.Left;
+                    voffset = DropPanel.InnerRect.Size.Height / 2 - Constants.DropUnitLength / 2 + DropPanel.InnerRect.Top + DropPanel.OuterRect.Top;
                     sideLength = Constants.DropUnitLength * 2 - Constants.DropCornerLength;
                 }
                 else if(DropPanel.Target.Mode == DragMode.None || DropPanel.Source.DragMode == DragMode.None || (DropPanel.Target.Mode == DragMode.Anchor
@@ -57,14 +57,14 @@ namespace YDock.View
                     return;
                 else
                 {
-                    hoffeset = size.Width / 2 - Constants.DropUnitLength * 3 / 2 + DropPanel.Hoffset;
-                    voffeset = size.Height / 2 - Constants.DropUnitLength / 2 + DropPanel.Voffset;
+                    hoffset = DropPanel.InnerRect.Size.Width / 2 - Constants.DropUnitLength * 3 / 2 + DropPanel.InnerRect.Left + DropPanel.OuterRect.Left;
+                    voffset = DropPanel.InnerRect.Size.Height / 2 - Constants.DropUnitLength / 2 + DropPanel.InnerRect.Top + DropPanel.OuterRect.Top;
                     sideLength = Constants.DropUnitLength - Constants.DropCornerLength;
                 }
 
                 ctx.PushOpacity(Constants.DragOpacity);
                 List<Point> points = new List<Point>();
-                double currentX = hoffeset, currentY = voffeset;
+                double currentX = hoffset, currentY = voffset;
 
                 points.Add(new Point(currentX += sideLength, currentY));
                 points.Add(new Point(currentX += Constants.DropCornerLength, currentY -= Constants.DropCornerLength));
@@ -111,36 +111,76 @@ namespace YDock.View
                     ctx.PushOpacity(Constants.DragOpacity);
                     if (Rect.IsEmpty)
                     {
-                        if ((Flag & DragManager.LEFT) != 0)
+                        if (DropPanel.Target is LayoutDocumentGroupControl)
                         {
-                            if ((Flag & DragManager.SPLIT) != 0)
-                                ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.Hoffset, DropPanel.Voffset, size.Width / 2, size.Height));
-                            else ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.Hoffset, DropPanel.Voffset, Math.Min(size.Width / 2, DropPanel.Source.Size.Width), size.Height));
-                        }
-                        if ((Flag & DragManager.TOP) != 0)
-                        {
-                            if ((Flag & DragManager.SPLIT) != 0)
-                                ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.Hoffset, DropPanel.Voffset, size.Width, size.Height / 2));
-                            else ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.Hoffset, DropPanel.Voffset, size.Width, Math.Min(size.Height / 2, DropPanel.Source.Size.Height)));
-                        }
-                        if ((Flag & DragManager.RIGHT) != 0)
-                        {
-                            if ((Flag & DragManager.SPLIT) != 0)
-                                ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.Hoffset + size.Width / 2, DropPanel.Voffset, size.Width / 2, size.Height));
-                            else
+                            double innerLeft = DropPanel.InnerRect.Left + DropPanel.OuterRect.Left;
+                            double innerTop = DropPanel.InnerRect.Top + DropPanel.OuterRect.Top;
+                            if ((Flag & DragManager.LEFT) != 0)
                             {
-                                double length = Math.Min(size.Width / 2, DropPanel.Source.Size.Width);
-                                ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.Hoffset + size.Width - length, DropPanel.Voffset, length, size.Height));
+                                if ((Flag & DragManager.SPLIT) != 0)
+                                    ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(innerLeft, innerTop, DropPanel.InnerRect.Size.Width / 2, DropPanel.InnerRect.Size.Height));
+                                else ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.OuterRect.Left, DropPanel.OuterRect.Top, Math.Min(DropPanel.OuterRect.Size.Width / 2, DropPanel.Source.Size.Width), DropPanel.OuterRect.Size.Height));
+                            }
+                            if ((Flag & DragManager.TOP) != 0)
+                            {
+                                if ((Flag & DragManager.SPLIT) != 0)
+                                    ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(innerLeft, innerTop, DropPanel.InnerRect.Size.Width, DropPanel.InnerRect.Size.Height / 2));
+                                else ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.OuterRect.Left, DropPanel.OuterRect.Top, DropPanel.OuterRect.Size.Width, Math.Min(DropPanel.OuterRect.Size.Height / 2, DropPanel.Source.Size.Height)));
+                            }
+                            if ((Flag & DragManager.RIGHT) != 0)
+                            {
+                                if ((Flag & DragManager.SPLIT) != 0)
+                                    ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(innerLeft + DropPanel.InnerRect.Size.Width / 2, innerTop, DropPanel.InnerRect.Size.Width / 2, DropPanel.InnerRect.Size.Height));
+                                else
+                                {
+                                    double length = Math.Min(DropPanel.OuterRect.Size.Width / 2, DropPanel.Source.Size.Width);
+                                    ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.OuterRect.Left + DropPanel.OuterRect.Size.Width - length, DropPanel.OuterRect.Top, length, DropPanel.OuterRect.Size.Height));
+                                }
+                            }
+                            if ((Flag & DragManager.BOTTOM) != 0)
+                            {
+                                if ((Flag & DragManager.SPLIT) != 0)
+                                    ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(innerLeft, innerTop + DropPanel.InnerRect.Size.Height / 2, DropPanel.InnerRect.Size.Width, DropPanel.InnerRect.Size.Height / 2));
+                                else
+                                {
+                                    double length = Math.Min(DropPanel.OuterRect.Size.Height / 2, DropPanel.Source.Size.Height);
+                                    ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.OuterRect.Left, DropPanel.OuterRect.Top + DropPanel.OuterRect.Size.Height - length, DropPanel.OuterRect.Size.Width, length));
+                                }
                             }
                         }
-                        if ((Flag & DragManager.BOTTOM) != 0)
+                        else
                         {
-                            if ((Flag & DragManager.SPLIT) != 0)
-                                ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.Hoffset, DropPanel.Voffset + size.Height / 2, size.Width, size.Height / 2));
-                            else
+                            if ((Flag & DragManager.LEFT) != 0)
                             {
-                                double length = Math.Min(size.Height / 2, DropPanel.Source.Size.Height);
-                                ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.Hoffset, DropPanel.Voffset + size.Height - length, size.Width, length));
+                                if ((Flag & DragManager.SPLIT) != 0)
+                                    ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.InnerRect.Left, DropPanel.InnerRect.Top, DropPanel.InnerRect.Size.Width / 2, DropPanel.InnerRect.Size.Height));
+                                else ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.InnerRect.Left, DropPanel.InnerRect.Top, Math.Min(DropPanel.InnerRect.Size.Width / 2, DropPanel.Source.Size.Width), DropPanel.InnerRect.Size.Height));
+                            }
+                            if ((Flag & DragManager.TOP) != 0)
+                            {
+                                if ((Flag & DragManager.SPLIT) != 0)
+                                    ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.InnerRect.Left, DropPanel.InnerRect.Top, DropPanel.InnerRect.Size.Width, DropPanel.InnerRect.Size.Height / 2));
+                                else ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.InnerRect.Left, DropPanel.InnerRect.Top, DropPanel.InnerRect.Size.Width, Math.Min(DropPanel.InnerRect.Size.Height / 2, DropPanel.Source.Size.Height)));
+                            }
+                            if ((Flag & DragManager.RIGHT) != 0)
+                            {
+                                if ((Flag & DragManager.SPLIT) != 0)
+                                    ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.InnerRect.Left + DropPanel.InnerRect.Size.Width / 2, DropPanel.InnerRect.Top, DropPanel.InnerRect.Size.Width / 2, DropPanel.InnerRect.Size.Height));
+                                else
+                                {
+                                    double length = Math.Min(DropPanel.InnerRect.Size.Width / 2, DropPanel.Source.Size.Width);
+                                    ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.InnerRect.Left + DropPanel.InnerRect.Size.Width - length, DropPanel.InnerRect.Top, length, DropPanel.InnerRect.Size.Height));
+                                }
+                            }
+                            if ((Flag & DragManager.BOTTOM) != 0)
+                            {
+                                if ((Flag & DragManager.SPLIT) != 0)
+                                    ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.InnerRect.Left, DropPanel.InnerRect.Top + DropPanel.InnerRect.Size.Height / 2, DropPanel.InnerRect.Size.Width, DropPanel.InnerRect.Size.Height / 2));
+                                else
+                                {
+                                    double length = Math.Min(DropPanel.InnerRect.Size.Height / 2, DropPanel.Source.Size.Height);
+                                    ctx.DrawRectangle(ResourceManager.RectBrush, ResourceManager.RectBorderPen, new Rect(DropPanel.InnerRect.Left, DropPanel.InnerRect.Top + DropPanel.InnerRect.Size.Height - length, DropPanel.InnerRect.Size.Width, length));
+                                }
                             }
                         }
                         if ((Flag & DragManager.CENTER) != 0)
@@ -148,41 +188,41 @@ namespace YDock.View
                             StreamGeometry stream = new StreamGeometry();
                             using (var sctx = stream.Open())
                             {
-                                double currentX = DropPanel.Hoffset, currentY = DropPanel.Voffset;
+                                double currentX = DropPanel.InnerRect.Left + DropPanel.OuterRect.Left, currentY = DropPanel.InnerRect.Top + DropPanel.OuterRect.Top;
                                 sctx.BeginFigure(new Point(currentX, currentY), true, false);
                                 if (DropPanel.Target.Mode == DragMode.Anchor)
                                 {
-                                    sctx.LineTo(new Point(currentX += size.Width, currentY), true, false);
-                                    if (size.Width < 60)
+                                    sctx.LineTo(new Point(currentX += DropPanel.InnerRect.Size.Width, currentY), true, false);
+                                    if (DropPanel.InnerRect.Size.Width < 60)
                                     {
-                                        sctx.LineTo(new Point(currentX, currentY += size.Height), true, false);
-                                        sctx.LineTo(new Point(currentX -= size.Width, currentY), true, false);
+                                        sctx.LineTo(new Point(currentX, currentY += DropPanel.InnerRect.Size.Height), true, false);
+                                        sctx.LineTo(new Point(currentX -= DropPanel.InnerRect.Size.Width, currentY), true, false);
                                     }
                                     else
                                     {
-                                        sctx.LineTo(new Point(currentX, currentY += size.Height - 20), true, false);
-                                        sctx.LineTo(new Point(currentX -= size.Width - 60, currentY), true, false);
+                                        sctx.LineTo(new Point(currentX, currentY += DropPanel.InnerRect.Size.Height - 20), true, false);
+                                        sctx.LineTo(new Point(currentX -= DropPanel.InnerRect.Size.Width - 60, currentY), true, false);
                                         sctx.LineTo(new Point(currentX, currentY += 20), true, false);
                                         sctx.LineTo(new Point(currentX -= 60, currentY), true, false);
                                     }
-                                    sctx.LineTo(new Point(currentX, currentY -= size.Height), true, false);
+                                    sctx.LineTo(new Point(currentX, currentY -= DropPanel.InnerRect.Size.Height), true, false);
                                 }
                                 else
                                 {
-                                    if (size.Width < 120)
+                                    if (DropPanel.InnerRect.Size.Width < 120)
                                     {
-                                        sctx.LineTo(new Point(currentX += size.Width, currentY), true, false);
-                                        sctx.LineTo(new Point(currentX, currentY += size.Height), true, false);
+                                        sctx.LineTo(new Point(currentX += DropPanel.InnerRect.Size.Width, currentY), true, false);
+                                        sctx.LineTo(new Point(currentX, currentY += DropPanel.InnerRect.Size.Height), true, false);
                                     }
                                     else
                                     {
                                         sctx.LineTo(new Point(currentX += 120, currentY), true, false);
                                         sctx.LineTo(new Point(currentX, currentY += 22), true, false);
-                                        sctx.LineTo(new Point(currentX += size.Width - 120, currentY), true, false);
-                                        sctx.LineTo(new Point(currentX, currentY += size.Height - 22), true, false);
+                                        sctx.LineTo(new Point(currentX += DropPanel.InnerRect.Size.Width - 120, currentY), true, false);
+                                        sctx.LineTo(new Point(currentX, currentY += DropPanel.InnerRect.Size.Height - 22), true, false);
                                     }
-                                    sctx.LineTo(new Point(currentX -= size.Width, currentY), true, false);
-                                    sctx.LineTo(new Point(currentX, currentY -= size.Height), true, false);
+                                    sctx.LineTo(new Point(currentX -= DropPanel.InnerRect.Size.Width, currentY), true, false);
+                                    sctx.LineTo(new Point(currentX, currentY -= DropPanel.InnerRect.Size.Height), true, false);
                                 }
                                 sctx.Close();
                             }
@@ -194,35 +234,35 @@ namespace YDock.View
                         StreamGeometry stream = new StreamGeometry();
                         using (var sctx = stream.Open())
                         {
-                            double currentX = DropPanel.Hoffset, currentY = DropPanel.Voffset;
+                            double currentX = DropPanel.InnerRect.Left + DropPanel.OuterRect.Left, currentY = DropPanel.InnerRect.Top + DropPanel.OuterRect.Top;
                             if (DropPanel.Target.Mode == DragMode.Anchor)
                             {
                                 sctx.BeginFigure(new Point(currentX, currentY), true, false);
-                                if (size.Width < Rect.X + Rect.Width)
-                                    Rect.Width = size.Width - Rect.X;
-                                sctx.LineTo(new Point(currentX, currentY += size.Height - 20), true, false);
+                                if (DropPanel.InnerRect.Size.Width < Rect.X + Rect.Width)
+                                    Rect.Width = DropPanel.InnerRect.Size.Width - Rect.X;
+                                sctx.LineTo(new Point(currentX, currentY += DropPanel.InnerRect.Size.Height - 20), true, false);
                                 sctx.LineTo(new Point(currentX += Rect.X, currentY), true, false);
                                 sctx.LineTo(new Point(currentX, currentY += 20), true, false);
                                 sctx.LineTo(new Point(currentX += Rect.Width, currentY), true, false);
                                 sctx.LineTo(new Point(currentX, currentY -= 20), true, false);
-                                sctx.LineTo(new Point(currentX += size.Width - Rect.Width - Rect.X, currentY), true, false);
-                                sctx.LineTo(new Point(currentX, currentY -= size.Height - 20), true, false);
-                                sctx.LineTo(new Point(currentX -= size.Width, currentY), true, false);
+                                sctx.LineTo(new Point(currentX += DropPanel.InnerRect.Size.Width - Rect.Width - Rect.X, currentY), true, false);
+                                sctx.LineTo(new Point(currentX, currentY -= DropPanel.InnerRect.Size.Height - 20), true, false);
+                                sctx.LineTo(new Point(currentX -= DropPanel.InnerRect.Size.Width, currentY), true, false);
                             }
                             else
                             {
-                                currentY += size.Height;
+                                currentY += DropPanel.InnerRect.Size.Height;
                                 sctx.BeginFigure(new Point(currentX, currentY), true, false);
-                                if (size.Width < Rect.X + Rect.Width)
-                                    Rect.Width = size.Width - Rect.X;
-                                sctx.LineTo(new Point(currentX, currentY -= size.Height - 22), true, false);
+                                if (DropPanel.InnerRect.Size.Width < Rect.X + Rect.Width)
+                                    Rect.Width = DropPanel.InnerRect.Size.Width - Rect.X;
+                                sctx.LineTo(new Point(currentX, currentY -= (DropPanel.InnerRect.Size.Height - 22)), true, false);
                                 sctx.LineTo(new Point(currentX += Rect.X, currentY), true, false);
                                 sctx.LineTo(new Point(currentX, currentY -= 22), true, false);
                                 sctx.LineTo(new Point(currentX += Rect.Width, currentY), true, false);
                                 sctx.LineTo(new Point(currentX, currentY += 22), true, false);
-                                sctx.LineTo(new Point(currentX += size.Width - Rect.Width - Rect.X, currentY), true, false);
-                                sctx.LineTo(new Point(currentX, currentY += size.Height - 22), true, false);
-                                sctx.LineTo(new Point(currentX -= Rect.Width, currentY), true, false);
+                                sctx.LineTo(new Point(currentX += (DropPanel.InnerRect.Size.Width - Rect.Width - Rect.X), currentY), true, false);
+                                sctx.LineTo(new Point(currentX, currentY += (DropPanel.InnerRect.Size.Height - 22)), true, false);
+                                sctx.LineTo(new Point(currentX -= DropPanel.InnerRect.Size.Width, currentY), true, false);
                             }
                             sctx.Close();
                         }
@@ -247,23 +287,23 @@ namespace YDock.View
             if (DropPanel.Target == null) return;
             using (var ctx = RenderOpen())
             {
-                double hoffset = 0, voffset = 0;
+                double hoffset = DropPanel.InnerRect.Left + DropPanel.OuterRect.Left, voffset = DropPanel.InnerRect.Top + DropPanel.OuterRect.Top;
                 if (DropPanel is RootDropPanel)
                 {
                     if ((Flag & DragManager.LEFT) != 0)
-                        _DrawLeft(ctx, Constants.DropGlassLength, (size.Height - Constants.DropUnitLength) / 2);
+                        _DrawLeft(ctx, hoffset + Constants.DropGlassLength, voffset + (size.Height - Constants.DropUnitLength) / 2);
                     else if ((Flag & DragManager.TOP) != 0)
-                        _DrawTop(ctx, (size.Width - Constants.DropUnitLength) / 2, Constants.DropGlassLength);
+                        _DrawTop(ctx, hoffset + (size.Width - Constants.DropUnitLength) / 2, voffset + Constants.DropGlassLength);
                     else if ((Flag & DragManager.RIGHT) != 0)
-                        _DrawRight(ctx, size.Width - Constants.DropGlassLength, (size.Height - Constants.DropUnitLength) / 2);
+                        _DrawRight(ctx, hoffset + size.Width - Constants.DropGlassLength, voffset + (size.Height - Constants.DropUnitLength) / 2);
                     else if ((Flag & DragManager.BOTTOM) != 0)
-                        _DrawBottom(ctx, (size.Width - Constants.DropUnitLength) / 2, size.Height - Constants.DropGlassLength);
+                        _DrawBottom(ctx, hoffset + (size.Width - Constants.DropUnitLength) / 2, voffset + size.Height - Constants.DropGlassLength);
                 }
                 else
                 {
+                    bool flag = false;
                     if ((Flag & DragManager.CENTER) != 0)
                     {
-                        bool flag = false;
                         if (DropPanel.Target.Mode == DragMode.Document)
                             flag = true;
                         if (DropPanel.Source.DragMode != DragMode.Document
@@ -271,8 +311,12 @@ namespace YDock.View
                             flag = true;
 
                         if (flag)
-                            _DrawCenter(ctx, (size.Width - Constants.DropUnitLength) / 2, (size.Height - Constants.DropUnitLength) / 2);
+                            _DrawCenter(ctx, hoffset + (DropPanel.InnerRect.Size.Width - Constants.DropUnitLength) / 2, voffset + (DropPanel.InnerRect.Size.Height - Constants.DropUnitLength) / 2);
                     }
+
+                    flag = true;
+                    LayoutDocumentGroupControl layoutCrtl;
+                    LayoutGroupPanel layoutpanel;
 
                     if ((Flag & DragManager.LEFT) != 0)
                     {
@@ -280,24 +324,40 @@ namespace YDock.View
                         {
                             if (DropPanel.Target.Mode == DragMode.Document)
                             {
-                                hoffset = (size.Width - Constants.DropUnitLength) / 2 - Constants.DropUnitLength;
-                                voffset = (size.Height - Constants.DropUnitLength) / 2;
-                                _DrawCenter(ctx, hoffset, voffset, true, true);
+                                layoutCrtl = DropPanel.Target as LayoutDocumentGroupControl;
+                                if (layoutCrtl.DockViewParent != null)
+                                {
+                                    layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
+                                    flag &= layoutpanel.Direction != Direction.UpToDown;
+                                }
+                                if (flag)
+                                {
+                                    hoffset += (DropPanel.InnerRect.Size.Width - Constants.DropUnitLength) / 2 - Constants.DropUnitLength;
+                                    voffset += (DropPanel.InnerRect.Size.Height - Constants.DropUnitLength) / 2;
+                                    _DrawCenter(ctx, hoffset, voffset, true, true);
+                                }
                             }
                         }
                         else
                         {
                             if (DropPanel.Target.Mode == DragMode.Document)
                             {
-                                hoffset = (size.Width - Constants.DropUnitLength) / 2 - Constants.DropUnitLength * 2;
-                                voffset = (size.Height - Constants.DropUnitLength) / 2;
+                                layoutCrtl = DropPanel.Target as LayoutDocumentGroupControl;
+                                if (layoutCrtl.DockViewParent != null)
+                                {
+                                    layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
+                                    flag &= layoutpanel.Direction != Direction.UpToDown;
+                                    flag &= layoutCrtl.IndexOf() == 0;
+                                }
+                                hoffset += (DropPanel.InnerRect.Size.Width - Constants.DropUnitLength) / 2 - Constants.DropUnitLength * 2;
+                                voffset += (DropPanel.InnerRect.Size.Height - Constants.DropUnitLength) / 2;
                             }
                             else
                             {
-                                hoffset = (size.Width - Constants.DropUnitLength) / 2 - Constants.DropUnitLength;
-                                voffset = (size.Height - Constants.DropUnitLength) / 2;
+                                hoffset += (DropPanel.InnerRect.Size.Width - Constants.DropUnitLength) / 2 - Constants.DropUnitLength;
+                                voffset += (DropPanel.InnerRect.Size.Height - Constants.DropUnitLength) / 2;
                             }
-                            if (DropPanel.Source.DragMode == DragMode.Anchor)
+                            if (DropPanel.Source.DragMode == DragMode.Anchor && flag)
                                 _DrawLeft(ctx, hoffset, voffset, false);
                         }
                     }
@@ -308,24 +368,40 @@ namespace YDock.View
                         {
                             if (DropPanel.Target.Mode == DragMode.Document)
                             {
-                                hoffset = (size.Width + Constants.DropUnitLength) / 2;
-                                voffset = (size.Height - Constants.DropUnitLength) / 2;
-                                _DrawCenter(ctx, hoffset, voffset, true, true);
+                                layoutCrtl = DropPanel.Target as LayoutDocumentGroupControl;
+                                if (layoutCrtl.DockViewParent != null)
+                                {
+                                    layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
+                                    flag &= layoutpanel.Direction != Direction.UpToDown;
+                                }
+                                if (flag)
+                                {
+                                    hoffset += (DropPanel.InnerRect.Size.Width + Constants.DropUnitLength) / 2;
+                                    voffset += (DropPanel.InnerRect.Size.Height - Constants.DropUnitLength) / 2;
+                                    _DrawCenter(ctx, hoffset, voffset, true, true);
+                                }
                             }
                         }
                         else
                         {
                             if (DropPanel.Target.Mode == DragMode.Document)
                             {
-                                hoffset = size.Width / 2 + Constants.DropUnitLength * 2.5;
-                                voffset = (size.Height - Constants.DropUnitLength) / 2;
+                                layoutCrtl = DropPanel.Target as LayoutDocumentGroupControl;
+                                if (layoutCrtl.DockViewParent != null)
+                                {
+                                    layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
+                                    flag &= layoutpanel.Direction != Direction.UpToDown;
+                                    flag &= layoutCrtl.IndexOf() == layoutpanel.Count - 1;
+                                }
+                                hoffset += DropPanel.InnerRect.Size.Width / 2 + Constants.DropUnitLength * 2.5;
+                                voffset += (DropPanel.InnerRect.Size.Height - Constants.DropUnitLength) / 2;
                             }
                             else
                             {
-                                hoffset = size.Width / 2 + Constants.DropUnitLength * 1.5;
-                                voffset = (size.Height - Constants.DropUnitLength) / 2;
+                                hoffset += DropPanel.InnerRect.Size.Width / 2 + Constants.DropUnitLength * 1.5;
+                                voffset += (DropPanel.InnerRect.Size.Height - Constants.DropUnitLength) / 2;
                             }
-                            if (DropPanel.Source.DragMode == DragMode.Anchor)
+                            if (DropPanel.Source.DragMode == DragMode.Anchor && flag)
                                 _DrawRight(ctx, hoffset, voffset, false);
                         }
                     }
@@ -336,24 +412,40 @@ namespace YDock.View
                         {
                             if (DropPanel.Target.Mode == DragMode.Document)
                             {
-                                hoffset = (size.Width - Constants.DropUnitLength) / 2;
-                                voffset = size.Height / 2 - Constants.DropUnitLength * 1.5;
-                                _DrawCenter(ctx, hoffset, voffset, true);
+                                layoutCrtl = DropPanel.Target as LayoutDocumentGroupControl;
+                                if (layoutCrtl.DockViewParent != null)
+                                {
+                                    layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
+                                    flag &= layoutpanel.Direction != Direction.LeftToRight;
+                                }
+                                if (flag)
+                                {
+                                    hoffset += (DropPanel.InnerRect.Size.Width - Constants.DropUnitLength) / 2;
+                                    voffset += DropPanel.InnerRect.Size.Height / 2 - Constants.DropUnitLength * 1.5;
+                                    _DrawCenter(ctx, hoffset, voffset, true);
+                                }
                             }
                         }
                         else
                         {
                             if (DropPanel.Target.Mode == DragMode.Document)
                             {
-                                hoffset = (size.Width - Constants.DropUnitLength) / 2;
-                                voffset = size.Height / 2 - Constants.DropUnitLength * 2.5;
+                                layoutCrtl = DropPanel.Target as LayoutDocumentGroupControl;
+                                if (layoutCrtl.DockViewParent != null)
+                                {
+                                    layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
+                                    flag &= layoutpanel.Direction != Direction.LeftToRight;
+                                    flag &= layoutCrtl.IndexOf() == 0;
+                                }
+                                hoffset += (DropPanel.InnerRect.Size.Width - Constants.DropUnitLength) / 2;
+                                voffset += DropPanel.InnerRect.Size.Height / 2 - Constants.DropUnitLength * 2.5;
                             }
                             else
                             {
-                                hoffset = (size.Width - Constants.DropUnitLength) / 2;
-                                voffset = size.Height / 2 - Constants.DropUnitLength * 1.5;
+                                hoffset += (DropPanel.InnerRect.Size.Width - Constants.DropUnitLength) / 2;
+                                voffset += DropPanel.InnerRect.Size.Height / 2 - Constants.DropUnitLength * 1.5;
                             }
-                            if (DropPanel.Source.DragMode == DragMode.Anchor)
+                            if (DropPanel.Source.DragMode == DragMode.Anchor && flag)
                                 _DrawTop(ctx, hoffset, voffset, false);
                         }
                     }
@@ -364,24 +456,40 @@ namespace YDock.View
                         {
                             if (DropPanel.Target.Mode == DragMode.Document)
                             {
-                                hoffset = (size.Width - Constants.DropUnitLength) / 2;
-                                voffset = (size.Height + Constants.DropUnitLength) / 2;
-                                _DrawCenter(ctx, hoffset, voffset, true);
+                                layoutCrtl = DropPanel.Target as LayoutDocumentGroupControl;
+                                if (layoutCrtl.DockViewParent != null)
+                                {
+                                    layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
+                                    flag &= layoutpanel.Direction != Direction.LeftToRight;
+                                }
+                                if (flag)
+                                {
+                                    hoffset += (DropPanel.InnerRect.Size.Width - Constants.DropUnitLength) / 2;
+                                    voffset += (DropPanel.InnerRect.Size.Height + Constants.DropUnitLength) / 2;
+                                    _DrawCenter(ctx, hoffset, voffset, true);
+                                }
                             }
                         }
                         else
                         {
                             if (DropPanel.Target.Mode == DragMode.Document)
                             {
-                                hoffset = (size.Width - Constants.DropUnitLength) / 2;
-                                voffset = size.Height / 2 + Constants.DropUnitLength * 2.5;
+                                layoutCrtl = DropPanel.Target as LayoutDocumentGroupControl;
+                                if (layoutCrtl.DockViewParent != null)
+                                {
+                                    layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
+                                    flag &= layoutpanel.Direction != Direction.LeftToRight;
+                                    flag &= layoutCrtl.IndexOf() == layoutpanel.Count - 1;
+                                }
+                                hoffset += (DropPanel.InnerRect.Size.Width - Constants.DropUnitLength) / 2;
+                                voffset += DropPanel.InnerRect.Size.Height / 2 + Constants.DropUnitLength * 2.5;
                             }
                             else
                             {
-                                hoffset = (size.Width - Constants.DropUnitLength) / 2;
-                                voffset = size.Height / 2 + Constants.DropUnitLength * 1.5;
+                                hoffset += (DropPanel.InnerRect.Size.Width - Constants.DropUnitLength) / 2;
+                                voffset += DropPanel.InnerRect.Size.Height / 2 + Constants.DropUnitLength * 1.5;
                             }
-                            if (DropPanel.Source.DragMode == DragMode.Anchor)
+                            if (DropPanel.Source.DragMode == DragMode.Anchor && flag)
                                 _DrawBottom(ctx, hoffset, voffset, false);
                         }
                     }
@@ -391,8 +499,6 @@ namespace YDock.View
 
         private void _DrawLeft(DrawingContext ctx, double hoffset, double voffset, bool hasGlassBorder = true)
         {
-            hoffset += DropPanel.Hoffset;
-            voffset += DropPanel.Voffset;
             if (hasGlassBorder)
             {
                 //绘制玻璃外观
@@ -435,8 +541,6 @@ namespace YDock.View
 
         private void _DrawTop(DrawingContext ctx, double hoffset, double voffset, bool hasGlassBorder = true)
         {
-            hoffset += DropPanel.Hoffset;
-            voffset += DropPanel.Voffset;
             if (hasGlassBorder)
             {
                 //绘制玻璃外观
@@ -481,8 +585,6 @@ namespace YDock.View
 
         private void _DrawRight(DrawingContext ctx, double hoffset, double voffset, bool hasGlassBorder = true)
         {
-            hoffset += DropPanel.Hoffset;
-            voffset += DropPanel.Voffset;
             if (hasGlassBorder)
             {
                 //绘制玻璃外观
@@ -526,8 +628,6 @@ namespace YDock.View
 
         private void _DrawBottom(DrawingContext ctx, double hoffset, double voffset, bool hasGlassBorder = true)
         {
-            hoffset += DropPanel.Hoffset;
-            voffset += DropPanel.Voffset;
             if (hasGlassBorder)
             {
                 //绘制玻璃外观
@@ -573,8 +673,6 @@ namespace YDock.View
 
         private void _DrawCenter(DrawingContext ctx, double hoffset, double voffset, bool withSpliterLine = false, bool isVertical = false)
         {
-            hoffset += DropPanel.Hoffset;
-            voffset += +DropPanel.Voffset;
             double currentX = hoffset, currentY = voffset;
 
             if ((Flag & DragManager.ACTIVE) == 0)

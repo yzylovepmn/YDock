@@ -16,6 +16,6 @@ namespace YDock.Interface
         void ShowDropWindow();
         void CloseDropWindow();
         void Update(Point mouseP);
-        int Flag { get; set; }
+        DropMode DropMode { get; set; }
     }
 }

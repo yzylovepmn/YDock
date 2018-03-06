@@ -40,7 +40,6 @@ namespace YDock
         }
         private DockMode _dockMode;
 
-        
         public DragMode DragMode
         {
             get { return _dragMode; }
@@ -90,10 +89,9 @@ namespace YDock
         #region private field
         private Point _mouseP;
         private Size _rootSize;
-        private IDragTarget _rootTarget;
         private IDragTarget _dragTarget;
         private DragItem _dragItem;
-        private BaseFloatWindow _dragWnd;
+        internal BaseFloatWindow _dragWnd;
         private bool _isDragging = false;
         #endregion
 
@@ -161,13 +159,11 @@ namespace YDock
                     _dragWnd = _dragItem.RelativeObj as BaseFloatWindow;
             }
             else BeforeDrag();
-            if (_rootTarget == null)
-            {
-                //初始化最外层的_rootTarget
-                _rootSize = DockManager.LayoutRootPanel.RootGroupPanel.TransformActualSizeToAncestor();
-                _rootTarget = DockManager.LayoutRootPanel.RootGroupPanel;
-            }
-            else if (!_isInvokeByFloatWnd && _dragWnd is DocumentGroupWindow)
+
+            //初始化最外层的_rootTarget
+            _rootSize = DockManager.LayoutRootPanel.RootGroupPanel.TransformActualSizeToAncestor();
+
+            if (!_isInvokeByFloatWnd && _dragWnd is DocumentGroupWindow)
                 _dragWnd.Recreate();
         }
 
@@ -180,10 +176,10 @@ namespace YDock
         {
             IsDragging = false;
             //TODO Drop
-            if (_rootTarget.Flag != NONE)
-                _rootTarget.OnDrop(_dragItem);
-            else if (DragTarget.Flag != NONE)
-                DragTarget.OnDrop(_dragItem);
+            if (DockManager.LayoutRootPanel.RootGroupPanel?.DropMode != DropMode.None)
+                DockManager.LayoutRootPanel.RootGroupPanel?.OnDrop(_dragItem);
+            if (DragTarget?.DropMode != DropMode.None)
+                DragTarget?.OnDrop(_dragItem);
 
             AfterDrag();
         }
@@ -193,8 +189,7 @@ namespace YDock
             if (_dragWnd != null && _dragWnd.NeedReCreate)
                 _dragWnd.Recreate();
             _dragWnd = null;
-            _rootTarget.CloseDropWindow();
-            _rootTarget = null;
+            DockManager.LayoutRootPanel.RootGroupPanel.CloseDropWindow();
             _DestroyDragItem();
 
             BaseDropPanel.ActiveVisual = null;
@@ -379,12 +374,18 @@ namespace YDock
             {
                 if (wnd != _dragWnd
                     && wnd.Location.Contains(_mouseP)
-                    && !(wnd is DocumentGroupWindow && _dragItem.DragMode == DragMode.Anchor))
+                    && !(wnd is DocumentGroupWindow && _dragItem.DragMode == DragMode.Anchor)
+                    && !(wnd is AnchorGroupWindow && _dragItem.DragMode == DragMode.Document))
                 {
-                    DockManager.MoveFloatTo(wnd);
+                    if (wnd != DockManager.FloatWindows.First())
+                    {
+                        DockManager.MoveFloatTo(wnd);
+                        wnd.Activate();
+                        _dragWnd.Activate();
+                    }
                     wnd.HitTest(_mouseP);
 
-                    _rootTarget.HideDropWindow();
+                    DockManager.LayoutRootPanel.RootGroupPanel.HideDropWindow();
                     flag = true;
                     break;
                 }
@@ -398,15 +399,15 @@ namespace YDock
                 {
                     if (_dragItem.DragMode != DragMode.Document)
                     {
-                        _rootTarget.ShowDropWindow();
-                        _rootTarget.Update(_mouseP);
+                        DockManager.LayoutRootPanel.RootGroupPanel?.ShowDropWindow();
+                        DockManager.LayoutRootPanel.RootGroupPanel?.Update(_mouseP);
                     }
                     VisualTreeHelper.HitTest(DockManager.LayoutRootPanel.RootGroupPanel, _HitFilter, _HitRessult, new PointHitTestParameters(p));
                 }
                 else
                 {
                     if (_dragItem.DragMode != DragMode.Document)
-                        _rootTarget.HideDropWindow();
+                        DockManager.LayoutRootPanel.RootGroupPanel?.HideDropWindow();
                     DragTarget = null;
                 }
             }

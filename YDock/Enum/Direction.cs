@@ -7,6 +7,8 @@ namespace YDock.Enum
 {
     public enum Direction
     {
+        None,
+
         LeftToRight,
 
         UpToDown

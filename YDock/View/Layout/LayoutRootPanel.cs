@@ -34,7 +34,7 @@ namespace YDock.View
         {
             AHWindow = new AutoHideWindow();
             //先初始化Document区域
-            RootGroupPanel = new LayoutGroupPanel() { IsDocumentPanel = true };
+            RootGroupPanel = new LayoutGroupDocumentPanel();
             (_model as DockRoot).DocumentModel = new LayoutDocumentGroup(DockViewParent as DockManager);
             var _documentControl = new LayoutDocumentGroupControl((_model as DockRoot).DocumentModel);
             RootGroupPanel._AttachChild(_documentControl, 0);
@@ -49,7 +49,10 @@ namespace YDock.View
                 if (_rootGroupPanel != value)
                 {
                     if (_rootGroupPanel != null)
+                    {
                         Children.Remove(_rootGroupPanel);
+                        _rootGroupPanel.CloseDropWindow();
+                    }
                     _rootGroupPanel = value;
                     if (_rootGroupPanel != null)
                         Children.Add(_rootGroupPanel);

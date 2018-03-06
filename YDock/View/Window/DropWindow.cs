@@ -17,12 +17,12 @@ namespace YDock.View
             AllowsTransparency = true;
             _host = host;
             if (host.Mode == DragMode.RootPanel)
-            {
                 _dropPanel = new RootDropPanel(host, host.DockManager.DragManager.DragItem);
-                _dropPanel.SizeChanged += OnSizeChanged;
-            }
             else _dropPanel = new DropPanel(host, host.DockManager.DragManager.DragItem);
+            _dropPanel.SizeChanged += OnSizeChanged;
+
             Child = _dropPanel;
+
             if (host.Mode != DragMode.RootPanel)
             {
                 if (host.Mode == DragMode.Document
@@ -55,7 +55,7 @@ namespace YDock.View
 
                 if (parent != null && parent.ToString() == "System.Windows.Controls.Primitives.PopupRoot")
                 {
-                    (parent as FrameworkElement).Height = (_host as FrameworkElement).ActualHeight;
+                    (parent as FrameworkElement).Height = Math.Max((_host as FrameworkElement).ActualHeight, MinHeight);
                     break;
                 }
             }

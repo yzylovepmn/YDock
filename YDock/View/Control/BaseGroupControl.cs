@@ -145,6 +145,17 @@ namespace YDock.View
             get;
         }
 
+
+        public int ChildrenCount
+        {
+            get
+            {
+                if (DockViewParent is LayoutGroupPanel)
+                    return (DockViewParent as LayoutGroupPanel).Count;
+                else return 1;
+            }
+        }
+
         public DockManager DockManager
         {
             get
@@ -196,6 +207,13 @@ namespace YDock.View
             parent.AttachChild(this, index);
         }
 
+        public int IndexOf()
+        {
+            if (DockViewParent is LayoutGroupPanel)
+                return (DockViewParent as LayoutGroupPanel).Children.IndexOf(this);
+            else return -1;
+        }
+
         public virtual void Dispose()
         {
             BindingOperations.ClearBinding(this, ItemsSourceProperty);
@@ -207,11 +225,11 @@ namespace YDock.View
         }
 
         #region Drag
-        private int _flag;
-        public int Flag
+        private DropMode _dropMode = DropMode.None;
+        public DropMode DropMode
         {
-            get { return _flag; }
-            set { _flag = value; }
+            get { return _dropMode; }
+            set { _dropMode = value; }
         }
         DropWindow _dragWnd;
         public virtual void OnDrop(DragItem source)
@@ -229,7 +247,7 @@ namespace YDock.View
         {
             if (_dragWnd != null)
             {
-                Flag = DragManager.NONE;
+                _dropMode = DropMode.None;
                 _dragWnd.IsOpen = false;
                 _dragWnd = null;
             }
@@ -243,12 +261,25 @@ namespace YDock.View
         public void ShowDropWindow()
         {
             if (_dragWnd == null)
-            {
                 CreateDropWindow();
-                _dragWnd.IsOpen = true;
-            }
             var p = this.PointToScreenDPIWithoutFlowDirection(new Point());
-            DockHelper.UpdateLocation(_dragWnd, p.X, p.Y, ActualWidth, ActualHeight);
+            if (this is LayoutDocumentGroupControl)
+            {
+                if (DockViewParent == null)
+                {
+                    _dragWnd.DropPanel.InnerRect = new Rect(0, 0, ActualWidth, ActualHeight);
+                    DockHelper.UpdateLocation(_dragWnd, p.X, p.Y, ActualWidth, ActualHeight);
+                }
+                else
+                {
+                    var panel = DockViewParent as LayoutGroupDocumentPanel;
+                    var p1 = panel.PointToScreenDPIWithoutFlowDirection(new Point());
+                    _dragWnd.DropPanel.InnerRect = new Rect(p.X - p1.X, p.Y - p1.Y, ActualWidth, ActualHeight);
+                    DockHelper.UpdateLocation(_dragWnd, p.X, p.Y, panel.ActualWidth, panel.ActualHeight);
+                }
+            }
+            else DockHelper.UpdateLocation(_dragWnd, p.X, p.Y, ActualWidth, ActualHeight);
+            if (!_dragWnd.IsOpen) _dragWnd.IsOpen = true;
             _dragWnd.Show();
         }
 
@@ -264,6 +295,8 @@ namespace YDock.View
         }
         #endregion
 
+        internal bool canUpdate = true;
+        internal int _index;
         private ActiveRectDropVisual _activeRect;
         Point _mouseP;
         public void HitTest(Point mouseP, ActiveRectDropVisual activeRect)
@@ -279,25 +312,52 @@ namespace YDock.View
 
         private HitTestFilterBehavior _HitFilter(DependencyObject potentialHitTestTarget)
         {
-            if (potentialHitTestTarget is AnchorHeaderControl)
+            canUpdate = true;
+            if (potentialHitTestTarget is AnchorHeaderControl && _activeRect.DropPanel.Source.DragMode != DragMode.Document)
             {
+                if (DropMode == DropMode.Center && _index == -1)
+                {
+                    canUpdate = false;
+                    return HitTestFilterBehavior.Stop;
+                }
                 _activeRect.Flag = DragManager.CENTER;
                 _activeRect.Rect = new Rect(0, 0, 60, 20);
+                _index = -1;
             }
             else if (potentialHitTestTarget is AnchorSidePanel
                 || potentialHitTestTarget is DocumentPanel)
             {
                 UpdateChildrenBounds(potentialHitTestTarget as Panel);
-                _activeRect.Flag = DragManager.CENTER;
                 var p = (potentialHitTestTarget as Panel).PointToScreenDPIWithoutFlowDirection(new Point());
                 var index = _childrenBounds.FindIndex(new Point(_mouseP.X - p.X, _mouseP.Y - p.Y));
                 Rect rect;
                 if (index < 0)
                 {
-                    rect = _childrenBounds.Last();
-                    rect = new Rect(rect.X + rect.Width, 0, 0, rect.Height);
+                    if (_childrenBounds.Count == 0)
+                        rect = new Rect(0, 0, 0, 22);
+                    else
+                    {
+                        rect = _childrenBounds.Last();
+                        rect = new Rect(rect.X + rect.Width, 0, 0, rect.Height);
+                    }
+                    if (DropMode == DropMode.Center && _index == _childrenBounds.Count)
+                    {
+                        canUpdate = false;
+                        return HitTestFilterBehavior.Stop;
+                    }
+                    _index = _childrenBounds.Count;
                 }
-                else rect = _childrenBounds[index];
+                else
+                {
+                    rect = _childrenBounds[index];
+                    if (DropMode == DropMode.Center && _index == index)
+                    {
+                        canUpdate = false;
+                        return HitTestFilterBehavior.Stop;
+                    }
+                    _index = index;
+                }
+                _activeRect.Flag = DragManager.CENTER;
                 _activeRect.Rect = new Rect(rect.X, 0, this is AnchorSideGroupControl ? 60 : 120, rect.Height);
 
                 return HitTestFilterBehavior.Stop;
