@@ -150,6 +150,8 @@ namespace YDock.View
 
         DropMode _GetMode(int flag)
         {
+            if ((flag & DragManager.HEAD) != 0)
+                return DropMode.Header;
             if ((flag & DragManager.LEFT) != 0)
             {
                 if ((flag & DragManager.SPLIT) != 0)

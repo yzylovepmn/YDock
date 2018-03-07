@@ -441,7 +441,7 @@ namespace YDock
 
         internal static void ChangeSide(IDockView view, DockSide side)
         {
-            if (view.Model.Side == side) return;
+            if (view.Model != null && view.Model.Side == side) return;
             if (view is BaseGroupControl)
                 (view.Model as BaseLayoutGroup).Side = side;
             if (view is LayoutGroupPanel)

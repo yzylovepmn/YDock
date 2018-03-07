@@ -171,11 +171,13 @@ namespace YDock.Model
             (element as DockElement).IsVisible = false;
         }
 
-        public virtual void Attach(IDockElement element)
+        public virtual void Attach(IDockElement element, int index = -1)
         {
             if (element == null || element.Container != null)
                 throw new InvalidOperationException("Attach Failed!");
-            _children.Add(element);
+            if (index < 0)
+                _children.Add(element);
+            else _children.Insert(index, element);
         }
 
         public void SetDockMode(DockMode mode)

@@ -85,16 +85,18 @@ namespace YDock.Model
             }
         }
 
-        public override void Attach(IDockElement element)
+        public override void Attach(IDockElement element, int index = -1)
         {
-            if (!element.Side.Assert() || (element.Side == DockSide.None
-                && !(this is LayoutDocumentGroup)))
+            if (!element.Side.Assert())
                 throw new ArgumentException("Side is illegal!");
-            base.Attach(element);
+            base.Attach(element, index);
         }
 
         public override void Dispose()
         {
+            base.Dispose();
+            if (_view != null)
+                _dockManager.DragManager.OnDragStatusChanged -= (_view as BaseGroupControl).OnDragStatusChanged;
             _dockManager = null;
         }
     }
@@ -140,11 +142,11 @@ namespace YDock.Model
             }
         }
 
-        public override void Attach(IDockElement element)
+        public override void Attach(IDockElement element, int index = -1)
         {
             if (element.Side != DockSide.None)
                 throw new ArgumentException("Side is illegal!");
-            base.Attach(element);
+            base.Attach(element, index);
             if (element.IsActive) IsActive = true;
         }
 

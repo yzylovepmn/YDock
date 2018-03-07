@@ -1270,6 +1270,15 @@ namespace YDock.View
                             dockManager.LayoutRootPanel.AttachChild(child, 0);
                         }
                     }
+                    else if (DockViewParent == null)
+                    {
+                        var wnd = Parent as BaseFloatWindow;
+                        wnd.DetachChild(this);
+                        var _child = Children[0];
+                        Children.Clear();
+                        Dispose();
+                        wnd.AttachChild(_child as IDockView, 0);
+                    }
                 }
             }
         }

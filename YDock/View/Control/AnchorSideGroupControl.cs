@@ -34,7 +34,68 @@ namespace YDock.View
 
         public override void OnDrop(DragItem source)
         {
-            
+            if (DropMode == DropMode.Left
+                || DropMode == DropMode.Right
+                || DropMode == DropMode.Top
+                || DropMode == DropMode.Bottom)
+            {
+                var child = (source.RelativeObj as BaseFloatWindow).Child;
+                (source.RelativeObj as BaseFloatWindow).DetachChild(child);
+
+                DockManager.ChangeSide(child, Model.Side);
+
+                LayoutGroupPanel panel;
+                if (DockViewParent == null)
+                {
+                    var wnd = Parent as BaseFloatWindow;
+                    wnd.DetachChild(this);
+                    panel = new LayoutGroupPanel(Model.Side)
+                    {
+                        Direction = (DropMode == DropMode.Left || DropMode == DropMode.Right) ? Direction.LeftToRight : Direction.UpToDown
+                    };
+                    wnd.DockManager = DockManager;
+                    wnd.AttachChild(panel, 0);
+                    panel._AttachChild(this, 0);
+                }
+                else panel = DockViewParent as LayoutGroupPanel;
+                panel.IsAnchorPanel = true;
+
+                int index = panel.Children.IndexOf(this);
+                switch (DropMode)
+                {
+                    case DropMode.Left:
+                        if (panel.Direction == Direction.UpToDown)
+                        {
+                            var _subpanel = new LayoutGroupPanel(Model.Side) { Direction = Direction.LeftToRight };
+                            
+                        }
+                        else panel._AttachChild(child, index);
+                        break;
+                    case DropMode.Top:
+                        if (panel.Direction == Direction.LeftToRight)
+                        {
+
+                        }
+                        else panel._AttachChild(child, index);
+                        break;
+                    case DropMode.Right:
+                        if (panel.Direction == Direction.UpToDown)
+                        {
+
+                        }
+                        else panel._AttachChild(child, index + 1);
+                        break;
+                    case DropMode.Bottom:
+                        if (panel.Direction == Direction.LeftToRight)
+                        {
+
+                        }
+                        else panel._AttachChild(child, index + 1);
+                        break;
+                }
+            }
+            else base.OnDrop(source);
+            (source.RelativeObj as BaseFloatWindow).Close();
         }
     }
 }

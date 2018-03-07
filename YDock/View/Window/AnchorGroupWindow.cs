@@ -1,6 +1,7 @@
 ﻿using Microsoft.Windows.Shell;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using YDock.Enum;
 using YDock.Interface;
+using YDock.Model;
 
 namespace YDock.View
 {
@@ -60,16 +62,25 @@ namespace YDock.View
             if (child is ILayoutPanel)
             {
                 _heightEceeed += Constants.FloatWindowHeaderHeight;
-                Owner = (child as ILayoutPanel).DockManager.MainWindow;
+                Owner = DockManager?.MainWindow;
             }
             else Owner = (child as ILayoutGroupControl).Model.DockManager.MainWindow;
             base.AttachChild(child, index);
+            if (child is BaseGroupControl)
+                (((child as BaseGroupControl).Model as BaseLayoutGroup).Children as ObservableCollection<IDockElement>).CollectionChanged += OnCollectionChanged;
         }
 
         public override void DetachChild(IDockView child)
         {
+            if (child is BaseGroupControl)
+                (((child as BaseGroupControl).Model as BaseLayoutGroup).Children as ObservableCollection<IDockElement>).CollectionChanged -= OnCollectionChanged;
             base.DetachChild(child);
             UpdateSize();
+        }
+
+        private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateTemplate();
         }
 
         protected override void OnContentChanged(object oldContent, object newContent)
@@ -96,15 +107,18 @@ namespace YDock.View
             if (_needReCreate)
             {
                 _needReCreate = false;
-                var layoutCtrl = Child as BaseGroupControl;
-                layoutCtrl.IsDraggingFromDock = false;
+                if (Child != null)
+                {
+                    var layoutCtrl = Child as BaseGroupControl;
+                    layoutCtrl.IsDraggingFromDock = false;
+                }
             }
         }
 
         public void UpdateTemplate()
         {
             PropertyChanged(this, new PropertyChangedEventArgs("IsSingleMode"));
-            PropertyChanged(this, new PropertyChangedEventArgs("HasBorder"));
+            PropertyChanged(this, new PropertyChangedEventArgs("NoBorder"));
         }
 
         public void UpdateSize()

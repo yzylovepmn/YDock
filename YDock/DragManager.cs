@@ -174,12 +174,13 @@ namespace YDock
 
         internal void DoDragDrop()
         {
-            IsDragging = false;
             //TODO Drop
             if (DockManager.LayoutRootPanel.RootGroupPanel?.DropMode != DropMode.None)
                 DockManager.LayoutRootPanel.RootGroupPanel?.OnDrop(_dragItem);
-            if (DragTarget?.DropMode != DropMode.None)
+            else if (DragTarget?.DropMode != DropMode.None)
                 DragTarget?.OnDrop(_dragItem);
+
+            IsDragging = false;
 
             AfterDrag();
         }
@@ -289,7 +290,7 @@ namespace YDock
                         }
                         else
                         {
-                            if (ele.Container is LayoutDocumentGroup)
+                            if (ele.IsDocument)
                                 group = new LayoutDocumentGroup(DockManager);
                             else group = new LayoutGroup(ele.Side, DockManager);
                             //先从逻辑父级中移除
@@ -307,13 +308,24 @@ namespace YDock
                             }
                             else
                             {
-                                _dragWnd = new AnchorGroupWindow() { NeedReCreate = true };
-                                _dragWnd.AttachChild(new AnchorSideGroupControl(group) { IsDraggingFromDock = true }, 0);
-                                _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowHeaderHeight - Constants.FloatWindowResizeLength;
-                                _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left - Constants.FloatWindowResizeLength - Constants.DocumentWindowPadding;
+                                _dragWnd = new AnchorGroupWindow() { NeedReCreate = _dragItem.DragMode == DragMode.Anchor };
+                                _dragWnd.AttachChild(new AnchorSideGroupControl(group) { IsDraggingFromDock = _dragItem.DragMode == DragMode.Anchor }, 0);
+                                if (!_dragWnd.NeedReCreate)
+                                {
+                                    _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowResizeLength;
+                                    _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left - Constants.FloatWindowResizeLength - Constants.DocumentWindowPadding;
+                                }
+                                else
+                                {
+                                    _dragWnd.Top = mouseP.Y + _dragItem.ClickPos.Y + Constants.FloatWindowResizeLength - _dragWnd.Height;
+                                    _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - Constants.FloatWindowResizeLength - Constants.DocumentWindowPadding;
+                                }
                             }
-                            _dragWnd.Background = Brushes.Transparent;
-                            _dragWnd.BorderBrush = Brushes.Transparent;
+                            if (_dragWnd.NeedReCreate)
+                            {
+                                _dragWnd.Background = Brushes.Transparent;
+                                _dragWnd.BorderBrush = Brushes.Transparent;
+                            }
                             _dragWnd.Show();
                         }
                     }

@@ -34,7 +34,8 @@ namespace YDock.View
 
         public override void OnDrop(DragItem source)
         {
-
+            base.OnDrop(source);
+            (source.RelativeObj as BaseFloatWindow).Close();
         }
     }
 }

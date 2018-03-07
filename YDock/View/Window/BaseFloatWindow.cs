@@ -146,17 +146,18 @@ namespace YDock.View
             get { return _isDragging; }
         }
 
+        protected DockManager _dockManager;
         public virtual DockManager DockManager
         {
             get
             {
-                if (Content != null)
-                {
-                    if (Content is ILayoutPanel)
-                        return (Content as LayoutGroupPanel).DockManager;
-                    else return Child.Model.DockManager;
-                }
-                return null;
+                if (Content != null && (Content is BaseGroupControl))
+                    return Child.Model.DockManager;
+                return _dockManager;
+            }
+            internal set
+            {
+                _dockManager = value;
             }
         }
 
@@ -176,6 +177,8 @@ namespace YDock.View
             if (child == Content)
             {
                 DockManager.RemoveFloatWindow(this);
+                if (child is BaseGroupControl)
+                    (child as BaseGroupControl).IsDraggingFromDock = false;
                 Content = null;
             }
         }

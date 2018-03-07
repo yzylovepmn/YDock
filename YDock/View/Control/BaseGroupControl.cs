@@ -106,13 +106,15 @@ namespace YDock.View
                     if (_model != null)
                     {
                         (_model as LayoutGroup).View = null;
-                        _model.DockManager.DragManager.OnDragStatusChanged -= OnDragStatusChanged;
+                        if (_model.DockManager != null)
+                            _model.DockManager.DragManager.OnDragStatusChanged -= OnDragStatusChanged;
                     }
                     _model = value;
                     if (_model != null)
                     {
                         (_model as LayoutGroup).View = this;
-                        _model.DockManager.DragManager.OnDragStatusChanged += OnDragStatusChanged;
+                        if (_model.DockManager != null)
+                            _model.DockManager.DragManager.OnDragStatusChanged += OnDragStatusChanged;
                     }
                 }
             }
@@ -220,7 +222,7 @@ namespace YDock.View
             Items.Clear();
             Model = null;
             _dragItem = null;
-            _childrenBounds.Clear();
+            _childrenBounds?.Clear();
             _childrenBounds = null;
         }
 
@@ -234,7 +236,38 @@ namespace YDock.View
         DropWindow _dragWnd;
         public virtual void OnDrop(DragItem source)
         {
-            
+            var child = (source.RelativeObj as BaseFloatWindow).Child;
+            (source.RelativeObj as BaseFloatWindow).DetachChild(child);
+
+            DockManager.ChangeSide(child, Model.Side);
+
+            var group = Model as LayoutGroup;
+            switch (DropMode)
+            {
+                case DropMode.Header:
+                case DropMode.Center:
+                    _AttachDockView(child as UIElement, group);
+                    break;
+            }
+        }
+
+        private void _AttachDockView(UIElement view, LayoutGroup target)
+        {
+            if (view is LayoutGroupPanel)
+                foreach (UIElement item in (view as LayoutGroupPanel).Children)
+                    _AttachDockView(item, target);
+
+            if (view is BaseGroupControl)
+            {
+                var model = (view as BaseGroupControl).Model as LayoutGroup;
+                var _children = new List<IDockElement>(model.Children.Reverse());
+                model.Dispose();
+                foreach (var item in _children)
+                    target.Attach(item, _index);
+            }
+
+            if (view is IDisposable)
+                (view as IDisposable).Dispose();
         }
 
         internal virtual void CreateDropWindow()
@@ -288,13 +321,14 @@ namespace YDock.View
             _dragWnd?.Update(mouseP);
         }
 
-        private void OnDragStatusChanged(DragStatusChangedEventArgs args)
+        internal void OnDragStatusChanged(DragStatusChangedEventArgs args)
         {
             if (!args.IsDragging)
                 CloseDropWindow();
         }
         #endregion
 
+        #region HitTest
         internal bool canUpdate = true;
         internal int _index;
         private ActiveRectDropVisual _activeRect;
@@ -320,7 +354,7 @@ namespace YDock.View
                     canUpdate = false;
                     return HitTestFilterBehavior.Stop;
                 }
-                _activeRect.Flag = DragManager.CENTER;
+                _activeRect.Flag = DragManager.HEAD;
                 _activeRect.Rect = new Rect(0, 0, 60, 20);
                 _index = -1;
             }
@@ -369,5 +403,6 @@ namespace YDock.View
         {
             return HitTestResultBehavior.Stop;
         }
+        #endregion
     }
 }
