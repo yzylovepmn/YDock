@@ -125,6 +125,7 @@ namespace YDock.View
                     group.Attach(_child);
                 var ctrl = new LayoutDocumentGroupControl(group);
                 _AttachChild(ctrl, index);
+                (child as IDisposable).Dispose();
             }
 
             if (child is LayoutGroupDocumentPanel
@@ -135,10 +136,11 @@ namespace YDock.View
                 (child as LayoutGroupPanel).Children.Clear();
                 foreach (var _child in _children)
                     _AttachWithSplit(_child as IDockView, mode, index);
+                (child as IDisposable).Dispose();
             }
 
-            if (child is IDisposable)
-                (child as IDisposable).Dispose();
+            //if (child is IDisposable)
+            //    (child as IDisposable).Dispose();
         }
 
         internal override bool _AssertMode(AttachMode mode)

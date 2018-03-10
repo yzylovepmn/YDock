@@ -55,21 +55,9 @@ namespace YDock.View
                             Direction = (DropMode == DropMode.Left_WithSplit || DropMode == DropMode.Right_WithSplit) ? Direction.LeftToRight : Direction.UpToDown
                         };
                         panel._AttachChild(this, 0);
-                        switch (DropMode)
-                        {
-                            case DropMode.Left_WithSplit:
-                                panel.AttachChild(child, AttachMode.Left_WithSplit, 0);
-                                break;
-                            case DropMode.Top_WithSplit:
-                                panel.AttachChild(child, AttachMode.Top_WithSplit, 0);
-                                break;
-                            case DropMode.Right_WithSplit:
-                                panel.AttachChild(child, AttachMode.Right_WithSplit, 1);
-                                break;
-                            case DropMode.Bottom_WithSplit:
-                                panel.AttachChild(child, AttachMode.Bottom_WithSplit, 1);
-                                break;
-                        }
+                        if (DropMode == DropMode.Left_WithSplit || DropMode == DropMode.Top_WithSplit)
+                            panel._AttachChild(child, 0);
+                        else panel._AttachChild(child, 1);
                         parent.AttachChild(panel, AttachMode.None, 0);
                     }
                     else
