@@ -206,7 +206,21 @@ namespace YDock.View
 
         public void AttachToParent(ILayoutPanel parent, int index)
         {
-            parent.AttachChild(this, index);
+            switch (Model.Side)
+            {
+                case DockSide.Left:
+                    parent.AttachChild(this, AttachMode.Left, index);
+                    break;
+                case DockSide.Right:
+                    parent.AttachChild(this, AttachMode.Right, index);
+                    break;
+                case DockSide.Top:
+                    parent.AttachChild(this, AttachMode.Top, index);
+                    break;
+                case DockSide.Bottom:
+                    parent.AttachChild(this, AttachMode.Bottom, index);
+                    break;
+            }
         }
 
         public int IndexOf()
@@ -308,7 +322,7 @@ namespace YDock.View
                     var panel = DockViewParent as LayoutGroupDocumentPanel;
                     var p1 = panel.PointToScreenDPIWithoutFlowDirection(new Point());
                     _dragWnd.DropPanel.InnerRect = new Rect(p.X - p1.X, p.Y - p1.Y, ActualWidth, ActualHeight);
-                    DockHelper.UpdateLocation(_dragWnd, p.X, p.Y, panel.ActualWidth, panel.ActualHeight);
+                    DockHelper.UpdateLocation(_dragWnd, p1.X, p1.Y, panel.ActualWidth, panel.ActualHeight);
                 }
             }
             else DockHelper.UpdateLocation(_dragWnd, p.X, p.Y, ActualWidth, ActualHeight);

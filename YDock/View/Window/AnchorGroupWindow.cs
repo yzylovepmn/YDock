@@ -23,7 +23,7 @@ namespace YDock.View
             DefaultStyleKeyProperty.OverrideMetadata(typeof(AnchorGroupWindow), new FrameworkPropertyMetadata(typeof(AnchorGroupWindow)));
         }
 
-        public AnchorGroupWindow()
+        public AnchorGroupWindow(DockManager dockManager) : base(dockManager)
         {
             ShowInTaskbar = false;
         }
@@ -52,29 +52,25 @@ namespace YDock.View
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="child">为ILayoutPanel类型</param>
-        /// <param name="index"></param>
-        public override void AttachChild(IDockView child, int index)
+        public override void AttachChild(IDockView child, AttachMode mode, int index)
         {
             if (child is ILayoutPanel)
-            {
                 _heightEceeed += Constants.FloatWindowHeaderHeight;
-                Owner = DockManager?.MainWindow;
-            }
-            else Owner = (child as ILayoutGroupControl).Model.DockManager.MainWindow;
-            base.AttachChild(child, index);
+            Owner = DockManager.MainWindow;
+            base.AttachChild(child, mode, index);
             if (child is BaseGroupControl)
                 (((child as BaseGroupControl).Model as BaseLayoutGroup).Children as ObservableCollection<IDockElement>).CollectionChanged += OnCollectionChanged;
         }
 
-        public override void DetachChild(IDockView child)
+        public override void DetachChild(IDockView child, bool force = true)
         {
             if (child is BaseGroupControl)
                 (((child as BaseGroupControl).Model as BaseLayoutGroup).Children as ObservableCollection<IDockElement>).CollectionChanged -= OnCollectionChanged;
-            base.DetachChild(child);
+
+            if (force)
+                Owner = null;
+
+            base.DetachChild(child, force);
             UpdateSize();
         }
 

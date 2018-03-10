@@ -15,8 +15,9 @@ namespace YDock.Interface
 
     public interface ILayoutViewParent
     {
-        void DetachChild(IDockView child);
-        void AttachChild(IDockView child, int index);
+        void DetachChild(IDockView child, bool force = true);
+        void AttachChild(IDockView child, AttachMode mode, int index);
+        int IndexOf(IDockView child);
     }
 
     public interface ILayoutViewWithSize : ILayoutSize, IDockView

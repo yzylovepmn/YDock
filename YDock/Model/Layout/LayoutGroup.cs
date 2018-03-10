@@ -154,6 +154,20 @@ namespace YDock.Model
         {
             base.Detach(element);
             if (element.IsActive) IsActive = false;
+            if (Children_CanSelect.Count() == 0 && _view?.DockViewParent != null)
+            {
+                var ctrl = _view as LayoutDocumentGroupControl;
+                var panel = _view.DockViewParent as LayoutGroupDocumentPanel;
+                if (panel.Children.Count > 1)
+                {
+                    panel.DetachChild(_view);
+                    if (DockManager.Root.DocumentModel == this)
+                    {
+                        var child = panel.Children[0] as LayoutDocumentGroupControl;
+                        DockManager.Root.DocumentModel = child.Model as BaseLayoutGroup;
+                    }
+                }
+            }
         }
     }
 }

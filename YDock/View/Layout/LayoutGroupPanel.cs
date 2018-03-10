@@ -1231,59 +1231,142 @@ namespace YDock.View
         }
         #endregion
 
-        public virtual void DetachChild(IDockView child)
+        public virtual void AttachChild(IDockView child, AttachMode mode, int index)
+        {
+            if (index < 0 || index > Count) throw new ArgumentOutOfRangeException("index out of range!");
+            if (!_AssertMode(mode)) throw new ArgumentException("mode is illegal!");
+
+            bool flag = true;
+
+            switch (Direction)
+            {
+                case Direction.None:
+                    if (mode == AttachMode.Left || mode == AttachMode.Right)
+                        Direction = Direction.LeftToRight;
+                    else Direction = Direction.UpToDown;
+                    break;
+                case Direction.LeftToRight:
+                    if (mode == AttachMode.Left || mode == AttachMode.Right)
+                    {
+                        if (child is LayoutGroupPanel && !(child as LayoutGroupPanel).IsDocumentPanel)
+                        {
+                            flag = false;
+                            _AttachSubPanel((child as LayoutGroupPanel), index);
+                        }
+                    }
+                    else
+                    {
+                        if (IsRootPanel)
+                        {
+                            flag = false;
+                            AttachToRootPanel(child, mode);
+                        }
+                        else throw new ArgumentException("mode is illegal!");
+                    }
+                    break;
+                case Direction.UpToDown:
+                    if (mode == AttachMode.Top || mode == AttachMode.Bottom)
+                    {
+                        if (child is LayoutGroupPanel && !(child as LayoutGroupPanel).IsDocumentPanel)
+                        {
+                            flag = false;
+                            _AttachSubPanel((child as LayoutGroupPanel), index);
+                        }
+                    }
+                    else
+                    {
+                        if (IsRootPanel)
+                        {
+                            flag = false;
+                            AttachToRootPanel(child, mode);
+                        }
+                        else throw new ArgumentException("mode is illegal!");
+                    }
+                    break;
+            }
+            if (flag)
+                _AttachChild(child, index);
+        }
+
+        public virtual void DetachChild(IDockView child, bool force = true)
         {
             if (Children.Contains(child as UIElement))
             {
                 _DetachChild(child);
-                //若元素为空，且不是RootPanel，则递归的将其从Parent中移除
-                if (Children.Count == 0 && !IsRootPanel)
+                if (force)
                 {
-                    (DockViewParent as ILayoutViewParent).DetachChild(this);
-                    Dispose();
-                }
-                //若元素只有一个，则将子元素层次减一
-                if (Children.Count == 1)
-                {
-                    child = Children[0] as IDockView;
-                    if (DockViewParent is ILayoutPanel)
+                    if (Children.Count < 2)
                     {
-                        var parent = DockViewParent as LayoutGroupPanel;
-                        var index = parent.Children.IndexOf(this);
-                        //_DetachChild会重置Direction，故这里保存下来
-                        var direction = parent.Direction;
-                        //从父容器中移除自己
-                        parent._DetachChild(this);
-                        Children.Clear();
-                        parent.Direction = direction;
-                        //从父容器中加入自己的子元素
-                        parent.AttachChild(child, Math.Max(index - 1, 0));
+                        Direction = Direction.None;
+                        _isAnchorPanel = false;
                     }
-                    else if (IsRootPanel)
+
+                    //若元素为空，且不是RootPanel，则递归的将其从Parent中移除
+                    if (Children.Count == 0 && !IsRootPanel)
                     {
-                        if (child is ILayoutPanel)
-                        {
-                            var dockManager = DockManager;
-                            //首先从Parent移除此Panel
-                            DockManager.LayoutRootPanel.DetachChild(this);
-                            Children.Clear();
-                            dockManager.LayoutRootPanel.AttachChild(child, 0);
-                        }
-                    }
-                    else if (DockViewParent == null)
-                    {
-                        var wnd = Parent as BaseFloatWindow;
-                        wnd.DetachChild(this);
-                        var _child = Children[0];
-                        Children.Clear();
+                        (Parent as ILayoutViewParent).DetachChild(this);
                         Dispose();
-                        wnd.AttachChild(_child as IDockView, 0);
+                    }
+                    //若元素只有一个，则将子元素层次减一
+                    if (Children.Count == 1)
+                    {
+                        child = Children[0] as IDockView;
+                        var parent = Parent as ILayoutViewParent;
+                        var index = parent.IndexOf(this);
+                        //从父容器中移除自己
+                        parent.DetachChild(this, false);
+                        Children.Clear();
+                        //从父容器中加入自己的子元素
+                        if (parent is LayoutGroupPanel)
+                        {
+                            switch ((parent as LayoutGroupPanel).Direction)
+                            {
+                                case Direction.None:
+                                    parent.AttachChild(child, AttachMode.None, Math.Max(index - 1, 0));
+                                    break;
+                                case Direction.LeftToRight:
+                                    parent.AttachChild(child, AttachMode.Left, Math.Max(index - 1, 0));
+                                    break;
+                                case Direction.UpToDown:
+                                    parent.AttachChild(child, AttachMode.Top, Math.Max(index - 1, 0));
+                                    break;
+                            }
+                        }
+                        else parent.AttachChild(child, AttachMode.None, Math.Max(index - 1, 0));
                     }
                 }
             }
         }
 
-        protected void _DetachChild(IDockView child)
+        public int IndexOf(IDockView child)
+        {
+            if (Children.Contains(child as UIElement))
+                return Children.IndexOf(child as UIElement);
+            else return -1;
+        }
+
+        internal void _AttachChild(IDockView child, int index)
+        {
+            Children.Insert(index, child as UIElement);
+            if (Children.Count > 1)
+            {
+                switch (Direction)
+                {
+                    case Direction.LeftToRight:
+                        if (index % 2 == 0)
+                            Children.Insert(index + 1, _CreateSplitter(Cursors.SizeWE));
+                        else Children.Insert(index, _CreateSplitter(Cursors.SizeWE));
+                        break;
+                    case Direction.UpToDown:
+                        if (index % 2 == 0)
+                            Children.Insert(index + 1, _CreateSplitter(Cursors.SizeNS));
+                        else Children.Insert(index, _CreateSplitter(Cursors.SizeNS));
+                        break;
+                }
+            }
+        }
+
+        internal void _DetachChild(IDockView child)
         {
             if (Children.Contains(child as UIElement))
             {
@@ -1308,155 +1391,48 @@ namespace YDock.View
                         Children.RemoveAt(0);
                     }
                 }
-                if (Children.Count < 2)
-                {
-                    Direction = Direction.None;
-                    _isAnchorPanel = false;
-                }
             }
         }
 
-        /// <summary>
-        /// 将子元素加入到Children中
-        /// </summary>
-        /// <param name="child"></param>
-        /// <param name="index">要插入的索引（不包括Spliter）</param>
-        public virtual void AttachChild(IDockView child, int index)
+        protected void _AttachSubPanel(LayoutGroupPanel subpanel, int index)
         {
-            switch (Direction)
-            {
-                case Direction.None:
-                    if (child.Model != null)
-                    {
-                        switch (child.Model.Side)
-                        {
-                            case DockSide.Left:
-                            case DockSide.Right:
-                                Direction = Direction.LeftToRight;
-                                break;
-                            case DockSide.Top:
-                            case DockSide.Bottom:
-                                Direction = Direction.UpToDown;
-                                break;
-                        }
-                    }
-                    break;
-                case Direction.LeftToRight:
-                    if (child.Model != null && (child.Model.Side == DockSide.Top
-                            || child.Model.Side == DockSide.Bottom))
-                    {
-                        if (IsRootPanel)
-                        {
-                            var dockManager = DockManager;
-                            //首先从Parent移除此Panel
-                            DockManager.LayoutRootPanel.DetachChild(this);
-                            var pparent = new LayoutGroupPanel() { Direction = Direction.UpToDown };
-                            if (child.Model.Side == DockSide.Top)
-                            {
-                                pparent._AttachChild(this, 0);
-                                pparent._AttachChild(child, 0);
-                            }
-                            else
-                            {
-                                pparent._AttachChild(child, 0);
-                                pparent._AttachChild(this, 0);
-                            }
-                            dockManager.LayoutRootPanel.AttachChild(pparent, 0);
-                        }
-                        else
-                        {
-                            int pindex = (DockViewParent as LayoutGroupPanel).Children.IndexOf(this);
-                            if (child.Model.Side == DockSide.Top)
-                                (DockViewParent as ILayoutPanel).AttachChild(child, pindex);
-                            else (DockViewParent as ILayoutPanel).AttachChild(child, pindex + 1);
-                            if (Side != DockSide.None)
-                                DockManager.ChangeSide(child, Side);
-                        }
-                        return;
-                    }
-                    break;
-                case Direction.UpToDown:
-                    if (child.Model != null && (child.Model.Side == DockSide.Left
-                            || child.Model.Side == DockSide.Right))
-                    {
-                        if (IsRootPanel)
-                        {
-                            var dockManager = DockManager;
-                            //首先从Parent移除此Panel
-                            DockManager.LayoutRootPanel.DetachChild(this);
-                            var pparent = new LayoutGroupPanel() { Direction = Direction.LeftToRight };
-                            if (child.Model.Side == DockSide.Left)
-                            {
-                                pparent._AttachChild(this, 0);
-                                pparent._AttachChild(child, 0);
-                            }
-                            else
-                            {
-                                pparent._AttachChild(child, 0);
-                                pparent._AttachChild(this, 0);
-                            }
-                            dockManager.LayoutRootPanel.AttachChild(pparent, 0);
-                        }
-                        else
-                        {
-                            int pindex = (DockViewParent as LayoutGroupPanel).Children.IndexOf(this);
-                            if (child.Model.Side == DockSide.Left)
-                                (DockViewParent as ILayoutPanel).AttachChild(child, pindex);
-                            else (DockViewParent as ILayoutPanel).AttachChild(child, pindex + 1);
-                            if (Side != DockSide.None)
-                                DockManager.ChangeSide(child, Side);
-                        }
-                        return;
-                    }
-                    break;
-            }
-            bool flag = true;
-            //表示child为LayoutGroupPanel
-            if (child.Model == null && !(child as LayoutGroupPanel).IsDocumentPanel)
-            {
-                var subpanel = (child as LayoutGroupPanel);
-                if (Direction == subpanel.Direction)
-                    flag = false;
-                else if (IsRootPanel && Children.Count == 1)
-                {
-                    flag = false;
-                    Direction = subpanel.Direction;
-                }
-                if (!flag)
-                {
-                    List<UIElement> children = new List<UIElement>();
-                    foreach (UIElement ele in subpanel.Children)
-                        children.Add(ele);
-                    children.Reverse();
-                    subpanel.Children.Clear();
-                    foreach (UIElement ele in children)
-                        if (ele is IDockView)
-                            _AttachChild(ele as IDockView, index);
-                }
-            }
-            if (flag)
-                _AttachChild(child, index);
+            List<UIElement> children = new List<UIElement>();
+            foreach (UIElement ele in subpanel.Children)
+                children.Add(ele);
+            children.Reverse();
+            subpanel.Children.Clear();
+            foreach (UIElement ele in children)
+                if (ele is IDockView)
+                    _AttachChild(ele as IDockView, index);
         }
 
-        internal void _AttachChild(IDockView child, int index)
+        internal void AttachToRootPanel(IDockView child, AttachMode mode)
         {
-            Children.Insert(index, child as UIElement);
-            if (Children.Count > 1)
+            var parent = Parent as ILayoutViewParent;
+            parent.DetachChild(this);
+            var pparent = new LayoutGroupPanel()
             {
-                switch (Direction)
-                {
-                    case Direction.LeftToRight:
-                        if (index % 2 == 0)
-                            Children.Insert(index + 1, _CreateSplitter(Cursors.SizeWE));
-                        else Children.Insert(index, _CreateSplitter(Cursors.SizeWE));
-                        break;
-                    case Direction.UpToDown:
-                        if (index % 2 == 0)
-                            Children.Insert(index + 1, _CreateSplitter(Cursors.SizeNS));
-                        else Children.Insert(index, _CreateSplitter(Cursors.SizeNS));
-                        break;
-                }
+                Direction = (mode == AttachMode.Left || mode == AttachMode.Right) ? Direction.LeftToRight : Direction.UpToDown
+            };
+            parent.AttachChild(pparent, AttachMode.None, 0);
+            if (mode == AttachMode.Left || mode == AttachMode.Top)
+            {
+                pparent._AttachChild(this, 0);
+                pparent._AttachChild(child, 0);
             }
+            else
+            {
+                pparent._AttachChild(child, 0);
+                pparent._AttachChild(this, 0);
+            }
+        }
+
+        internal virtual bool _AssertMode(AttachMode mode)
+        {
+            return mode == AttachMode.Left
+                || mode == AttachMode.Top
+                || mode == AttachMode.Right
+                || mode == AttachMode.Bottom;
         }
 
         #region Drag
@@ -1476,19 +1452,19 @@ namespace YDock.View
             {
                 case DropMode.Left:
                     DockManager.ChangeSide(child, DockSide.Left);
-                    AttachChild(child, 0);
+                    AttachChild(child, AttachMode.Left, 0);
                     break;
                 case DropMode.Top:
                     DockManager.ChangeSide(child, DockSide.Top);
-                    AttachChild(child, 0);
+                    AttachChild(child, AttachMode.Top, 0);
                     break;
                 case DropMode.Right:
                     DockManager.ChangeSide(child, DockSide.Right);
-                    AttachChild(child, Count);
+                    AttachChild(child, AttachMode.Right, Count);
                     break;
                 case DropMode.Bottom:
                     DockManager.ChangeSide(child, DockSide.Bottom);
-                    AttachChild(child, Count);
+                    AttachChild(child, AttachMode.Bottom, Count);
                     break;
             }
 

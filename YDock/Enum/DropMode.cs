@@ -21,4 +21,18 @@ namespace YDock.Enum
         Center = 0x0020,
         Split = 0x1000,
     }
+
+    public enum AttachMode
+    {
+        None,
+        Left,
+        Top,
+        Right,
+        Bottom,
+        Left_WithSplit,
+        Top_WithSplit,
+        Right_WithSplit,
+        Bottom_WithSplit,
+        Center
+    }
 }

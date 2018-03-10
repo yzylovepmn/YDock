@@ -16,8 +16,9 @@ namespace YDock.View
 {
     public abstract class BaseFloatWindow : Window, ILayoutViewParent
     {
-        protected BaseFloatWindow(bool needReCreate = false)
+        protected BaseFloatWindow(DockManager dockManager, bool needReCreate = false)
         {
+            _dockManager = dockManager;
             MinWidth = 150;
             MinHeight = 60;
             _widthEceeed = Constants.FloatWindowResizeLength * 2;
@@ -151,35 +152,11 @@ namespace YDock.View
         {
             get
             {
-                if (Content != null && (Content is BaseGroupControl))
-                    return Child.Model.DockManager;
                 return _dockManager;
             }
             internal set
             {
                 _dockManager = value;
-            }
-        }
-
-        public virtual void AttachChild(IDockView child, int index)
-        {
-            if (Content != child)
-            {
-                Content = child;
-                DockManager.AddFloatWindow(this);
-                Height = (child as ILayoutSize).DesiredHeight + _heightEceeed;
-                Width = (child as ILayoutSize).DesiredWidth + _widthEceeed;
-            }
-        }
-
-        public virtual void DetachChild(IDockView child)
-        {
-            if (child == Content)
-            {
-                DockManager.RemoveFloatWindow(this);
-                if (child is BaseGroupControl)
-                    (child as BaseGroupControl).IsDraggingFromDock = false;
-                Content = null;
             }
         }
 
@@ -206,6 +183,37 @@ namespace YDock.View
                 return HitTestFilterBehavior.Stop;
             }
             return HitTestFilterBehavior.Continue;
+        }
+
+        public virtual void DetachChild(IDockView child, bool force = true)
+        {
+            if (child == Content)
+            {
+                DockManager.RemoveFloatWindow(this);
+                if (child is BaseGroupControl)
+                    (child as BaseGroupControl).IsDraggingFromDock = false;
+                Content = null;
+                if (force)
+                    _dockManager = null;
+            }
+        }
+
+        public virtual void AttachChild(IDockView child, AttachMode mode, int index)
+        {
+            if (Content != child)
+            {
+                Content = child;
+                DockManager.AddFloatWindow(this);
+                Height = (child as ILayoutSize).DesiredHeight + _heightEceeed;
+                Width = (child as ILayoutSize).DesiredWidth + _widthEceeed;
+            }
+        }
+
+        public int IndexOf(IDockView child)
+        {
+            if (child == Child)
+                return 0;
+            else return -1;
         }
     }
 }

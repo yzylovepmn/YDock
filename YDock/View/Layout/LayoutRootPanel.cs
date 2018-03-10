@@ -155,6 +155,25 @@ namespace YDock.View
             }
         }
 
+        public void AttachChild(IDockView child, AttachMode mode, int index)
+        {
+            if (child is LayoutGroupPanel)
+                RootGroupPanel = child as LayoutGroupPanel;
+        }
+
+        public void DetachChild(IDockView child, bool force = true)
+        {
+            if (child == RootGroupPanel)
+                RootGroupPanel = null;
+        }
+
+        public int IndexOf(IDockView child)
+        {
+            if (child == RootGroupPanel)
+                return 0;
+            else return -1;
+        }
+
         public void Dispose()
         {
             Model = null;
@@ -162,18 +181,6 @@ namespace YDock.View
             RootGroupPanel = null;
             AHWindow = null;
             Children.Clear();
-        }
-
-        public void DetachChild(IDockView child)
-        {
-            if (child == RootGroupPanel)
-                RootGroupPanel = null;
-        }
-
-        public void AttachChild(IDockView child, int index)
-        {
-            if (child is LayoutGroupPanel)
-                RootGroupPanel = child as LayoutGroupPanel;
         }
     }
 }

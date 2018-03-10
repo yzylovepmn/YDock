@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
+using YDock.Enum;
 using YDock.Interface;
 
 namespace YDock.View
@@ -19,16 +20,22 @@ namespace YDock.View
             DefaultStyleKeyProperty.OverrideMetadata(typeof(DocumentGroupWindow), new FrameworkPropertyMetadata(typeof(DocumentGroupWindow)));
         }
 
-        public override void AttachChild(IDockView child, int index)
+        public DocumentGroupWindow(DockManager dockManager) : base(dockManager)
+        {
+
+        }
+
+        public override void AttachChild(IDockView child, AttachMode mode, int index)
         {
             //后面的2是border Thickness
             _widthEceeed += Constants.DocumentWindowPadding * 2 + 2;
             _heightEceeed += Constants.DocumentWindowPadding * 2 + Constants.FloatWindowHeaderHeight + 2;
-            base.AttachChild(child, index);
+            base.AttachChild(child, mode, index);
         }
 
         public override void Recreate()
         {
+            if (Child == null) return;
             if (_needReCreate)
             {
                 _needReCreate = false;

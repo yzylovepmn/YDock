@@ -108,6 +108,8 @@ namespace YDock.View
                         //TODO Drag
                         var item = _dockViewParent._dragItem;
                         _dockViewParent._dragItem = null;
+                        (item as ILayoutSize).DesiredWidth = _dockViewParent.ActualWidth;
+                        (item as ILayoutSize).DesiredHeight = _dockViewParent.ActualHeight;
                         if (_dockViewParent is AnchorSideGroupControl)
                             _dockViewParent.Model.DockManager.DragManager.IntoDragAction(new DragItem(item, item.Mode, DragMode.Anchor, _dockViewParent._mouseDown, _dockViewParent._rect, new Size(item.DesiredWidth, item.DesiredHeight)));
                         else _dockViewParent.Model.DockManager.DragManager.IntoDragAction(new DragItem(item, item.Mode, DragMode.Document, _dockViewParent._mouseDown, _dockViewParent._rect, new Size(item.DesiredWidth, item.DesiredHeight)));
