@@ -33,8 +33,17 @@ namespace YDock.Interface
         ILayoutGroup Container { get; }
     }
 
-    public interface IDockControl : IDockOrigin
+    public interface IDockControl : IDockOrigin, IDockItem
     {
 
+    }
+
+    public interface IDockItem
+    {
+        void ToFloat();
+        void ToDock();
+        void ToDockAsDocument();
+        void SwitchAutoHideStatus();
+        void Hide();
     }
 }

@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
+using YDock.Commands;
 using YDock.Enum;
 using YDock.Interface;
 
@@ -23,6 +24,22 @@ namespace YDock.View
         public DocumentGroupWindow(DockManager dockManager) : base(dockManager)
         {
 
+        }
+
+        protected override void OnInitialized(EventArgs e)
+        {
+            CommandBindings.Add(new CommandBinding(GlobalCommands.MinimizeCommand, OnMinimizeExecute, OnMinimizeCanExecute));
+            base.OnInitialized(e);
+        }
+
+        private void OnMinimizeCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void OnMinimizeExecute(object sender, ExecutedRoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
         }
 
         public override void AttachChild(IDockView child, AttachMode mode, int index)

@@ -13,7 +13,7 @@ using YDock.Model;
 
 namespace YDock.View
 {
-    public class DragTabItem : TabItem, IDockView
+    public class DragTabItem : TabItem, IDockView, IMenuItem
     {
         static DragTabItem()
         {
@@ -172,6 +172,36 @@ namespace YDock.View
         {
             _dockViewParent = null;
             Content = null;
+        }
+
+        public void SetContextMenu(ContextMenu menu)
+        {
+            ContextMenu = menu;
+        }
+
+        public void ToFloat()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ToDock()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ToDockAsDocument()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SwitchAutoHideStatus()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Hide()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -11,7 +11,7 @@ using YDock.Model;
 
 namespace YDock.View
 {
-    public class AnchorHeaderControl : Control, IDisposable
+    public class AnchorHeaderControl : Control, IMenuItem, IDisposable
     {
         static AnchorHeaderControl()
         {
@@ -56,6 +56,36 @@ namespace YDock.View
                     }
                 }
             }
+        }
+
+        public void SetContextMenu(ContextMenu menu)
+        {
+            ContextMenu = menu;
+        }
+
+        public void ToFloat()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ToDock()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ToDockAsDocument()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SwitchAutoHideStatus()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Hide()
+        {
+            throw new NotImplementedException();
         }
     }
 }

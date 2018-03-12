@@ -4,7 +4,8 @@
                     xmlns:view="clr-namespace:YDock.View"
                     xmlns:enum="clr-namespace:YDock.Enum"
                     xmlns:shell="clr-namespace:Microsoft.Windows.Shell"
-                    xmlns:converters="clr-namespace:YDock.Converters">
+                    xmlns:converters="clr-namespace:YDock.Converters"
+                    xmlns:command="clr-namespace:YDock.Commands">
     <enum:DockSide x:Key="Top">Top</enum:DockSide>
     <enum:DockSide x:Key="Right">Right</enum:DockSide>
     
@@ -20,6 +21,29 @@
     <SolidColorBrush x:Key="AnchorPanelBackground" Color="#FFEEEEF2"/>
     <SolidColorBrush x:Key="ActivePanelItemBackground" Color="#FFC9DEF5"/>
 
+    <Style x:Key="Header_Btn" TargetType="{x:Type Button}">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="Width" Value="16"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}">
+                        <ContentPresenter Content="{TemplateBinding Content}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Opacity" Value="0.6"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
     <Style x:Key="CustomToggleButtonStyle" TargetType="{x:Type view:CustomToggleButton}">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Template">
@@ -72,7 +96,9 @@
                             <TextBlock x:Name="HeaderTextBlock" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Text="{Binding Title}"/>
                             <view:TexturePanel DataContext="{Binding}" Grid.Column="1" Margin="10,0,10,0"/>
                             <StackPanel Grid.Column="2">
-
+                                <Button Style="{StaticResource Header_Btn}">
+                                    <Image Source="/YDock;component/Resource/Image/Close_White.png"/>
+                                </Button>
                             </StackPanel>
                         </Grid>
                     </Border>
@@ -554,7 +580,10 @@
                                 <DockPanel x:Name="HeaderPanel">
                                     <Image DockPanel.Dock="Left" Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
                                     <TextBlock DockPanel.Dock="Left" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
-
+                                    <Button Style="{StaticResource Header_Btn}"
+                                            Command="{x:Static command:GlobalCommands.CloseCommand}">
+                                        <Image Source="/YDock;component/Resource/Image/Close_Black.png"/>
+                                    </Button>
                                 </DockPanel>
                                 <AdornerDecorator Grid.Row="1">
                                     <Border Padding="6,0,6,6">

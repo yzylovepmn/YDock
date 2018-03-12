@@ -74,6 +74,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\GlobalCommands.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Converters\NullBindingConverter.cs" />
     <Compile Include="Converters\SideToAngleConverter.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Interface\IDrag.cs" />
     <Compile Include="Interface\IDrop.cs" />
     <Compile Include="Interface\ILayout.cs" />
+    <Compile Include="Interface\IMenuItem.cs" />
     <Compile Include="Interface\IModel.cs" />
     <Compile Include="Interface\IView.cs" />
     <Compile Include="Model\Element\DockElement.cs" />
@@ -139,6 +141,7 @@
     <Compile Include="View\Layout\LayoutGroupPanel.cs" />
     <Compile Include="View\Layout\LayoutRootPanel.cs" />
     <Compile Include="View\Control\DockBarGroupControl.cs" />
+    <Compile Include="View\Meun\DockMenu.cs" />
     <Compile Include="View\Render\BaseDropPanel.cs" />
     <Compile Include="View\Render\BaseDropVisual.cs" />
     <Compile Include="View\ViewExtensions.cs" />
@@ -156,6 +159,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -169,8 +173,13 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Commands\" />
+    <Resource Include="Resource\Image\AutoHide.png" />
+    <Resource Include="Resource\Image\Close_Black.png" />
+    <Resource Include="Resource\Image\Close_White.png" />
+    <Resource Include="Resource\Image\Maximize.png" />
+    <Resource Include="Resource\Image\Restore.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

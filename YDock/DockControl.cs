@@ -240,5 +240,25 @@ namespace YDock
             _prototype.Dispose();
             _prototype = null;
         }
+
+        public void ToFloat()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ToDock()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ToDockAsDocument()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SwitchAutoHideStatus()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

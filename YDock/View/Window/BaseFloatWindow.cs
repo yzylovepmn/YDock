@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
+using YDock.Commands;
 using YDock.Enum;
 using YDock.Interface;
 
@@ -105,6 +106,50 @@ namespace YDock.View
                 _hwndSrc = null;
             }
         }
+
+        #region Command
+        protected override void OnInitialized(EventArgs e)
+        {
+            CommandBindings.Add(new CommandBinding(GlobalCommands.CloseCommand, OnCloseExecute, OnCloseCanExecute));
+            CommandBindings.Add(new CommandBinding(GlobalCommands.RestoreCommand, OnRestoreExecute, OnRestoreCanExecute));
+            CommandBindings.Add(new CommandBinding(GlobalCommands.MaximizeCommand, OnMaximizeExecute, OnMaximizeCanExecute));
+            base.OnInitialized(e);
+        }
+
+        private void OnMaximizeCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = WindowState != WindowState.Maximized;
+        }
+
+        private void OnMaximizeExecute(object sender, ExecutedRoutedEventArgs e)
+        {
+            WindowState = WindowState.Maximized;
+        }
+
+        private void OnRestoreCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = WindowState == WindowState.Maximized;
+        }
+
+        private void OnRestoreExecute(object sender, ExecutedRoutedEventArgs e)
+        {
+            WindowState = WindowState.Normal;
+        }
+
+        private void OnCloseCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void OnCloseExecute(object sender, ExecutedRoutedEventArgs e)
+        {
+            var child = Child;
+            DetachChild(Child);
+            if (child is IDisposable)
+                (child as IDisposable).Dispose();
+            Close();
+        }
+        #endregion
 
         protected double _widthEceeed;
         internal double WidthEceeed
