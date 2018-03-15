@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Media;
 using YDock.Enum;
 using YDock.Interface;
+using YDock.View;
 
 namespace YDock.Model
 {
@@ -193,6 +194,47 @@ namespace YDock.Model
             }
         }
 
+        public DockManager DockManager
+        {
+            get
+            {
+                return _container?.DockManager;
+            }
+        }
+
+        /// <summary>
+        /// 用于保存布局信息的Level
+        /// </summary>
+        internal int Level
+        {
+            get
+            {
+                UpdateLevel();
+                return _level;
+            }
+        }
+        private int _level = -1;
+
+        internal void UpdateLevel()
+        {
+            _level = -1;
+            //Float与DockBar模式不计算
+            if (_container == null || Mode != DockMode.Normal)
+                return;
+            else
+            {
+                var parent = _container.View;
+                while (true)
+                {
+                    _level++;
+                    if (parent.DockViewParent is LayoutRootPanel)
+                        break;
+                    parent = parent.DockViewParent;
+                }
+            }
+        }
+
+        #region Size
         private double _desiredWidth;
         public double DesiredWidth
         {
@@ -240,13 +282,46 @@ namespace YDock.Model
                     _floatTop = value;
             }
         }
+        #endregion
 
-
-        public DockManager DockManager
+        #region Interface
+        public bool CanFloat
         {
             get
             {
-                return _container?.DockManager;
+                return _container == null ? false : Mode != DockMode.Float;
+            }
+        }
+
+        public bool CanDock
+        {
+            get
+            {
+                return _container == null ? false : Mode != DockMode.Normal;
+            }
+        }
+
+        public bool CanDockAsDocument
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public bool CanSwitchAutoHideStatus
+        {
+            get
+            {
+                return _container == null ? false : Mode == DockMode.Normal;
+            }
+        }
+
+        public bool CanHide
+        {
+            get
+            {
+                return true;
             }
         }
 
@@ -255,11 +330,186 @@ namespace YDock.Model
             return Title.CompareTo(other.Title);
         }
 
+        public void ToFloat()
+        {
+            if (!CanFloat) return;
+            if (_container != null)
+            {
+                if (Mode == DockMode.Normal)
+                    UpdateLevel();
+
+                //注意切换模式
+                Mode = DockMode.Float;
+                var dockManager = DockManager;
+                _container.Detach(this);
+                _container = null;
+
+                var group = new LayoutGroup(Side, Mode, dockManager);
+                group.Attach(this);
+                var groupctrl = new AnchorSideGroupControl(group) { DesiredHeight = DesiredHeight, DesiredWidth = DesiredWidth };
+                var wnd = new AnchorGroupWindow(dockManager)
+                {
+                    Height = DesiredHeight,
+                    Width = DesiredWidth,
+                    Left = FloatLeft,
+                    Top = FloatTop
+                };
+                wnd.AttachChild(groupctrl, AttachMode.None, 0);
+                wnd.Show();
+            }
+        }
+
+        public void ToDock()
+        {
+            if (!CanDock) return;
+            if (_container != null)
+            {
+                //默认向下停靠
+                if (Side == DockSide.None)
+                    Side = DockSide.Bottom;
+
+                Mode = DockMode.Normal;
+
+                var dockManager = DockManager;
+                _container.Detach(this);
+                _container = null;
+
+                if (_level < 0)
+                    _ToRoot(dockManager);
+                else
+                {
+                    IDockView view = dockManager.LayoutRootPanel.FindChildByLevel(_level, Side);
+                    if (view != null)
+                    {
+                        if (view is BaseGroupControl)
+                        {
+                            var group = (view as BaseGroupControl).Model as ILayoutGroup;
+                            group.Attach(this);
+                        }
+                        if (view is LayoutGroupPanel)
+                        {
+                            var panal = (view as LayoutGroupPanel);
+                            var group = new LayoutGroup(Side, Mode, dockManager);
+                            group.Attach(this);
+                            var groupctrl = new AnchorSideGroupControl(group) { DesiredHeight = DesiredHeight, DesiredWidth = DesiredWidth };
+                            switch (Side)
+                            {
+                                case DockSide.Left:
+                                    panal.AttachChild(groupctrl, AttachMode.Left, 0);
+                                    break;
+                                case DockSide.Right:
+                                    panal.AttachChild(groupctrl, AttachMode.Right, panal.Count);
+                                    break;
+                                case DockSide.Top:
+                                    panal.AttachChild(groupctrl, AttachMode.Top, 0);
+                                    break;
+                                case DockSide.Bottom:
+                                    panal.AttachChild(groupctrl, AttachMode.Bottom, panal.Count);
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public void ToDockAsDocument()
+        {
+            if (!CanDockAsDocument) return;
+            if (_container != null)
+            {
+                var dockManager = DockManager;
+                _container.Detach(this);
+                _container = null;
+                Side = DockSide.None;
+                Mode = DockMode.Normal;
+
+                dockManager.Root.DocumentModel.Attach(this, 0);
+            }
+        }
+
+        public void SwitchAutoHideStatus()
+        {
+            if (!CanSwitchAutoHideStatus) return;
+            if (_container != null)
+            {
+                var dockManager = DockManager;
+                _container.Detach(this);
+                _container = null;
+
+                if (Mode == DockMode.Normal)
+                {
+                    UpdateLevel();
+                    Mode = DockMode.DockBar;
+                    switch (Side)
+                    {
+                        case DockSide.Left:
+                            dockManager.Root.LeftSide.Attach(this);
+                            break;
+                        case DockSide.Right:
+                            dockManager.Root.RightSide.Attach(this);
+                            break;
+                        case DockSide.Top:
+                            dockManager.Root.TopSide.Attach(this);
+                            break;
+                        case DockSide.Bottom:
+                            dockManager.Root.BottomSide.Attach(this);
+                            break;
+                    }
+                }
+                if (Mode == DockMode.DockBar)
+                    _ToRoot(dockManager);
+            }
+        }
+
+        public void Hide()
+        {
+            if (!CanHide) return;
+            if (DockManager.ActiveElement == this)
+                DockManager.ActiveElement = null;
+            if (DockManager.AutoHideElement == this)
+                DockManager.AutoHideElement = null;
+            CanSelect = false;
+        }
+
+        private void _ToRoot(DockManager dockManager)
+        {
+            Mode = DockMode.Normal;
+            var group = new LayoutGroup(Side, Mode, dockManager);
+            group.Attach(this);
+            var groupctrl = new AnchorSideGroupControl(group) { DesiredHeight = DesiredHeight, DesiredWidth = DesiredWidth };
+            switch (Side)
+            {
+                case DockSide.Left:
+                    dockManager.LayoutRootPanel.RootGroupPanel.AttachChild(groupctrl, AttachMode.Left, 0);
+                    break;
+                case DockSide.Right:
+                    dockManager.LayoutRootPanel.RootGroupPanel.AttachChild(groupctrl, AttachMode.Right, dockManager.LayoutRootPanel.RootGroupPanel.Count);
+                    break;
+                case DockSide.Top:
+                    dockManager.LayoutRootPanel.RootGroupPanel.AttachChild(groupctrl, AttachMode.Top, 0);
+                    break;
+                case DockSide.Bottom:
+                    dockManager.LayoutRootPanel.RootGroupPanel.AttachChild(groupctrl, AttachMode.Bottom, dockManager.LayoutRootPanel.RootGroupPanel.Count);
+                    break;
+            }
+        }
+        #endregion
+
+        #region Dispose
+        private bool _isDisposed = false;
+        public bool IsDisposed
+        {
+            get { return _isDisposed; }
+        }
         public void Dispose()
         {
+            if (_isDisposed) return;
             _dockControl = null;
             _content = null;
             _container = null;
+            _isDisposed = true;
         }
+        #endregion
     }
 }

@@ -41,6 +41,7 @@ namespace YDock.View
             {
                 var child = (source.RelativeObj as BaseFloatWindow).Child;
                 (source.RelativeObj as BaseFloatWindow).DetachChild(child);
+                DockManager.ChangeDockMode(child, (Model as ILayoutGroup).Mode);
 
                 if (_AssertSplitMode(DropMode))
                 {

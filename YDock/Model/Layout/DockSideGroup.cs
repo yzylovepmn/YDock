@@ -15,6 +15,7 @@ namespace YDock.Model
     {
         public DockSideGroup()
         {
+            _mode = DockMode.DockBar;
         }
 
         #region Root

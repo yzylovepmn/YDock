@@ -74,7 +74,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\GlobalCommands.cs" />
+    <Compile Include="Global\Commands\GlobalCommands.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Converters\NullBindingConverter.cs" />
     <Compile Include="Converters\SideToAngleConverter.cs" />
@@ -85,10 +85,10 @@
     <Compile Include="Enum\DockMode.cs" />
     <Compile Include="Enum\DragMode.cs" />
     <Compile Include="Enum\DropMode.cs" />
+    <Compile Include="Global\Extension\ResourceExtension.cs" />
     <Compile Include="Interface\IDrag.cs" />
     <Compile Include="Interface\IDrop.cs" />
     <Compile Include="Interface\ILayout.cs" />
-    <Compile Include="Interface\IMenuItem.cs" />
     <Compile Include="Interface\IModel.cs" />
     <Compile Include="Interface\IView.cs" />
     <Compile Include="Model\Element\DockElement.cs" />
@@ -104,6 +104,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.zh-Hans.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.zh-Hans.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -157,9 +162,13 @@
     <Compile Include="View\Window\DocumentGroupWindow.cs" />
     <Compile Include="View\Window\DropWindow.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.zh-Hans.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.zh-Hans.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -173,13 +182,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resource\Image\Pin_Black.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Resource\Image\AutoHide.png" />
     <Resource Include="Resource\Image\Close_Black.png" />
     <Resource Include="Resource\Image\Close_White.png" />
     <Resource Include="Resource\Image\Maximize.png" />
     <Resource Include="Resource\Image\Restore.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\Image\Pin_White.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

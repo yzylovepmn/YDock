@@ -89,7 +89,7 @@ namespace YDock.View
                     item.IsVisible = true;
         }
 
-        private IDockModel _model;
+        private ILayoutGroup _model;
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
@@ -109,7 +109,7 @@ namespace YDock.View
                         if (_model.DockManager != null)
                             _model.DockManager.DragManager.OnDragStatusChanged -= OnDragStatusChanged;
                     }
-                    _model = value;
+                    _model = value as ILayoutGroup;
                     if (_model != null)
                     {
                         (_model as LayoutGroup).View = this;
@@ -195,7 +195,9 @@ namespace YDock.View
                     if (panel.IsDocumentPanel && panel.Count == 1)
                         return false;
                 }
-                (Parent as ILayoutViewParent).DetachChild(this);
+                var parent = Parent;
+                (parent as ILayoutViewParent).DetachChild(this);
+                if (parent is Window) (parent as Window).Close();
                 DesiredHeight = ActualHeight;
                 DesiredWidth = ActualWidth;
                 if (isDispose)
@@ -230,14 +232,21 @@ namespace YDock.View
             else return -1;
         }
 
+        private bool _isDisposed = false;
+        public bool IsDisposed
+        {
+            get { return _isDisposed; }
+        }
         public virtual void Dispose()
         {
+            if (_isDisposed) return;
             BindingOperations.ClearBinding(this, ItemsSourceProperty);
             Items.Clear();
             Model = null;
             _dragItem = null;
             _childrenBounds?.Clear();
             _childrenBounds = null;
+            _isDisposed = true;
         }
 
         #region Drag
@@ -247,12 +256,14 @@ namespace YDock.View
             get { return _dropMode; }
             set { _dropMode = value; }
         }
+
         DropWindow _dragWnd;
         public virtual void OnDrop(DragItem source)
         {
             var child = (source.RelativeObj as BaseFloatWindow).Child;
             (source.RelativeObj as BaseFloatWindow).DetachChild(child);
 
+            DockManager.ChangeDockMode(child, (Model as ILayoutGroup).Mode);
             DockManager.ChangeSide(child, Model.Side);
 
             var group = Model as LayoutGroup;
@@ -260,6 +271,8 @@ namespace YDock.View
             {
                 case DropMode.Header:
                 case DropMode.Center:
+                    if (DropMode == DropMode.Center)
+                        _index = 0;
                     _AttachDockView(child as UIElement, group);
                     break;
             }
@@ -363,7 +376,7 @@ namespace YDock.View
             canUpdate = true;
             if (potentialHitTestTarget is AnchorHeaderControl && _activeRect.DropPanel.Source.DragMode != DragMode.Document)
             {
-                if (DropMode == DropMode.Center && _index == -1)
+                if (DropMode == DropMode.Header && _index == -1)
                 {
                     canUpdate = false;
                     return HitTestFilterBehavior.Stop;
@@ -388,7 +401,7 @@ namespace YDock.View
                         rect = _childrenBounds.Last();
                         rect = new Rect(rect.X + rect.Width, 0, 0, rect.Height);
                     }
-                    if (DropMode == DropMode.Center && _index == _childrenBounds.Count)
+                    if (DropMode == DropMode.Header && _index == _childrenBounds.Count)
                     {
                         canUpdate = false;
                         return HitTestFilterBehavior.Stop;
@@ -398,14 +411,14 @@ namespace YDock.View
                 else
                 {
                     rect = _childrenBounds[index];
-                    if (DropMode == DropMode.Center && _index == index)
+                    if (DropMode == DropMode.Header && _index == index)
                     {
                         canUpdate = false;
                         return HitTestFilterBehavior.Stop;
                     }
                     _index = index;
                 }
-                _activeRect.Flag = DragManager.CENTER;
+                _activeRect.Flag = DragManager.HEAD;
                 _activeRect.Rect = new Rect(rect.X, 0, this is AnchorSideGroupControl ? 60 : 120, rect.Height);
 
                 return HitTestFilterBehavior.Stop;

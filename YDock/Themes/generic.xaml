@@ -97,7 +97,7 @@
                             <view:TexturePanel DataContext="{Binding}" Grid.Column="1" Margin="10,0,10,0"/>
                             <StackPanel Grid.Column="2">
                                 <Button Style="{StaticResource Header_Btn}">
-                                    <Image Source="/YDock;component/Resource/Image/Close_White.png"/>
+                                    <Image Height="9" Source="/YDock;component/Resource/Image/Close_White.png"/>
                                 </Button>
                             </StackPanel>
                         </Grid>

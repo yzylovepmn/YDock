@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AutoHide" xml:space="preserve">
-    <value>AutoHide(_A)</value>
+    <value>自动隐藏(_A)</value>
   </data>
   <data name="Dock" xml:space="preserve">
-    <value>ToDock(_K)</value>
+    <value>停靠(_K)</value>
   </data>
   <data name="Dock_Document" xml:space="preserve">
-    <value>Dock as Tabbed Document(_T)</value>
+    <value>作为选项卡式文档停靠(_T)</value>
   </data>
   <data name="Float" xml:space="preserve">
-    <value>ToFloat(_F)</value>
+    <value>浮动(_F)</value>
   </data>
   <data name="Hide" xml:space="preserve">
-    <value>Hide(_H)</value>
+    <value>隐藏(_H)</value>
   </data>
 </root>

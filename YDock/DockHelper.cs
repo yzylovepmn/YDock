@@ -152,7 +152,7 @@ namespace YDock
                 }
                 else wnd.VerticalOffset = top;
                 wnd.DropPanel.InnerRect = new Rect(hrectoffset, vrectoffset, wnd.Width, wnd.Height);
-                wnd.DropPanel.OuterRect = new Rect(0, 0, 0, 0);
+                wnd.DropPanel.OuterRect = new Rect(0, 0, wnd.Width, wnd.Height);
             }
         }
 

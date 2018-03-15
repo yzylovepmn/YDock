@@ -55,7 +55,7 @@ namespace YDock.View
 
                 if (parent != null && parent.ToString() == "System.Windows.Controls.Primitives.PopupRoot")
                 {
-                    (parent as FrameworkElement).Height = Math.Max((_host as FrameworkElement).ActualHeight, MinHeight);
+                    (parent as FrameworkElement).Height = Math.Max(_dropPanel.OuterRect.Height, MinHeight);
                     break;
                 }
             }

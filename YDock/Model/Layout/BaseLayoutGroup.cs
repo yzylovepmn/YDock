@@ -115,6 +115,25 @@ namespace YDock.Model
             }
         }
 
+        protected DockMode _mode;
+        public DockMode Mode
+        {
+            get
+            {
+                return _mode;
+            }
+            internal set
+            {
+                if (_mode != value)
+                {
+                    _mode = value;
+                    foreach (DockElement child in _children)
+                        if (child.Mode != _mode)
+                            child.Mode = _mode;
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         public int IndexOf(IDockElement child)
@@ -178,15 +197,7 @@ namespace YDock.Model
             if (index < 0)
                 _children.Add(element);
             else _children.Insert(index, element);
-        }
-
-        public void SetDockMode(DockMode mode)
-        {
-            foreach (DockElement child in _children)
-            {
-                if (child.Mode != mode)
-                    child.Mode = mode;
-            }
+            (element as DockElement).Mode = _mode;
         }
 
         public virtual void Dispose()

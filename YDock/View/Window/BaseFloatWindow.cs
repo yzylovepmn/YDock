@@ -12,6 +12,7 @@ using System.Windows.Threading;
 using YDock.Commands;
 using YDock.Enum;
 using YDock.Interface;
+using YDock.Model;
 
 namespace YDock.View
 {
@@ -88,6 +89,7 @@ namespace YDock.View
                         DockManager.DragManager.DoDragDrop();
                         _isDragging = false;
                     }
+                    _UpdateLocation(Child);
                     break;
                 default:
                     break;
@@ -104,6 +106,28 @@ namespace YDock.View
                 _hwndSrc.RemoveHook(_hwndSrcHook);
                 _hwndSrc.Dispose();
                 _hwndSrc = null;
+            }
+        }
+
+        private void _UpdateLocation(object obj)
+        {
+            if (obj != null)
+            {
+                if (obj is LayoutGroupPanel)
+                    foreach (var child in (obj as LayoutGroupPanel).Children)
+                        _UpdateLocation(child as IDockView);
+
+                if (obj is BaseGroupControl)
+                    _UpdateLocation((obj as BaseGroupControl).Model);
+
+                if (obj is BaseLayoutGroup)
+                {
+                    foreach (DockElement item in (obj as BaseLayoutGroup).Children)
+                    {
+                        item.FloatLeft = Left;
+                        item.FloatTop = Top;
+                    }
+                }
             }
         }
 

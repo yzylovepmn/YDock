@@ -40,6 +40,7 @@ namespace YDock.Interface
 
     public interface ILayoutGroup : IDockModel, INotifyPropertyChanged
     {
+        DockMode Mode { get; }
         IEnumerable<IDockElement> Children { get; }
         void MoveTo(int src, int des);
         int IndexOf(IDockElement child);
@@ -47,7 +48,6 @@ namespace YDock.Interface
         void SetActive(int index);
         void Detach(IDockElement element);
         void Attach(IDockElement element, int index = -1);
-        void SetDockMode(DockMode mode);
         void RaisePropertyChanged(string propertyName);
     }
 

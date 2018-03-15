@@ -73,7 +73,7 @@ namespace YDock
             DependencyProperty.Register("DockImageSource", typeof(ImageSource), typeof(DockManager));
 
         /// <summary>
-        /// 用于浮动窗口显示，一般用作你程序的ImageSource
+        /// 用于浮动窗口显示，一般用作应用程序的图标
         /// </summary>
         public ImageSource DockImageSource
         {
@@ -88,7 +88,7 @@ namespace YDock
                 new FrameworkPropertyMetadata(string.Empty));
 
         /// <summary>
-        /// 用于浮动窗口显示，一般用作你程序的Title
+        /// 用于浮动窗口显示，一般用作应用程序的Title
         /// </summary>
         public string DockTitle
         {
@@ -249,10 +249,10 @@ namespace YDock
         /// <summary>
         /// 自动隐藏窗口的Model
         /// </summary>
-        public IDockElement AutoHideElement
+        internal IDockElement AutoHideElement
         {
             get { return LayoutRootPanel.AHWindow.Model; }
-            internal set
+            set
             {
                 if (LayoutRootPanel.AHWindow.Model != value)
                 {
@@ -268,10 +268,10 @@ namespace YDock
         /// <summary>
         /// current ActiveElement
         /// </summary>
-        public IDockElement ActiveElement
+        internal IDockElement ActiveElement
         {
             get { return _activeElement; }
-            internal set
+            set
             {
                 if (_activeElement != value)
                 {
@@ -288,6 +288,14 @@ namespace YDock
             }
         }
         private DockElement _activeElement;
+
+        /// <summary>
+        /// 当前活动的DockControl
+        /// </summary>
+        public IDockControl ActiveControl
+        {
+            get { return _activeElement?.DockControl; }
+        }
 
         public IDockModel Model
         {
@@ -311,7 +319,7 @@ namespace YDock
             get { return _floatWindows; }
         }
 
-        public void MoveFloatTo(BaseFloatWindow wnd, int index = 0)
+        internal void MoveFloatTo(BaseFloatWindow wnd, int index = 0)
         {
             _floatWindows.Remove(wnd);
             _floatWindows.Insert(index, wnd);
@@ -446,6 +454,15 @@ namespace YDock
                 (view.Model as BaseLayoutGroup).Side = side;
             if (view is LayoutGroupPanel)
                 (view as LayoutGroupPanel).Side = side;
+        }
+
+        internal static void ChangeDockMode(IDockView view, DockMode mode)
+        {
+            if (view is BaseGroupControl)
+                (view.Model as BaseLayoutGroup).Mode = mode;
+            if (view is LayoutGroupPanel)
+                foreach (var _view in (view as LayoutGroupPanel).Children.OfType<IDockView>())
+                    ChangeDockMode(_view, mode);
         }
 
         internal void AddFloatWindow(BaseFloatWindow window)

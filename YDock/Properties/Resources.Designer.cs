@@ -22,7 +22,7 @@ namespace YDock.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace YDock.Properties {
         ///   返回此类使用的缓存的 ResourceManager 实例。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("YDock.Properties.Resources", typeof(Resources).Assembly);
@@ -51,12 +51,57 @@ namespace YDock.Properties {
         ///   重写当前线程的 CurrentUICulture 属性。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 AutoHide(_A) 的本地化字符串。
+        /// </summary>
+        public static string AutoHide {
+            get {
+                return ResourceManager.GetString("AutoHide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 ToDock(_K) 的本地化字符串。
+        /// </summary>
+        public static string Dock {
+            get {
+                return ResourceManager.GetString("Dock", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Dock as Tabbed Document(_T) 的本地化字符串。
+        /// </summary>
+        public static string Dock_Document {
+            get {
+                return ResourceManager.GetString("Dock_Document", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 ToFloat(_F) 的本地化字符串。
+        /// </summary>
+        public static string Float {
+            get {
+                return ResourceManager.GetString("Float", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Hide(_H) 的本地化字符串。
+        /// </summary>
+        public static string Hide {
+            get {
+                return ResourceManager.GetString("Hide", resourceCulture);
             }
         }
     }

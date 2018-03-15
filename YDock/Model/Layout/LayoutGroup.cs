@@ -14,9 +14,10 @@ namespace YDock.Model
 {
     public class LayoutGroup : BaseLayoutGroup
     {
-        public LayoutGroup(DockSide side, DockManager dockManager)
+        public LayoutGroup(DockSide side, DockMode mode, DockManager dockManager)
         {
             _side = side;
+            _mode = mode;
             _dockManager = dockManager;
         }
 
@@ -38,6 +39,8 @@ namespace YDock.Model
                 if ((sender as DockElement).CanSelect)
                     (_view as TabControl).SelectedIndex = Children_CanSelect.Count() - 1;
                 else (_view as TabControl).SelectedIndex = Children_CanSelect.Count() > 0 ? 0 : -1;
+                if (Children_CanSelect.Count() == 0)
+                    _DetachFromParent();
             }
         }
 
@@ -70,18 +73,8 @@ namespace YDock.Model
                 (element as DockElement).DesiredHeight = (_view as BaseGroupControl).ActualHeight;
                 (element as DockElement).DesiredWidth = (_view as BaseGroupControl).ActualWidth;
                 //如果Children_CanSelect数量为0，且Container不是LayoutDocumentGroup，则尝试将view从界面移除
-                if (Children_CanSelect.Count() == 0 //如果Children_CanSelect数量为0
-                    && (!(this is LayoutDocumentGroup) //Container不是LayoutDocumentGroup
-                    || _view.DockViewParent == null))//表示Parent为浮动窗口,可以移除
-                {
-                    var ret = (_view as ILayoutGroupControl).TryDeatchFromParent();
-                    if (ret)
-                    {
-                        _view = null;
-                        if (_children.Count == 0)
-                            Dispose();
-                    }
-                }
+                if (Children_CanSelect.Count() == 0) //如果Children_CanSelect数量为0
+                    _DetachFromParent();
             }
         }
 
@@ -90,6 +83,22 @@ namespace YDock.Model
             if (!element.Side.Assert())
                 throw new ArgumentException("Side is illegal!");
             base.Attach(element, index);
+        }
+
+        private void _DetachFromParent()
+        {
+            if ((!(this is LayoutDocumentGroup) //Container不是LayoutDocumentGroup
+                    || _view.DockViewParent == null))//表示Parent为浮动窗口,可以移除
+            {
+                //view 默认Dispose
+                var ret = (_view as ILayoutGroupControl).TryDeatchFromParent();
+                if (ret)
+                {
+                    _view = null;
+                    if (_children.Count == 0)
+                        Dispose();
+                }
+            }
         }
 
         public override void Dispose()
@@ -103,7 +112,7 @@ namespace YDock.Model
 
     public class LayoutDocumentGroup : LayoutGroup
     {
-        public LayoutDocumentGroup(DockManager dockManager) : base(DockSide.None, dockManager)
+        public LayoutDocumentGroup(DockMode mode, DockManager dockManager) : base(DockSide.None, mode, dockManager)
         {
 
         }

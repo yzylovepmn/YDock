@@ -120,7 +120,7 @@ namespace YDock.View
                 var model = (child as AnchorSideGroupControl).Model as LayoutGroup;
                 var _children = new List<IDockElement>(model.Children);
                 model.Dispose();
-                var group = new LayoutDocumentGroup(DockManager);
+                var group = new LayoutDocumentGroup(DockViewParent == null ? DockMode.Float : DockMode.Normal, DockManager);
                 foreach (var _child in _children)
                     group.Attach(_child);
                 var ctrl = new LayoutDocumentGroupControl(group);

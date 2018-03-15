@@ -13,6 +13,7 @@ using System.Windows.Threading;
 using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
+using System.Windows.Input;
 
 namespace YDock.View
 {
@@ -93,9 +94,17 @@ namespace YDock.View
                 case Win32Helper.WM_NCLBUTTONDOWN:
                 case Win32Helper.WM_NCRBUTTONDOWN:
                     ActiveSelf();
+                    if (IsSingleMode && msg == Win32Helper.WM_NCRBUTTONDOWN)
+                        ContextMenu = new DockMenu((Child as BaseGroupControl).SelectedItem as IDockItem);
                     break;
             }
             return base.FilterMessage(hwnd, msg, wParam, lParam, ref handled);
+        }
+
+        protected override void OnMouseRightButtonUp(MouseButtonEventArgs e)
+        {
+            ContextMenu = null;
+            base.OnMouseRightButtonUp(e);
         }
 
         public override void Recreate()

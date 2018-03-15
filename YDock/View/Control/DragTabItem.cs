@@ -13,7 +13,7 @@ using YDock.Model;
 
 namespace YDock.View
 {
-    public class DragTabItem : TabItem, IDockView, IMenuItem
+    public class DragTabItem : TabItem, IDockView
     {
         static DragTabItem()
         {
@@ -62,6 +62,15 @@ namespace YDock.View
             }
         }
 
+        protected override void OnContentChanged(object oldContent, object newContent)
+        {
+            base.OnContentChanged(oldContent, newContent);
+            if (oldContent != null) ContextMenu = null;
+            if (newContent != null)
+                if (_dockViewParent is AnchorSideGroupControl)
+                    ContextMenu = new DockMenu(newContent as IDockItem);
+        }
+
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonUp(e);
@@ -89,6 +98,12 @@ namespace YDock.View
 
             if (!IsMouseCaptured)
                 CaptureMouse();
+        }
+
+        protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseRightButtonDown(e);
+            Container.SetActive(Content as IDockElement);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -171,37 +186,8 @@ namespace YDock.View
         public void Dispose()
         {
             _dockViewParent = null;
+            ContextMenu = null;
             Content = null;
-        }
-
-        public void SetContextMenu(ContextMenu menu)
-        {
-            ContextMenu = menu;
-        }
-
-        public void ToFloat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ToDock()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ToDockAsDocument()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SwitchAutoHideStatus()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Hide()
-        {
-            throw new NotImplementedException();
         }
     }
 }

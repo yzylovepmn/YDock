@@ -63,10 +63,10 @@ namespace YDockTest
             doc_1.Show();
             doc_2.Show();
             doc_3.Show();
-            left.ShowWithMode(DockMode.Normal);
-            bottom.ShowWithMode(DockMode.Normal);
-            right.ShowWithMode(DockMode.Normal);
-            top.ShowWithMode(DockMode.Normal);
+            left.Show();
+            bottom.Show();
+            right.Show();
+            top.Show();
             left_1.Show();
             bottom_1.Show();
             right_1.Show();

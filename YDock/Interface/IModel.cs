@@ -19,7 +19,7 @@ namespace YDock.Interface
 
     }
 
-    public interface IDockOrigin : ILayout, ILayoutSize, INotifyPropertyChanged, IDisposable
+    public interface IDockOrigin : ILayout, ILayoutSize, IDockItem, INotifyPropertyChanged, IDisposable
     {
         int ID { get; }
         string Title { get; }
@@ -33,17 +33,23 @@ namespace YDock.Interface
         ILayoutGroup Container { get; }
     }
 
-    public interface IDockControl : IDockOrigin, IDockItem
+    public interface IDockControl : IDockOrigin
     {
 
     }
 
     public interface IDockItem
     {
+        bool IsDisposed { get; }
         void ToFloat();
         void ToDock();
         void ToDockAsDocument();
         void SwitchAutoHideStatus();
         void Hide();
+        bool CanFloat { get; }
+        bool CanDock { get; }
+        bool CanDockAsDocument { get; }
+        bool CanSwitchAutoHideStatus { get; }
+        bool CanHide { get; }
     }
 }

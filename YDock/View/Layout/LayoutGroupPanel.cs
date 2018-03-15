@@ -1347,6 +1347,7 @@ namespace YDock.View
 
         internal void _AttachChild(IDockView child, int index)
         {
+            //DockManager.ChangeDockMode(child, DockManager == null ? DockMode.Float : DockMode.Normal);
             Children.Insert(index, child as UIElement);
             if (Children.Count > 1)
             {
@@ -1447,6 +1448,7 @@ namespace YDock.View
         {
             var child = (source.RelativeObj as BaseFloatWindow).Child;
             (source.RelativeObj as BaseFloatWindow).DetachChild(child);
+            DockManager.ChangeDockMode(child, DockMode.Normal);
 
             switch (DropMode)
             {

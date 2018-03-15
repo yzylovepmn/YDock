@@ -35,7 +35,7 @@ namespace YDock.View
             AHWindow = new AutoHideWindow();
             //先初始化Document区域
             RootGroupPanel = new LayoutGroupDocumentPanel();
-            (_model as DockRoot).DocumentModel = new LayoutDocumentGroup(DockViewParent as DockManager);
+            (_model as DockRoot).DocumentModel = new LayoutDocumentGroup(DockMode.Normal, DockViewParent as DockManager);
             var _documentControl = new LayoutDocumentGroupControl((_model as DockRoot).DocumentModel);
             RootGroupPanel._AttachChild(_documentControl, 0);
         }
@@ -153,6 +153,62 @@ namespace YDock.View
             {
                 return _model.DockManager;
             }
+        }
+
+        internal IDockView FindChildByLevel(int level, DockSide side)
+        {
+            IDockView view = _rootGroupPanel;
+            while(level > 0)
+            {
+                level--;
+                if (view is BaseGroupControl)
+                    break;
+                if (view is LayoutGroupPanel)
+                {
+                    var panel = (view as LayoutGroupPanel);
+                    if (panel.Direction == Direction.None)
+                        break;
+                    if (panel.Direction == Direction.LeftToRight)
+                    {
+                        if (side == DockSide.Top || side == DockSide.Bottom)
+                            break;
+                        if (side == DockSide.Left)
+                        {
+                            var child = panel.Children[0];
+                            if (child is LayoutDocumentGroupControl)
+                                break;
+                            view = child as IDockView;
+                        }
+                        if (side == DockSide.Right)
+                        {
+                            var child = panel.Children[panel.Count - 1];
+                            if (child is LayoutDocumentGroupControl)
+                                break;
+                            view = child as IDockView;
+                        }
+                    }
+                    else
+                    {
+                        if (side == DockSide.Left || side == DockSide.Right)
+                            break;
+                        if (side == DockSide.Top)
+                        {
+                            var child = panel.Children[0];
+                            if (child is LayoutDocumentGroupControl)
+                                break;
+                            view = child as IDockView;
+                        }
+                        if (side == DockSide.Bottom)
+                        {
+                            var child = panel.Children[panel.Count - 1];
+                            if (child is LayoutDocumentGroupControl)
+                                break;
+                            view = child as IDockView;
+                        }
+                    }
+                }
+            }
+            return view;
         }
 
         public void AttachChild(IDockView child, AttachMode mode, int index)

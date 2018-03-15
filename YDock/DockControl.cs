@@ -138,80 +138,72 @@ namespace YDock
             get { return _prototype.Container; }
         }
 
+        /// <summary>
+        /// 是否可以转为浮动模式
+        /// </summary>
+        public bool CanFloat
+        {
+            get
+            {
+                return _prototype == null ? false : _prototype.CanFloat;
+            }
+        }
+
+        /// <summary>
+        /// 是否可以转为Dock模式
+        /// </summary>
+        public bool CanDock
+        {
+            get
+            {
+                return _prototype == null ? false : _prototype.CanDock;
+            }
+        }
+
+        /// <summary>
+        /// 是否可以转为Document模式
+        /// </summary>
+        public bool CanDockAsDocument
+        {
+            get
+            {
+                return _prototype == null ? false : _prototype.CanDockAsDocument;
+            }
+        }
+
+        /// <summary>
+        /// 是否可以切换自动隐藏状态
+        /// </summary>
+        public bool CanSwitchAutoHideStatus
+        {
+            get
+            {
+                return _prototype == null ? false : _prototype.CanSwitchAutoHideStatus;
+            }
+        }
+
+        /// <summary>
+        /// 是否可以隐藏
+        /// </summary>
+        public bool CanHide
+        {
+            get
+            {
+                return _prototype == null ? false : _prototype.CanHide;
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
         /// <summary>
         /// 通用显示的方法。
-        /// 显示的模式（Dock，Float，AnchorSide）与当前Status有关，若需要切换显示模式请调用ShowWithMode方法
+        /// 显示的模式（Dock，Float，AnchorSide）与当前Status有关
         /// </summary>
         public void Show()
         {
             if (IsVisible) return;
             Container.SetActive(_prototype);
-        }
-
-        /// <summary>
-        /// 以指定模式显示该项，若该项原模式与指定模式不同，则切换为指定模式
-        /// </summary>
-        /// <param name="mode">指定的显示模式</param>
-        public void ShowWithMode(DockMode mode)
-        {
-            if (mode == Mode)
-            {
-                Show();
-                return;
-            }
-
-            //Document不允许转换为DockBar模式
-            if (IsDocument && mode == DockMode.DockBar)
-                return;
-
-            //切换为指定模式
-            (_prototype as DockElement).Mode = mode;
-            //保存DockManager的引用供后面使用
-            var dockManager = DockManager;
-            //先解除与原Container的关联
-            Container.Detach(_prototype);
-            //关联新的Container
-            switch (mode)
-            {
-                case DockMode.Normal:
-                    //None表示作为Document文档停靠
-                    if (Side == DockSide.None)
-                        dockManager.Root.DocumentModel.Attach(_prototype);
-                    else
-                    {
-                        var layoutGroup = new LayoutGroup(Side, dockManager);
-                        layoutGroup.Attach(_prototype);
-                        var layoutGroupCtrl = new AnchorSideGroupControl(layoutGroup);
-                        if (Side == DockSide.Left || Side == DockSide.Top)
-                            layoutGroupCtrl.AttachToParent(dockManager.LayoutRootPanel.RootGroupPanel, 0);
-                        else layoutGroupCtrl.AttachToParent(dockManager.LayoutRootPanel.RootGroupPanel, dockManager.LayoutRootPanel.RootGroupPanel.Count);
-                    }
-                    break;
-                case DockMode.DockBar:
-                    switch (Side)
-                    {
-                        case DockSide.Left:
-                            dockManager.Root.LeftSide.Attach(_prototype);
-                            break;
-                        case DockSide.Right:
-                            dockManager.Root.RightSide.Attach(_prototype);
-                            break;
-                        case DockSide.Top:
-                            dockManager.Root.TopSide.Attach(_prototype);
-                            break;
-                        case DockSide.Bottom:
-                            dockManager.Root.BottomSide.Attach(_prototype);
-                            break;
-                    }
-                    break;
-                case DockMode.Float:
-                    //TODO 对于Float，每次创建新的浮动窗口
-                    break;
-            }
-            Show();
         }
 
         /// <summary>
@@ -222,7 +214,39 @@ namespace YDock
         /// </summary>
         public void Hide()
         {
+            _prototype?.Hide();
+        }
 
+        /// <summary>
+        /// 转为浮动窗口
+        /// </summary>
+        public void ToFloat()
+        {
+            _prototype?.ToFloat();
+        }
+
+        /// <summary>
+        /// 转为Dock模式
+        /// </summary>
+        public void ToDock()
+        {
+            _prototype?.ToDock();
+        }
+
+        /// <summary>
+        /// 转为Document模式
+        /// </summary>
+        public void ToDockAsDocument()
+        {
+            _prototype?.ToDockAsDocument();
+        }
+
+        /// <summary>
+        /// 在Normal和DockBar模式间切换
+        /// </summary>
+        public void SwitchAutoHideStatus()
+        {
+            _prototype?.SwitchAutoHideStatus();
         }
 
         /// <summary>
@@ -231,34 +255,21 @@ namespace YDock
         /// </summary>
         public void Close()
         {
-
+            Hide();
         }
 
+        private bool _isDisposed = false;
+        public bool IsDisposed
+        {
+            get { return _isDisposed; }
+        }
         public void Dispose()
         {
+            if (_isDisposed) return;
             _prototype.PropertyChanged -= PropertyChanged;
             _prototype.Dispose();
             _prototype = null;
-        }
-
-        public void ToFloat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ToDock()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ToDockAsDocument()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SwitchAutoHideStatus()
-        {
-            throw new NotImplementedException();
+            _isDisposed = true;
         }
     }
 }

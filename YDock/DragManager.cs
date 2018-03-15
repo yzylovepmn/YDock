@@ -214,7 +214,7 @@ namespace YDock
                         if ((_layoutGroup.View as ILayoutGroupControl).TryDeatchFromParent(false))
                         {
                             //注意重新设置Mode
-                            _layoutGroup.SetDockMode(DockMode.Float);
+                            (_layoutGroup as BaseLayoutGroup).Mode = DockMode.Float;
                             _dragWnd = new AnchorGroupWindow(DockManager)
                             {
                                 Left = mouseP.X - _dragItem.ClickPos.X - Constants.FloatWindowResizeLength - 1,
@@ -228,14 +228,12 @@ namespace YDock
                     {
                         ele = _dragItem.RelativeObj as IDockElement;
                         if (ele.IsDocument)
-                            group = new LayoutDocumentGroup(DockManager);
-                        else group = new LayoutGroup(ele.Side, DockManager);
+                            group = new LayoutDocumentGroup(DockMode.Float, DockManager);
+                        else group = new LayoutGroup(ele.Side, DockMode.Float, DockManager);
                         //先从逻辑父级中移除
                         ele.Container.Detach(ele);
                         //再加入新的逻辑父级
                         group.Attach(ele);
-                        //注意重新设置Mode
-                        group.SetDockMode(DockMode.Float);
                         //创建新的浮动窗口，并初始化位置
                         //这里可知引起drag的时DragTabItem故这里创建临时的DragTabWindow
                         if (ele.IsDocument)
@@ -247,13 +245,24 @@ namespace YDock
                         }
                         else
                         {
-                            _dragWnd = new AnchorGroupWindow(DockManager) { NeedReCreate = true };
-                            _dragWnd.AttachChild(new AnchorSideGroupControl(group) { IsDraggingFromDock = true }, AttachMode.None, 0);
-                            _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowResizeLength - ele.DesiredHeight + 20;
-                            _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left - Constants.FloatWindowResizeLength;
+                            _dragWnd = new AnchorGroupWindow(DockManager) { NeedReCreate = _dragItem.DragMode == DragMode.Anchor };
+                            _dragWnd.AttachChild(new AnchorSideGroupControl(group) { IsDraggingFromDock = _dragItem.DragMode == DragMode.Anchor }, AttachMode.None, 0);
+                            if (!_dragWnd.NeedReCreate)
+                            {
+                                _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowResizeLength;
+                                _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left - Constants.FloatWindowResizeLength - Constants.DocumentWindowPadding;
+                            }
+                            else
+                            {
+                                _dragWnd.Top = mouseP.Y + _dragItem.ClickPos.Y + Constants.FloatWindowResizeLength - _dragWnd.Height;
+                                _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - Constants.FloatWindowResizeLength - Constants.DocumentWindowPadding;
+                            }
                         }
-                        _dragWnd.Background = Brushes.Transparent;
-                        _dragWnd.BorderBrush = Brushes.Transparent;
+                        if (_dragWnd.NeedReCreate)
+                        {
+                            _dragWnd.Background = Brushes.Transparent;
+                            _dragWnd.BorderBrush = Brushes.Transparent;
+                        }
                         _dragWnd.Show();
                     }
                     break;
@@ -262,10 +271,8 @@ namespace YDock
                     ele = _dragItem.RelativeObj as IDockElement;
                     ele.Container.Detach(ele);
                     //创建新的浮动窗口，并初始化位置
-                    group = new LayoutGroup(ele.Side, DockManager);
+                    group = new LayoutGroup(ele.Side, DockMode.Float, DockManager);
                     group.Attach(ele);
-                    //注意重新设置Mode
-                    group.SetDockMode(DockMode.Float);
                     _dragWnd = new AnchorGroupWindow(DockManager)
                     {
                         Left = mouseP.X - _dragItem.ClickPos.X - Constants.FloatWindowResizeLength - 1,
@@ -291,8 +298,8 @@ namespace YDock
                         else
                         {
                             if (ele.IsDocument)
-                                group = new LayoutDocumentGroup(DockManager);
-                            else group = new LayoutGroup(ele.Side, DockManager);
+                                group = new LayoutDocumentGroup(DockMode.Float, DockManager);
+                            else group = new LayoutGroup(ele.Side, DockMode.Float, DockManager);
                             //先从逻辑父级中移除
                             ele.Container.Detach(ele);
                             //再加入新的逻辑父级

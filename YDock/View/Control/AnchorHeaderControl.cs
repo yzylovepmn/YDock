@@ -11,16 +11,21 @@ using YDock.Model;
 
 namespace YDock.View
 {
-    public class AnchorHeaderControl : Control, IMenuItem, IDisposable
+    public class AnchorHeaderControl : Control, IDisposable
     {
         static AnchorHeaderControl()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(AnchorHeaderControl), new FrameworkPropertyMetadata(default(AnchorHeaderControl)));
         }
 
+        public AnchorHeaderControl()
+        {
+        }
+
         public void Dispose()
         {
             DataContext = null;
+            ContextMenu = null;
         }
 
         Point _mouseDown;
@@ -37,6 +42,12 @@ namespace YDock.View
             if(!IsMouseCaptured)
                 CaptureMouse();
             base.OnMouseLeftButtonDown(e);
+        }
+
+        protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseRightButtonDown(e);
+            ContextMenu = new DockMenu(DataContext as DockElement);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -56,36 +67,6 @@ namespace YDock.View
                     }
                 }
             }
-        }
-
-        public void SetContextMenu(ContextMenu menu)
-        {
-            ContextMenu = menu;
-        }
-
-        public void ToFloat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ToDock()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ToDockAsDocument()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SwitchAutoHideStatus()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Hide()
-        {
-            throw new NotImplementedException();
         }
     }
 }
