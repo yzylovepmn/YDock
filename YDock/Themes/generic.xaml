@@ -8,7 +8,7 @@
                     xmlns:command="clr-namespace:YDock.Commands">
     <enum:DockSide x:Key="Top">Top</enum:DockSide>
     <enum:DockSide x:Key="Right">Right</enum:DockSide>
-    
+
     <converters:NullToDoNothingConverter x:Key="NullToDoNothingConverter"/>
     <converters:SideToAngleConverter x:Key="SideToAngleConverter"/>
 
@@ -20,6 +20,187 @@
     <SolidColorBrush x:Key="DisActiveHeaderBackground" Color="#FFEEEEF2"/>
     <SolidColorBrush x:Key="AnchorPanelBackground" Color="#FFEEEEF2"/>
     <SolidColorBrush x:Key="ActivePanelItemBackground" Color="#FFC9DEF5"/>
+
+    <Image x:Key="Wnd_Close_Black" Height="10" Source="/YDock;component/Resource/Image/Close_Black.png"/>
+    <Image x:Key="Wnd_Close_White" Height="10" Source="/YDock;component/Resource/Image/Close_White.png"/>
+    <Image x:Key="Wnd_Close_Active" Height="10" Source="/YDock;component/Resource/Image/Close_Active.png"/>
+
+    <Image x:Key="Wnd_Restore_Black" Height="10" Source="/YDock;component/Resource/Image/Restore_Black.png"/>
+    <Image x:Key="Wnd_Restore_White" Height="10" Source="/YDock;component/Resource/Image/Restore_White.png"/>
+    <Image x:Key="Wnd_Restore_Active" Height="10" Source="/YDock;component/Resource/Image/Restore_Active.png"/>
+
+    <Image x:Key="Wnd_Maximize_Black" Height="10" Source="/YDock;component/Resource/Image/Maximize_Black.png"/>
+    <Image x:Key="Wnd_Maximize_White" Height="10" Source="/YDock;component/Resource/Image/Maximize_White.png"/>
+    <Image x:Key="Wnd_Maximize_Active" Height="10" Source="/YDock;component/Resource/Image/Maximize_Active.png"/>
+
+    <Style x:Key="WindowButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="VerticalAlignment" Value="Top"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+        <Setter Property="Background" Value="{StaticResource DisActiveHeaderBackground}"/>
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="Width" Value="24"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter Content="{TemplateBinding Content}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="White"/>
+            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="IsPressed" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter Property="Background" Value="{StaticResource ActiveHeaderBackground}"/>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="False"/>
+                    <Condition Property="IsPressed" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter Property="Background" Value="White"/>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Window_Close" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
+        <Setter Property="Content" Value="{StaticResource Wnd_Close_Black}"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Content" Value="{StaticResource Wnd_Close_Active}"/>
+            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="IsPressed" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter Property="Content" Value="{StaticResource Wnd_Close_White}"/>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="False"/>
+                    <Condition Property="IsPressed" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter Property="Content" Value="{StaticResource Wnd_Close_Active}"/>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Window_Restore" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
+        <Setter Property="Content" Value="{StaticResource Wnd_Restore_Black}"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Content" Value="{StaticResource Wnd_Restore_Active}"/>
+            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="IsPressed" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter Property="Content" Value="{StaticResource Wnd_Restore_White}"/>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="False"/>
+                    <Condition Property="IsPressed" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter Property="Content" Value="{StaticResource Wnd_Restore_Active}"/>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Window_Maximize" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
+        <Setter Property="Content" Value="{StaticResource Wnd_Maximize_Black}"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Content" Value="{StaticResource Wnd_Maximize_Active}"/>
+            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="IsPressed" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter Property="Content" Value="{StaticResource Wnd_Maximize_White}"/>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="False"/>
+                    <Condition Property="IsPressed" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter Property="Content" Value="{StaticResource Wnd_Maximize_Active}"/>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Window_Minimize" TargetType="{x:Type Button}">
+        <Setter Property="VerticalAlignment" Value="Top"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+        <Setter Property="Background" Value="{StaticResource DisActiveHeaderBackground}"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Height" Value="24"/>
+        <Setter Property="Width" Value="24"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <Path VerticalAlignment="Center" Data="M0,0 L10,0 Z" Width="10" StrokeThickness="5" Stroke="{TemplateBinding Foreground}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="Foreground" Value="{StaticResource ActiveHeaderBackground}"/>
+            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="IsPressed" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter Property="Background" Value="{StaticResource ActiveHeaderBackground}"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="False"/>
+                    <Condition Property="IsPressed" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="Foreground" Value="{StaticResource ActiveHeaderBackground}"/>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>
 
     <Style x:Key="Header_Btn" TargetType="{x:Type Button}">
         <Setter Property="BorderThickness" Value="0"/>
@@ -97,7 +278,7 @@
                             <view:TexturePanel DataContext="{Binding}" Grid.Column="1" Margin="10,0,10,0"/>
                             <StackPanel Grid.Column="2">
                                 <Button Style="{StaticResource Header_Btn}">
-                                    <Image Height="9" Source="/YDock;component/Resource/Image/Close_White.png"/>
+                                    <Image Source="/YDock;component/Resource/Image/Restore_White.png"/>
                                 </Button>
                             </StackPanel>
                         </Grid>
@@ -192,17 +373,21 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Image VerticalAlignment="Center" Source="{Binding Path=ImageSource,Converter={StaticResource NullToDoNothingConverter}}" Stretch="Uniform"/>
                 <TextBlock x:Name="title" VerticalAlignment="Center" Margin="4,0,0,0" Text="{Binding Path=Title}" Grid.Column="1"/>
+                <Button x:Name="Close" Grid.Column="2" Visibility="Hidden" Content="X" Command="{x:Static command:GlobalCommands.HideStatusCommand}"/>
             </Grid>
         </Border>
         <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Close" Property="Visibility" Value="Visible"/>
                 <Setter Property="Background" Value="{StaticResource MouseOnBackground}"/>
                 <Setter TargetName="title" Property="Foreground" Value="White"/>
             </Trigger>
             <Trigger Property="IsSelected" Value="True">
+                <Setter TargetName="Close" Property="Visibility" Value="Visible"/>
                 <Setter Property="Background" Value="{StaticResource BorderBrush}"/>
                 <Setter TargetName="title" Property="Foreground" Value="#FF717171"/>
             </Trigger>
@@ -518,7 +703,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="8"/>
             </Grid.ColumnDefinitions>
-            <Border Grid.Row="1" Grid.Column="1" ClipToBounds="True" BorderBrush="{TemplateBinding BorderBrush}"
+            <Border Margin="{TemplateBinding Padding}" Grid.Row="1" Grid.Column="1" ClipToBounds="True" BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}">
                 <Grid>
@@ -526,11 +711,15 @@
                         <RowDefinition Height="32"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <DockPanel x:Name="HeaderPanel">
-                        <Image DockPanel.Dock="Left" Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
-                        <TextBlock DockPanel.Dock="Left" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
-
-                    </DockPanel>
+                    <StackPanel x:Name="Header_Title_Image" Orientation="Horizontal">
+                        <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
+                        <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" FontSize="12" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
+                    </StackPanel>
+                    <StackPanel x:Name="HeaderPanel" FlowDirection="RightToLeft" Orientation="Horizontal">
+                        <Button Style="{StaticResource Window_Close}" Command="{x:Static command:GlobalCommands.CloseCommand}"/>
+                        <Button x:Name="Maximize_Btn" Style="{StaticResource Window_Maximize}" Command="{x:Static command:GlobalCommands.MaximizeCommand}"/>
+                        <Button x:Name="Restore_Btn" Visibility="Collapsed" Style="{StaticResource Window_Restore}" Command="{x:Static command:GlobalCommands.RestoreCommand}"/>
+                    </StackPanel>
                     <AdornerDecorator Grid.Row="1">
                         <Border>
                             <ContentPresenter Content="{TemplateBinding Content}"/>
@@ -539,6 +728,12 @@
                 </Grid>
             </Border>
         </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="WindowState" Value="Maximized">
+                <Setter TargetName="Restore_Btn" Property="Visibility" Value="Visible"/>
+                <Setter TargetName="Maximize_Btn" Property="Visibility" Value="Collapsed"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
     </ControlTemplate>
 
     <Style TargetType="{x:Type view:DocumentGroupWindow}">
@@ -577,14 +772,16 @@
                                     <RowDefinition Height="32"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
-                                <DockPanel x:Name="HeaderPanel">
-                                    <Image DockPanel.Dock="Left" Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
-                                    <TextBlock DockPanel.Dock="Left" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
-                                    <Button Style="{StaticResource Header_Btn}"
-                                            Command="{x:Static command:GlobalCommands.CloseCommand}">
-                                        <Image Source="/YDock;component/Resource/Image/Close_Black.png"/>
-                                    </Button>
-                                </DockPanel>
+                                <StackPanel x:Name="Header_Title_Image" Orientation="Horizontal">
+                                    <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
+                                    <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" FontSize="12" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
+                                </StackPanel>
+                                <StackPanel x:Name="HeaderPanel" FlowDirection="RightToLeft" Orientation="Horizontal">
+                                    <Button Height="24" Style="{StaticResource Window_Close}" Command="{x:Static command:GlobalCommands.CloseCommand}"/>
+                                    <Button x:Name="Maximize_Btn" Height="24" Style="{StaticResource Window_Maximize}" Command="{x:Static command:GlobalCommands.MaximizeCommand}"/>
+                                    <Button x:Name="Restore_Btn" Height="24" Visibility="Collapsed" Style="{StaticResource Window_Restore}" Command="{x:Static command:GlobalCommands.RestoreCommand}"/>
+                                    <Button Style="{StaticResource Window_Minimize}" Command="{x:Static command:GlobalCommands.MinimizeCommand}"/>
+                                </StackPanel>
                                 <AdornerDecorator Grid.Row="1">
                                     <Border Padding="6,0,6,6">
                                         <ContentPresenter Content="{TemplateBinding Content}"/>
@@ -593,14 +790,16 @@
                             </Grid>
                         </Border>
                     </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="WindowState" Value="Maximized">
+                            <Setter TargetName="Maximize_Btn" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="Restore_Btn" Property="Visibility" Value="Visible"/>
+                            <Setter Property="Padding" Value="-3,-3,-3,38"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Style.Triggers>
-            <Trigger Property="WindowState" Value="Maximized">
-                <Setter Property="Padding" Value="-3,-3,-3,38"/>
-            </Trigger>
-        </Style.Triggers>
     </Style>
 
     <Style TargetType="{x:Type view:AnchorGroupWindow}">
@@ -619,9 +818,6 @@
         </Setter>
         <Setter Property="Template" Value="{StaticResource AnchorGroupWindow_Single}"/>
         <Style.Triggers>
-            <Trigger Property="WindowState" Value="Maximized">
-                <Setter Property="Padding" Value="-3,-3,-3,38"/>
-            </Trigger>
             <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self},Path=NoBorder}" Value="True">
                 <Setter Property="BorderThickness" Value="0"/>
             </DataTrigger>
@@ -630,6 +826,9 @@
                 <Setter Property="shell:WindowChrome.CaptionHeight" Value="28"/>
                 <Setter Property="shell:WindowChrome.ResizeBorderThickness" Value="8"/>
             </DataTrigger>
+            <Trigger Property="WindowState" Value="Maximized">
+                <Setter Property="Padding" Value="-3,-3,-3,38"/>
+            </Trigger>
         </Style.Triggers>
     </Style>
 

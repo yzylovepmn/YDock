@@ -142,7 +142,7 @@ namespace YDock.View
 
         private void OnMaximizeCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = WindowState != WindowState.Maximized;
+            e.CanExecute = true;
         }
 
         private void OnMaximizeExecute(object sender, ExecutedRoutedEventArgs e)
@@ -152,7 +152,7 @@ namespace YDock.View
 
         private void OnRestoreCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = WindowState == WindowState.Maximized;
+            e.CanExecute = true;
         }
 
         private void OnRestoreExecute(object sender, ExecutedRoutedEventArgs e)
@@ -217,6 +217,7 @@ namespace YDock.View
         }
 
         protected DockManager _dockManager;
+
         public virtual DockManager DockManager
         {
             get
