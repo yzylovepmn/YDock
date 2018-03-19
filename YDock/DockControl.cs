@@ -207,10 +207,7 @@ namespace YDock
         }
 
         /// <summary>
-        /// 对于Normal or Float模式，此方法会直接从用户界面隐藏该项（CanSelect设为False）
-        /// 对于DockBar模式：
-        /// 若以自动隐藏窗口显示，则关闭窗口，但不从DockBar移除此项，用户依旧可以在界面选择（即CanSelect设为True）；
-        /// 否则不做任何操作。若需要将该项从DockBar移除，需要调用Close方法
+        /// 此方法会直接从用户界面隐藏该项（CanSelect设为False）
         /// </summary>
         public void Hide()
         {

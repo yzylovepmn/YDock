@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using YDock.Commands;
 using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
@@ -181,6 +182,23 @@ namespace YDock.View
             (_dockViewParent as BaseGroupControl).SelectedIndex = des;
             parent.Children[des].CaptureMouse();
             _dockViewParent.UpdateChildrenBounds(parent);
+        }
+
+        protected override void OnInitialized(EventArgs e)
+        {
+            CommandBindings.Add(new CommandBinding(GlobalCommands.HideStatusCommand, OnCommandExecute, OnCommandCanExecute));
+            base.OnInitialized(e);
+        }
+
+        private void OnCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void OnCommandExecute(object sender, ExecutedRoutedEventArgs e)
+        {
+            var ele = Content as DockElement;
+            ele.Hide();
         }
 
         public void Dispose()

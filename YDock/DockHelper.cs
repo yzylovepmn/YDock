@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using YDock.Interface;
@@ -49,6 +50,24 @@ namespace YDock
             var mouseP = relativeTo.TransformToDeviceDPI(Win32Helper.GetMousePosition());
             var pToScreen = relativeTo.PointToScreenDPIWithoutFlowDirection(new Point());
             return new Point(mouseP.X - pToScreen.X, mouseP.Y - pToScreen.Y);
+        }
+
+        public static void ComputeSpliterLocation(Popup spliter, Point location, Size size)
+        {
+            if (location.X < 0)
+            {
+                spliter.HorizontalOffset = 0;
+                spliter.Width = size.Width + location.X;
+            }
+            if (location.Y < 0)
+            {
+                spliter.VerticalOffset = 0;
+                spliter.Height = size.Height + location.Y;
+            }
+            if (location.X + size.Width > SystemParameters.PrimaryScreenWidth)
+                spliter.Width = SystemParameters.PrimaryScreenWidth - location.X;
+            if (location.Y + size.Height > SystemParameters.PrimaryScreenHeight)
+                spliter.Height = SystemParameters.PrimaryScreenHeight - location.Y;
         }
 
         public static void UpdateLocation(DropWindow wnd, double left, double top, double width, double height)

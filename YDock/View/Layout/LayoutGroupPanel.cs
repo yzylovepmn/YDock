@@ -1149,6 +1149,7 @@ namespace YDock.View
                 AllowsTransparency = true
             };
 
+            DockHelper.ComputeSpliterLocation(_dragPopup, pToScreen, new Size(splitter.ActualWidth, splitter.ActualHeight));
             _dragPopup.IsOpen = true;
         }
 

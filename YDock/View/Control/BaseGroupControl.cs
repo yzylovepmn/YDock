@@ -80,13 +80,21 @@ namespace YDock.View
         protected override void OnSelectionChanged(SelectionChangedEventArgs e)
         {
             base.OnSelectionChanged(e);
+            var activeItem = default(DockElement);
             if (e.RemovedItems != null)
                 foreach (DockElement item in e.RemovedItems)
+                {
+                    if (item.IsActive)
+                        activeItem = item;
                     item.IsVisible = false;
+                }
 
             if (e.AddedItems != null)
                 foreach (DockElement item in e.AddedItems)
                     item.IsVisible = true;
+
+            if (activeItem != null)
+                SelectedItem = activeItem;
         }
 
         private ILayoutGroup _model;

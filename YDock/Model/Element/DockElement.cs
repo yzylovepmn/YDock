@@ -457,7 +457,7 @@ namespace YDock.Model
                             break;
                     }
                 }
-                if (Mode == DockMode.DockBar)
+                else if (Mode == DockMode.DockBar)
                     _ToRoot(dockManager);
             }
         }

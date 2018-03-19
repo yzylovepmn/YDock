@@ -193,6 +193,7 @@ namespace YDock
             DockManager.LayoutRootPanel.RootGroupPanel.CloseDropWindow();
             _DestroyDragItem();
 
+            _isDragOverRoot = false;
             BaseDropPanel.ActiveVisual = null;
             BaseDropPanel.CurrentRect = null;
         }

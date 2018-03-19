@@ -87,17 +87,12 @@ namespace YDock.Model
 
         private void _DetachFromParent()
         {
-            if ((!(this is LayoutDocumentGroup) //Container不是LayoutDocumentGroup
-                    || _view.DockViewParent == null))//表示Parent为浮动窗口,可以移除
+            var ret = (_view as ILayoutGroupControl).TryDeatchFromParent();
+            if (ret)
             {
-                //view 默认Dispose
-                var ret = (_view as ILayoutGroupControl).TryDeatchFromParent();
-                if (ret)
-                {
-                    _view = null;
-                    if (_children.Count == 0)
-                        Dispose();
-                }
+                _view = null;
+                if (_children.Count == 0)
+                    Dispose();
             }
         }
 

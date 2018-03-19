@@ -21,18 +21,6 @@
     <SolidColorBrush x:Key="AnchorPanelBackground" Color="#FFEEEEF2"/>
     <SolidColorBrush x:Key="ActivePanelItemBackground" Color="#FFC9DEF5"/>
 
-    <Image x:Key="Wnd_Close_Black" Height="10" Source="/YDock;component/Resource/Image/Close_Black.png"/>
-    <Image x:Key="Wnd_Close_White" Height="10" Source="/YDock;component/Resource/Image/Close_White.png"/>
-    <Image x:Key="Wnd_Close_Active" Height="10" Source="/YDock;component/Resource/Image/Close_Active.png"/>
-
-    <Image x:Key="Wnd_Restore_Black" Height="10" Source="/YDock;component/Resource/Image/Restore_Black.png"/>
-    <Image x:Key="Wnd_Restore_White" Height="10" Source="/YDock;component/Resource/Image/Restore_White.png"/>
-    <Image x:Key="Wnd_Restore_Active" Height="10" Source="/YDock;component/Resource/Image/Restore_Active.png"/>
-
-    <Image x:Key="Wnd_Maximize_Black" Height="10" Source="/YDock;component/Resource/Image/Maximize_Black.png"/>
-    <Image x:Key="Wnd_Maximize_White" Height="10" Source="/YDock;component/Resource/Image/Maximize_White.png"/>
-    <Image x:Key="Wnd_Maximize_Active" Height="10" Source="/YDock;component/Resource/Image/Maximize_Active.png"/>
-
     <Style x:Key="WindowButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="VerticalAlignment" Value="Top"/>
         <Setter Property="BorderThickness" Value="0"/>
@@ -40,130 +28,127 @@
         <Setter Property="Background" Value="{StaticResource DisActiveHeaderBackground}"/>
         <Setter Property="Height" Value="20"/>
         <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <Style x:Key="Window_Close" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
-                        <ContentPresenter Content="{TemplateBinding Content}"/>
+                        <Image x:Name="Image" Height="10" Source="/YDock;component/Resource/Image/Close_Black.png"/>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="White"/>
+                            <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Close_Active.png"/>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsPressed" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="Background" Value="{StaticResource ActiveHeaderBackground}"/>
+                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Close_White.png"/>
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="False"/>
+                                <Condition Property="IsPressed" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="Background" Value="White"/>
+                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Close_Active.png"/>
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="White"/>
-            </Trigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsMouseOver" Value="True"/>
-                    <Condition Property="IsPressed" Value="True"/>
-                </MultiTrigger.Conditions>
-                <MultiTrigger.Setters>
-                    <Setter Property="Background" Value="{StaticResource ActiveHeaderBackground}"/>
-                </MultiTrigger.Setters>
-            </MultiTrigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsMouseOver" Value="False"/>
-                    <Condition Property="IsPressed" Value="True"/>
-                </MultiTrigger.Conditions>
-                <MultiTrigger.Setters>
-                    <Setter Property="Background" Value="White"/>
-                </MultiTrigger.Setters>
-            </MultiTrigger>
-        </Style.Triggers>
-    </Style>
-
-    <Style x:Key="Window_Close" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
-        <Setter Property="Content" Value="{StaticResource Wnd_Close_Black}"/>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Content" Value="{StaticResource Wnd_Close_Active}"/>
-            </Trigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsMouseOver" Value="True"/>
-                    <Condition Property="IsPressed" Value="True"/>
-                </MultiTrigger.Conditions>
-                <MultiTrigger.Setters>
-                    <Setter Property="Content" Value="{StaticResource Wnd_Close_White}"/>
-                </MultiTrigger.Setters>
-            </MultiTrigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsMouseOver" Value="False"/>
-                    <Condition Property="IsPressed" Value="True"/>
-                </MultiTrigger.Conditions>
-                <MultiTrigger.Setters>
-                    <Setter Property="Content" Value="{StaticResource Wnd_Close_Active}"/>
-                </MultiTrigger.Setters>
-            </MultiTrigger>
-        </Style.Triggers>
     </Style>
 
     <Style x:Key="Window_Restore" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
-        <Setter Property="Content" Value="{StaticResource Wnd_Restore_Black}"/>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Content" Value="{StaticResource Wnd_Restore_Active}"/>
-            </Trigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsMouseOver" Value="True"/>
-                    <Condition Property="IsPressed" Value="True"/>
-                </MultiTrigger.Conditions>
-                <MultiTrigger.Setters>
-                    <Setter Property="Content" Value="{StaticResource Wnd_Restore_White}"/>
-                </MultiTrigger.Setters>
-            </MultiTrigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsMouseOver" Value="False"/>
-                    <Condition Property="IsPressed" Value="True"/>
-                </MultiTrigger.Conditions>
-                <MultiTrigger.Setters>
-                    <Setter Property="Content" Value="{StaticResource Wnd_Restore_Active}"/>
-                </MultiTrigger.Setters>
-            </MultiTrigger>
-        </Style.Triggers>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <Image x:Name="Image" Height="10" Source="/YDock;component/Resource/Image/Restore_Black.png"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="White"/>
+                            <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Restore_Active.png"/>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsPressed" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="Background" Value="{StaticResource ActiveHeaderBackground}"/>
+                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Restore_White.png"/>
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="False"/>
+                                <Condition Property="IsPressed" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="Background" Value="White"/>
+                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Restore_Active.png"/>
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="Window_Maximize" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
-        <Setter Property="Content" Value="{StaticResource Wnd_Maximize_Black}"/>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Content" Value="{StaticResource Wnd_Maximize_Active}"/>
-            </Trigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsMouseOver" Value="True"/>
-                    <Condition Property="IsPressed" Value="True"/>
-                </MultiTrigger.Conditions>
-                <MultiTrigger.Setters>
-                    <Setter Property="Content" Value="{StaticResource Wnd_Maximize_White}"/>
-                </MultiTrigger.Setters>
-            </MultiTrigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsMouseOver" Value="False"/>
-                    <Condition Property="IsPressed" Value="True"/>
-                </MultiTrigger.Conditions>
-                <MultiTrigger.Setters>
-                    <Setter Property="Content" Value="{StaticResource Wnd_Maximize_Active}"/>
-                </MultiTrigger.Setters>
-            </MultiTrigger>
-        </Style.Triggers>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <Image x:Name="Image" Height="10" Source="/YDock;component/Resource/Image/Maximize_Black.png"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="White"/>
+                            <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Maximize_Active.png"/>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsPressed" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="Background" Value="{StaticResource ActiveHeaderBackground}"/>
+                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Maximize_White.png"/>
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="False"/>
+                                <Condition Property="IsPressed" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="Background" Value="White"/>
+                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Maximize_Active.png"/>
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
-    <Style x:Key="Window_Minimize" TargetType="{x:Type Button}">
-        <Setter Property="VerticalAlignment" Value="Top"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
-        <Setter Property="Background" Value="{StaticResource DisActiveHeaderBackground}"/>
-        <Setter Property="Foreground" Value="Black"/>
+    <Style x:Key="Window_Minimize" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
         <Setter Property="Height" Value="24"/>
-        <Setter Property="Width" Value="24"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -224,7 +209,71 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    
+
+    <Style x:Key="Header_Close" TargetType="{x:Type Button}">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="Width" Value="16"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}">
+                        <Image x:Name="Image" Height="8" Source="/YDock;component/Resource/Image/Close_White.png"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type view:DragTabItem}},Path=IsSelected}" Value="True"/>
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type view:DragTabItem}},Path=Content.IsActive}" Value="False"/>
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.Setters>
+                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Close_Black.png"/>
+                            </MultiDataTrigger.Setters>
+                        </MultiDataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#FF52B0EF"/>
+            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="IsPressed" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter Property="Background" Value="#FF0E6198"/>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=IsMouseOver}" Value="True"/>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=IsSelected}" Value="True"/>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Content.IsActive}" Value="False"/>
+                </MultiDataTrigger.Conditions>
+                <MultiDataTrigger.Setters>
+                    <Setter Property="Background" Value="#FFE6E7ED"/>
+                </MultiDataTrigger.Setters>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=IsMouseOver}" Value="True"/>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=IsSelected}" Value="True"/>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=IsPressed}" Value="True"/>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Content.IsActive}" Value="False"/>
+                </MultiDataTrigger.Conditions>
+                <MultiDataTrigger.Setters>
+                    <Setter Property="Background" Value="#FFB7B9C5"/>
+                </MultiDataTrigger.Setters>
+            </MultiDataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <Style x:Key="CustomToggleButtonStyle" TargetType="{x:Type view:CustomToggleButton}">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Template">
@@ -377,17 +426,18 @@
                 </Grid.ColumnDefinitions>
                 <Image VerticalAlignment="Center" Source="{Binding Path=ImageSource,Converter={StaticResource NullToDoNothingConverter}}" Stretch="Uniform"/>
                 <TextBlock x:Name="title" VerticalAlignment="Center" Margin="4,0,0,0" Text="{Binding Path=Title}" Grid.Column="1"/>
-                <Button x:Name="Close" Grid.Column="2" Visibility="Hidden" Content="X" Command="{x:Static command:GlobalCommands.HideStatusCommand}"/>
+                <Button x:Name="PART_Close" Margin="8,0,0,0" Grid.Column="2" Visibility="Hidden"
+                        Style="{StaticResource Header_Close}" Command="{x:Static command:GlobalCommands.HideStatusCommand}"/>
             </Grid>
         </Border>
         <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter TargetName="Close" Property="Visibility" Value="Visible"/>
+                <Setter TargetName="PART_Close" Property="Visibility" Value="Visible"/>
                 <Setter Property="Background" Value="{StaticResource MouseOnBackground}"/>
                 <Setter TargetName="title" Property="Foreground" Value="White"/>
             </Trigger>
             <Trigger Property="IsSelected" Value="True">
-                <Setter TargetName="Close" Property="Visibility" Value="Visible"/>
+                <Setter TargetName="PART_Close" Property="Visibility" Value="Visible"/>
                 <Setter Property="Background" Value="{StaticResource BorderBrush}"/>
                 <Setter TargetName="title" Property="Foreground" Value="#FF717171"/>
             </Trigger>
