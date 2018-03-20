@@ -1316,7 +1316,7 @@ namespace YDock.View
                         var index = parent.IndexOf(this);
                         //从父容器中移除自己
                         parent.DetachChild(this, false);
-                        Children.Clear();
+                        Dispose();
                         //从父容器中加入自己的子元素
                         if (parent is LayoutGroupPanel)
                         {
@@ -1450,6 +1450,8 @@ namespace YDock.View
             var child = (source.RelativeObj as BaseFloatWindow).Child;
             (source.RelativeObj as BaseFloatWindow).DetachChild(child);
             DockManager.ChangeDockMode(child, DockMode.Normal);
+            //取消AttachObj信息
+            DockManager.ClearAttachObj(child);
 
             switch (DropMode)
             {
@@ -1511,12 +1513,12 @@ namespace YDock.View
         }
         #endregion
 
+        public event EventHandler Disposed = delegate { };
+
         public void Dispose()
         {
-            foreach (var child in Children)
-                if (child is IDisposable)
-                    (child as IDisposable).Dispose();
             Children.Clear();
+            Disposed(this ,new EventArgs());
         }
     }
 }

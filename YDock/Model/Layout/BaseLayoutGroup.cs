@@ -162,10 +162,6 @@ namespace YDock.Model
                     (element as DockElement).CanSelect = true;
                 DockManager.ActiveElement = element;
             }
-            else
-            {
-
-            }
         }
 
         public virtual void SetActive(int index)
@@ -175,10 +171,6 @@ namespace YDock.Model
             {
                 (_children[index] as DockElement).CanSelect = true;
                 DockManager.ActiveElement = _children[index];
-            }
-            else
-            {
-
             }
         }
 
@@ -211,6 +203,7 @@ namespace YDock.Model
             _children.Clear();
             _children = null;
             PropertyChanged = null;
+            _view?.Dispose();
             _view = null;
         }
     }

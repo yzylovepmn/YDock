@@ -140,32 +140,32 @@ namespace YDock.View
             base.OnInitialized(e);
         }
 
-        private void OnMaximizeCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        protected virtual void OnMaximizeCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
 
-        private void OnMaximizeExecute(object sender, ExecutedRoutedEventArgs e)
+        protected void OnMaximizeExecute(object sender, ExecutedRoutedEventArgs e)
         {
             WindowState = WindowState.Maximized;
         }
 
-        private void OnRestoreCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        protected virtual void OnRestoreCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
 
-        private void OnRestoreExecute(object sender, ExecutedRoutedEventArgs e)
+        protected void OnRestoreExecute(object sender, ExecutedRoutedEventArgs e)
         {
             WindowState = WindowState.Normal;
         }
 
-        private void OnCloseCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        protected void OnCloseCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
 
-        private void OnCloseExecute(object sender, ExecutedRoutedEventArgs e)
+        protected void OnCloseExecute(object sender, ExecutedRoutedEventArgs e)
         {
             var child = Child;
             DetachChild(Child);

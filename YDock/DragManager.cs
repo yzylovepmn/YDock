@@ -202,7 +202,7 @@ namespace YDock
         #region init & destroy
         private void _InitDragItem()
         {
-            ILayoutGroup group;
+            LayoutGroup group;
             IDockElement ele;
             var mouseP = DockHelper.GetMousePosition(DockManager);
             switch (_dragItem.DockMode)
@@ -210,7 +210,17 @@ namespace YDock
                 case DockMode.Normal:
                     if (_dragItem.RelativeObj is ILayoutGroup)
                     {
-                        var _layoutGroup = _dragItem.RelativeObj as ILayoutGroup;
+                        var _layoutGroup = _dragItem.RelativeObj as LayoutGroup;
+
+                        #region AttachObj
+                        var _parent = _layoutGroup.View.DockViewParent as LayoutGroupPanel;
+                        var _mode = _parent.Direction == Direction.LeftToRight ? AttachMode.Left : AttachMode.Top;
+                        if (_parent.Direction == Direction.None)
+                            _mode = AttachMode.None;
+                        var _index = _parent.IndexOf(_layoutGroup.View);
+                        _layoutGroup.AttachObj = new AttachObject(_layoutGroup, _parent, _index, _mode);
+                        #endregion
+
                         //这里移动的一定是AnchorSideGroup，故将其从父级LayoutGroupPanel移走，但不Dispose留着构造浮动窗口
                         if ((_layoutGroup.View as ILayoutGroupControl).TryDeatchFromParent(false))
                         {
@@ -228,9 +238,19 @@ namespace YDock
                     else if (_dragItem.RelativeObj is IDockElement)
                     {
                         ele = _dragItem.RelativeObj as IDockElement;
+
+                        #region AttachObj
+                        var _parent = (ele.Container as LayoutGroup).View as BaseGroupControl;
+                        var _index = ele.Container.IndexOf(ele);
+                        #endregion
+
                         if (ele.IsDocument)
                             group = new LayoutDocumentGroup(DockMode.Float, DockManager);
-                        else group = new LayoutGroup(ele.Side, DockMode.Float, DockManager);
+                        else
+                        {
+                            group = new LayoutGroup(ele.Side, DockMode.Float, DockManager);
+                            group.AttachObj = new AttachObject(group, _parent, _index);
+                        }
                         //先从逻辑父级中移除
                         ele.Container.Detach(ele);
                         //再加入新的逻辑父级
@@ -298,9 +318,18 @@ namespace YDock
                         }
                         else
                         {
+                            #region AttachObj
+                            var _parent = (ele.Container as LayoutGroup).View as BaseGroupControl;
+                            var _index = ele.Container.IndexOf(ele);
+                            #endregion
+
                             if (ele.IsDocument)
                                 group = new LayoutDocumentGroup(DockMode.Float, DockManager);
-                            else group = new LayoutGroup(ele.Side, DockMode.Float, DockManager);
+                            else
+                            {
+                                group = new LayoutGroup(ele.Side, DockMode.Float, DockManager);
+                                group.AttachObj = new AttachObject(group, _parent, _index);
+                            }
                             //先从逻辑父级中移除
                             ele.Container.Detach(ele);
                             //再加入新的逻辑父级
@@ -339,12 +368,21 @@ namespace YDock
                     }
                     else if (_dragItem.RelativeObj is ILayoutGroup)
                     {
-                        group = _dragItem.RelativeObj as ILayoutGroup;
+                        group = _dragItem.RelativeObj as LayoutGroup;
                         //表示此时的浮动窗口为IsSingleMode
                         if (group.View.DockViewParent == null)
                             _dragWnd = (group.View as BaseGroupControl).Parent as BaseFloatWindow;
                         else
                         {
+                            #region AttachObj
+                            var _parent = group.View.DockViewParent as LayoutGroupPanel;
+                            var _mode = _parent.Direction == Direction.LeftToRight ? AttachMode.Left : AttachMode.Top;
+                            if (_parent.Direction == Direction.None)
+                                _mode = AttachMode.None;
+                            var _index = _parent.IndexOf(group.View);
+                            group.AttachObj = new AttachObject(group, _parent, _index, _mode);
+                            #endregion
+
                             //这里移动的一定是AnchorSideGroup，故将其从父级LayoutGroupPanel移走，但不Dispose留着构造浮动窗口
                             if ((group.View as ILayoutGroupControl).TryDeatchFromParent(false))
                             {

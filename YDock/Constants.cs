@@ -12,7 +12,7 @@ namespace YDock
         public const double SplitterSpan = 6;
         public const double DragOpacity = 0.4;
         public const double DockDefaultWidthLength = 300;
-        public const double DockDefaultHeightLength = 200;
+        public const double DockDefaultHeightLength = 300;
         public const double FloatWindowHeaderHeight = 32;
         public const double FloatWindowResizeLength = 8;
         public const double DocumentWindowPadding = 6;

@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using YDock.Commands;
 using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
@@ -67,6 +69,70 @@ namespace YDock.View
                     }
                 }
             }
+        }
+
+        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+            if (e.Property.Name == "DataContext")
+            {
+                if (menu != null)
+                {
+                    menu.Dispose();
+                    menu = null;
+                }
+            }
+        }
+
+        ToggleButton ctb;
+        DockMenu menu;
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            ctb = (ToggleButton)GetTemplateChild("PART_DropMenu");
+            ctb.PreviewMouseLeftButtonDown += OnMenuOpen;
+        }
+
+        private void OnMenuOpen(object sender, MouseButtonEventArgs e)
+        {
+            if (menu == null)
+                _ApplyMenu();
+            menu.IsOpen = true;
+        }
+
+        private void _ApplyMenu()
+        {
+            if (menu != null)
+            {
+                menu.Dispose();
+                menu = null;
+            }
+            var ele = DataContext as DockElement;
+            menu = new DockMenu(ele);
+            menu.PlacementTarget = ctb;
+            menu.Placement = PlacementMode.Bottom;
+            ctb.ContextMenu = menu;
+        }
+
+        protected override void OnInitialized(EventArgs e)
+        {
+            CommandBindings.Add(new CommandBinding(GlobalCommands.SwitchAutoHideStatusCommand, OnCommandExecute, OnCommandCanExecute));
+            CommandBindings.Add(new CommandBinding(GlobalCommands.HideStatusCommand, OnCommandExecute, OnCommandCanExecute));
+            base.OnInitialized(e);
+        }
+
+        private void OnCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void OnCommandExecute(object sender, ExecutedRoutedEventArgs e)
+        {
+            var ele = DataContext as DockElement;
+            if (e.Command == GlobalCommands.HideStatusCommand)
+                ele?.Hide();
+            if (e.Command == GlobalCommands.SwitchAutoHideStatusCommand)
+                ele?.SwitchAutoHideStatus();
         }
     }
 }

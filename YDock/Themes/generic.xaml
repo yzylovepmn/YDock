@@ -5,12 +5,17 @@
                     xmlns:enum="clr-namespace:YDock.Enum"
                     xmlns:shell="clr-namespace:Microsoft.Windows.Shell"
                     xmlns:converters="clr-namespace:YDock.Converters"
-                    xmlns:command="clr-namespace:YDock.Commands">
+                    xmlns:command="clr-namespace:YDock.Commands"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xmlns:Global="clr-namespace:YDock.Global">
     <enum:DockSide x:Key="Top">Top</enum:DockSide>
     <enum:DockSide x:Key="Right">Right</enum:DockSide>
 
     <converters:NullToDoNothingConverter x:Key="NullToDoNothingConverter"/>
     <converters:SideToAngleConverter x:Key="SideToAngleConverter"/>
+    <converters:DockModeToTransformConverter x:Key="DockModeToTransformConverter"/>
+    <converters:DockModeToVisibilityConverter x:Key="DockModeToVisibilityConverter"/>
+    <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
     <SolidColorBrush x:Key="WindowBackground" Color="#FFEEEEF2"/>
     <SolidColorBrush x:Key="MouseOnBackground" Color="#FF1C97EA"/>
@@ -31,6 +36,7 @@
     </Style>
 
     <Style x:Key="Window_Close" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
+        <Setter Property="ToolTip" Value="{Global:Resource Key=Close}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -70,6 +76,7 @@
     </Style>
 
     <Style x:Key="Window_Restore" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
+        <Setter Property="ToolTip" Value="{Global:Resource Key=Restore}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -109,6 +116,7 @@
     </Style>
 
     <Style x:Key="Window_Maximize" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
+        <Setter Property="ToolTip" Value="{Global:Resource Key=Maximize}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -148,6 +156,7 @@
     </Style>
 
     <Style x:Key="Window_Minimize" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
+        <Setter Property="ToolTip" Value="{Global:Resource Key=Minimize}"/>
         <Setter Property="Height" Value="24"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -187,30 +196,8 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="Header_Btn" TargetType="{x:Type Button}">
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
-        <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Height" Value="16"/>
-        <Setter Property="Width" Value="16"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
-                            Background="{TemplateBinding Background}">
-                        <ContentPresenter Content="{TemplateBinding Content}"/>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Opacity" Value="0.6"/>
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-
     <Style x:Key="Header_Close" TargetType="{x:Type Button}">
+        <Setter Property="ToolTip" Value="{Global:Resource Key=Close}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
         <Setter Property="Background" Value="Transparent"/>
@@ -274,11 +261,15 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="CustomToggleButtonStyle" TargetType="{x:Type view:CustomToggleButton}">
+    <Style x:Key="CustomToggleButtonStyle" TargetType="{x:Type ToggleButton}">
+        <Setter Property="Width" Value="16"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type view:CustomToggleButton}">
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
                     <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
                         <Path Data="M0,0 L8,0 L4,4 Z" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="{TemplateBinding Foreground}"/>
                     </Border>
@@ -287,7 +278,41 @@
         </Setter>
     </Style>
 
-    <Style x:Key="DocumentToggleButtonStyle" TargetType="{x:Type view:CustomToggleButton}" BasedOn="{StaticResource CustomToggleButtonStyle}">
+    <Style x:Key="Header_TB_Style" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource CustomToggleButtonStyle}">
+        <Setter Property="ToolTip" Value="{Global:Resource Key=Window_Position}"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#FFF7F7F9"/>
+            </Trigger>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DataContext.IsActive}" Value="True">
+                <Setter Property="Foreground" Value="White"/>
+            </DataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=IsMouseOver}" Value="True"/>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DataContext.IsActive}" Value="True"/>
+                </MultiDataTrigger.Conditions>
+                <MultiDataTrigger.Setters>
+                    <Setter Property="Background" Value="#FF52B0EF"/>
+                </MultiDataTrigger.Setters>
+            </MultiDataTrigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="#FFB7B9C5"/>
+            </Trigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=IsChecked}" Value="True"/>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DataContext.IsActive}" Value="True"/>
+                </MultiDataTrigger.Conditions>
+                <MultiDataTrigger.Setters>
+                    <Setter Property="Background" Value="#FF0E6198"/>
+                </MultiDataTrigger.Setters>
+            </MultiDataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="DocumentToggleButtonStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource CustomToggleButtonStyle}">
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="#FFC9DEF5"/>
@@ -300,6 +325,120 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="Anchor_Btn" TargetType="{x:Type Button}">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="Width" Value="16"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#FFF7F7F9"/>
+            </Trigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=IsMouseOver}" Value="True"/>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DataContext.IsActive}" Value="True"/>
+                </MultiDataTrigger.Conditions>
+                <MultiDataTrigger.Setters>
+                    <Setter Property="Background" Value="#FF52B0EF"/>
+                </MultiDataTrigger.Setters>
+            </MultiDataTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="IsPressed" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter Property="Background" Value="#FF0E6198"/>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Anchor_Close" TargetType="{x:Type Button}" BasedOn="{StaticResource Anchor_Btn}">
+        <Setter Property="ToolTip" Value="{Global:Resource Key=Close}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}">
+                        <Image x:Name="Image" Height="8" Source="/YDock;component/Resource/Image/Close_White.png"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type view:AnchorHeaderControl}},Path=DataContext.IsActive}" Value="False">
+                            <DataTrigger.Setters>
+                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Close_Black.png"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Anchor_AutoHide" TargetType="{x:Type Button}" BasedOn="{StaticResource Anchor_Btn}">
+        <Setter Property="ToolTip" Value="{Global:Resource Key=_AutoHide}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}">
+                        <Image x:Name="Image" Height="10" Source="/YDock;component/Resource/Image/AutoHide_White.png" LayoutTransform="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type view:AnchorHeaderControl}},Path=DataContext.Mode,Converter={StaticResource DockModeToTransformConverter}}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type view:AnchorHeaderControl}},Path=DataContext.IsActive}" Value="False">
+                            <DataTrigger.Setters>
+                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/AutoHide_Black.png"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Anchor_Maximize" TargetType="{x:Type Button}" BasedOn="{StaticResource Anchor_Btn}">
+        <Setter Property="ToolTip" Value="{Global:Resource Key=Maximize}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}">
+                        <Image x:Name="Image" Height="10" Source="/YDock;component/Resource/Image/Maximize_White.png"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type view:AnchorHeaderControl}},Path=DataContext.IsActive}" Value="False">
+                            <DataTrigger.Setters>
+                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Maximize_Black.png"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Anchor_Restore" TargetType="{x:Type Button}" BasedOn="{StaticResource Anchor_Btn}">
+        <Setter Property="ToolTip" Value="{Global:Resource Key=Restore}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}">
+                        <Image x:Name="Image" Height="10" Source="/YDock;component/Resource/Image/Restore_White.png"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type view:AnchorHeaderControl}},Path=DataContext.IsActive}" Value="False">
+                            <DataTrigger.Setters>
+                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Restore_Black.png"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style TargetType="{x:Type view:LayoutDragSplitter}">
         <Setter Property="Template">
@@ -325,10 +464,12 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock x:Name="HeaderTextBlock" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Text="{Binding Title}"/>
                             <view:TexturePanel DataContext="{Binding}" Grid.Column="1" Margin="10,0,10,0"/>
-                            <StackPanel Grid.Column="2">
-                                <Button Style="{StaticResource Header_Btn}">
-                                    <Image Source="/YDock;component/Resource/Image/Restore_White.png"/>
-                                </Button>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                <ToggleButton x:Name="PART_DropMenu" IsChecked="{Binding RelativeSource={RelativeSource Self},Path=ContextMenu.IsOpen}" IsThreeState="False" Style="{StaticResource Header_TB_Style}"/>
+                                <Button x:Name="Maximize" Style="{StaticResource Anchor_Maximize}" Command="{x:Static command:GlobalCommands.MaximizeCommand}" Visibility="{Binding RelativeSource={RelativeSource Self},Path=IsEnabled,Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                <Button x:Name="Restore" Style="{StaticResource Anchor_Restore}" Command="{x:Static command:GlobalCommands.RestoreCommand}" Visibility="{Binding RelativeSource={RelativeSource Self},Path=IsEnabled,Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                <Button Style="{StaticResource Anchor_AutoHide}" Command="{x:Static command:GlobalCommands.SwitchAutoHideStatusCommand}" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DataContext.Mode,Converter={StaticResource DockModeToVisibilityConverter}}"/>
+                                <Button Style="{StaticResource Anchor_Close}" Command="{x:Static command:GlobalCommands.HideStatusCommand}"/>
                             </StackPanel>
                         </Grid>
                     </Border>
@@ -460,10 +601,10 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="15"/>
+                        <ColumnDefinition Width="16"/>
                     </Grid.ColumnDefinitions>
                     <view:DocumentPanel IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
-                    <view:CustomToggleButton shell:WindowChrome.IsHitTestVisibleInChrome="True" IsChecked="{Binding RelativeSource={RelativeSource Self},Path=DropContextMenu.IsOpen}" IsThreeState="False" Height="15" Grid.Column="1" Style="{StaticResource DocumentToggleButtonStyle}">
+                    <view:CustomToggleButton IsChecked="{Binding RelativeSource={RelativeSource Self},Path=DropContextMenu.IsOpen}" IsThreeState="False" Grid.Column="1" Style="{StaticResource DocumentToggleButtonStyle}">
                         <view:CustomToggleButton.DropContextMenu>
                             <view:CustomContextMenu ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.ChildrenSorted}">
                                 <view:CustomContextMenu.Style>

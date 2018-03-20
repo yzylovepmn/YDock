@@ -442,6 +442,8 @@ namespace YDock
                 DesiredHeight = desiredHeight
             };
             var ctrl = new DockControl(ele);
+            var group = new LayoutGroup(side, ele.Mode, this);
+            group.Attach(ele);
             _dockControls.Add(ctrl);
             return ctrl;
         }
@@ -454,6 +456,16 @@ namespace YDock
                 (view.Model as BaseLayoutGroup).Side = side;
             if (view is LayoutGroupPanel)
                 (view as LayoutGroupPanel).Side = side;
+        }
+
+        internal static void ClearAttachObj(IDockView view)
+        {
+            if (view is AnchorSideGroupControl)
+                (view.Model as LayoutGroup).AttachObj?.Dispose();
+
+            if (view is LayoutGroupPanel)
+                foreach (var _view in (view as LayoutGroupPanel).Children.OfType<IDockView>())
+                    ClearAttachObj(_view);
         }
 
         internal static void ChangeDockMode(IDockView view, DockMode mode)

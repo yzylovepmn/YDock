@@ -9,6 +9,10 @@ using YDock.Enum;
 
 namespace YDock.Interface
 {
+    public interface INotifyDisposable
+    {
+        event EventHandler Disposed;
+    }
     public interface IDockModel : ILayout, IDisposable
     {
         IDockView View { get; }

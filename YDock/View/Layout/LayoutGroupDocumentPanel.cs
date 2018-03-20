@@ -99,7 +99,7 @@ namespace YDock.View
                         var _child = Children[0];
                         var wnd = Parent as ILayoutViewParent;
                         wnd.DetachChild(this, false);
-                        Children.Clear();
+                        Dispose();
                         wnd.AttachChild(_child as IDockView, AttachMode.None, 0);
                     }
                 }

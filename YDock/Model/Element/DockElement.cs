@@ -202,37 +202,6 @@ namespace YDock.Model
             }
         }
 
-        /// <summary>
-        /// 用于保存布局信息的Level
-        /// </summary>
-        internal int Level
-        {
-            get
-            {
-                UpdateLevel();
-                return _level;
-            }
-        }
-        private int _level = -1;
-
-        internal void UpdateLevel()
-        {
-            _level = -1;
-            //Float与DockBar模式不计算
-            if (_container == null || Mode != DockMode.Normal)
-                return;
-            else
-            {
-                var parent = _container.View;
-                while (true)
-                {
-                    _level++;
-                    if (parent.DockViewParent is LayoutRootPanel)
-                        break;
-                    parent = parent.DockViewParent;
-                }
-            }
-        }
 
         #region Size
         private double _desiredWidth;
@@ -289,7 +258,7 @@ namespace YDock.Model
         {
             get
             {
-                return _container == null ? false : Mode != DockMode.Float;
+                return _container == null ? false : (Mode != DockMode.Float || _container?.View == null);
             }
         }
 
@@ -313,7 +282,7 @@ namespace YDock.Model
         {
             get
             {
-                return _container == null ? false : Mode == DockMode.Normal;
+                return _container == null ? false : Mode != DockMode.Float;
             }
         }
 
@@ -335,9 +304,7 @@ namespace YDock.Model
             if (!CanFloat) return;
             if (_container != null)
             {
-                if (Mode == DockMode.Normal)
-                    UpdateLevel();
-
+                _canSelect = true;
                 //注意切换模式
                 Mode = DockMode.Float;
                 var dockManager = DockManager;
@@ -371,44 +338,14 @@ namespace YDock.Model
                 Mode = DockMode.Normal;
 
                 var dockManager = DockManager;
-                _container.Detach(this);
-                _container = null;
-
-                if (_level < 0)
-                    _ToRoot(dockManager);
+                var group = _container as LayoutGroup;
+                if (group.AttachObj != null)
+                    group.AttachObj.AttachTo();
                 else
                 {
-                    IDockView view = dockManager.LayoutRootPanel.FindChildByLevel(_level, Side);
-                    if (view != null)
-                    {
-                        if (view is BaseGroupControl)
-                        {
-                            var group = (view as BaseGroupControl).Model as ILayoutGroup;
-                            group.Attach(this);
-                        }
-                        if (view is LayoutGroupPanel)
-                        {
-                            var panal = (view as LayoutGroupPanel);
-                            var group = new LayoutGroup(Side, Mode, dockManager);
-                            group.Attach(this);
-                            var groupctrl = new AnchorSideGroupControl(group) { DesiredHeight = DesiredHeight, DesiredWidth = DesiredWidth };
-                            switch (Side)
-                            {
-                                case DockSide.Left:
-                                    panal.AttachChild(groupctrl, AttachMode.Left, 0);
-                                    break;
-                                case DockSide.Right:
-                                    panal.AttachChild(groupctrl, AttachMode.Right, panal.Count);
-                                    break;
-                                case DockSide.Top:
-                                    panal.AttachChild(groupctrl, AttachMode.Top, 0);
-                                    break;
-                                case DockSide.Bottom:
-                                    panal.AttachChild(groupctrl, AttachMode.Bottom, panal.Count);
-                                    break;
-                            }
-                        }
-                    }
+                    _container.Detach(this);
+                    _container = null;
+                    _ToRoot(dockManager);
                 }
             }
         }
@@ -439,7 +376,6 @@ namespace YDock.Model
 
                 if (Mode == DockMode.Normal)
                 {
-                    UpdateLevel();
                     Mode = DockMode.DockBar;
                     switch (Side)
                     {

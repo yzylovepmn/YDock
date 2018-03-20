@@ -58,7 +58,7 @@ namespace YDockTest
             left_1 = DockManager.RegisterDock("Dock_Left_1", new TextBlock() { Text = "Dock_Left_1_Content" });
             right_1 = DockManager.RegisterDock("Dock_Right_1", new TextBlock() { Text = "Dock_Righ_1t_Content" }, null, DockSide.Right);
             top_1 = DockManager.RegisterDock("Dock_Top_1", new TextBlock() { Text = "Dock_Top_1_Content" }, null, DockSide.Top);
-            bottom_1 = DockManager.RegisterDock("Dock_Bottom_1", new TextBlock() { Text = "Dock_Bottom_1_Content" }, null, DockSide.Bottom);
+            bottom_1 = DockManager.RegisterFloat("Dock_Bottom_1", new TextBlock() { Text = "Dock_Bottom_1_Content" }, null, DockSide.Bottom);
             doc_0.Show();
             doc_1.Show();
             doc_2.Show();

@@ -21,6 +21,9 @@ namespace YDock.Model
             _dockManager = dockManager;
         }
 
+        private AttachObject _attachObj;
+        internal AttachObject AttachObj { get { return _attachObj; } set { _attachObj = value; } }
+
         protected override void OnChildrenCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             base.OnChildrenCollectionChanged(sender, e);
@@ -60,7 +63,39 @@ namespace YDock.Model
                 (_view as TabControl).SelectedIndex = IndexOf(element);
             else//_view不存在则要创建新的_view
             {
-
+                if (_attachObj != null)
+                    _attachObj.AttachTo();
+                else
+                {
+                    if (this is LayoutDocumentGroup)
+                    {
+                        var _children = Children.ToList();
+                        _children.Reverse();
+                        var dockManager = _dockManager;
+                        Dispose();
+                        foreach (var child in _children)
+                            dockManager.Root.DocumentModel.Attach(child);
+                    }
+                    else
+                    {
+                        var ctrl = new AnchorSideGroupControl(this);
+                        switch (Side)
+                        {
+                            case DockSide.Left:
+                                _dockManager.LayoutRootPanel.RootGroupPanel.AttachChild(ctrl, AttachMode.Left, 0);
+                                break;
+                            case DockSide.Right:
+                                _dockManager.LayoutRootPanel.RootGroupPanel.AttachChild(ctrl, AttachMode.Right, _dockManager.LayoutRootPanel.RootGroupPanel.Count);
+                                break;
+                            case DockSide.Top:
+                                _dockManager.LayoutRootPanel.RootGroupPanel.AttachChild(ctrl, AttachMode.Top, 0);
+                                break;
+                            case DockSide.Bottom:
+                                _dockManager.LayoutRootPanel.RootGroupPanel.AttachChild(ctrl, AttachMode.Bottom, _dockManager.LayoutRootPanel.RootGroupPanel.Count);
+                                break;
+                        }
+                    }
+                }
             }
         }
 
@@ -87,8 +122,7 @@ namespace YDock.Model
 
         private void _DetachFromParent()
         {
-            var ret = (_view as ILayoutGroupControl).TryDeatchFromParent();
-            if (ret)
+            if ((_view as ILayoutGroupControl).TryDeatchFromParent())
             {
                 _view = null;
                 if (_children.Count == 0)
@@ -98,9 +132,14 @@ namespace YDock.Model
 
         public override void Dispose()
         {
-            base.Dispose();
+            _attachObj?.Dispose();
+            _attachObj = null;
             if (_view != null)
+            {
                 _dockManager.DragManager.OnDragStatusChanged -= (_view as BaseGroupControl).OnDragStatusChanged;
+                (_view as BaseGroupControl).TryDeatchFromParent();
+            }
+            base.Dispose();
             _dockManager = null;
         }
     }

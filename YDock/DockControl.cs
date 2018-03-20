@@ -203,7 +203,9 @@ namespace YDock
         public void Show()
         {
             if (IsVisible) return;
-            Container.SetActive(_prototype);
+            if (Mode == DockMode.Float)
+                ToFloat();
+            else Container.SetActive(_prototype);
         }
 
         /// <summary>

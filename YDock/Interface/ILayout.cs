@@ -25,7 +25,7 @@ namespace YDock.Interface
 
     }
 
-    public interface ILayoutPanel : ILayoutViewWithSize, ILayout, ILayoutViewParent
+    public interface ILayoutPanel : ILayoutViewWithSize, ILayout, ILayoutViewParent, INotifyDisposable
     {
         int Count { get; }
         bool IsAnchorPanel { get; }
@@ -51,7 +51,7 @@ namespace YDock.Interface
         void RaisePropertyChanged(string propertyName);
     }
 
-    public interface ILayoutGroupControl : ILayoutViewWithSize, INotifyPropertyChanged
+    public interface ILayoutGroupControl : ILayoutViewWithSize, INotifyDisposable, INotifyPropertyChanged
     {
         bool TryDeatchFromParent(bool isDispose = true);
         void AttachToParent(ILayoutPanel parent, int index);

@@ -61,11 +61,29 @@ namespace YDock.Properties {
         }
         
         /// <summary>
+        ///   查找类似 AutoHide 的本地化字符串。
+        /// </summary>
+        public static string _AutoHide {
+            get {
+                return ResourceManager.GetString("_AutoHide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 AutoHide(_A) 的本地化字符串。
         /// </summary>
         public static string AutoHide {
             get {
                 return ResourceManager.GetString("AutoHide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Close 的本地化字符串。
+        /// </summary>
+        public static string Close {
+            get {
+                return ResourceManager.GetString("Close", resourceCulture);
             }
         }
         
@@ -102,6 +120,42 @@ namespace YDock.Properties {
         public static string Hide {
             get {
                 return ResourceManager.GetString("Hide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Maximize 的本地化字符串。
+        /// </summary>
+        public static string Maximize {
+            get {
+                return ResourceManager.GetString("Maximize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Minimize 的本地化字符串。
+        /// </summary>
+        public static string Minimize {
+            get {
+                return ResourceManager.GetString("Minimize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Restore 的本地化字符串。
+        /// </summary>
+        public static string Restore {
+            get {
+                return ResourceManager.GetString("Restore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Window position 的本地化字符串。
+        /// </summary>
+        public static string Window_Position {
+            get {
+                return ResourceManager.GetString("Window_Position", resourceCulture);
             }
         }
     }

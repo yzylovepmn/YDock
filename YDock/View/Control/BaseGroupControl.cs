@@ -240,21 +240,17 @@ namespace YDock.View
             else return -1;
         }
 
-        private bool _isDisposed = false;
-        public bool IsDisposed
-        {
-            get { return _isDisposed; }
-        }
+
+        public event EventHandler Disposed = delegate { };
         public virtual void Dispose()
         {
-            if (_isDisposed) return;
             BindingOperations.ClearBinding(this, ItemsSourceProperty);
             Items.Clear();
             Model = null;
             _dragItem = null;
             _childrenBounds?.Clear();
             _childrenBounds = null;
-            _isDisposed = true;
+            Disposed(this ,new EventArgs());
         }
 
         #region Drag
@@ -273,6 +269,8 @@ namespace YDock.View
 
             DockManager.ChangeDockMode(child, (Model as ILayoutGroup).Mode);
             DockManager.ChangeSide(child, Model.Side);
+            //取消AttachObj信息
+            DockManager.ClearAttachObj(child);
 
             var group = Model as LayoutGroup;
             switch (DropMode)

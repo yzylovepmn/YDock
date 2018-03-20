@@ -124,6 +124,7 @@ namespace YDock.View
         {
             PropertyChanged(this, new PropertyChangedEventArgs("IsSingleMode"));
             PropertyChanged(this, new PropertyChangedEventArgs("NoBorder"));
+            CommandManager.InvalidateRequerySuggested();
         }
 
         public void UpdateSize()
@@ -131,6 +132,16 @@ namespace YDock.View
             if (IsSingleMode)
                 _heightEceeed = Constants.FloatWindowResizeLength * 2;
             else _heightEceeed = Constants.FloatWindowResizeLength * 2 + Constants.FloatWindowHeaderHeight;
+        }
+
+        protected override void OnMaximizeCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsSingleMode && WindowState == WindowState.Normal;
+        }
+
+        protected override void OnRestoreCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsSingleMode && WindowState == WindowState.Maximized;
         }
 
         private void ActiveSelf()

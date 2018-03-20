@@ -74,6 +74,9 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Converters\DockModeToTransformConverter.cs" />
+    <Compile Include="Converters\DockModeToVisibilityConverter.cs" />
     <Compile Include="Global\Commands\GlobalCommands.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Converters\NullBindingConverter.cs" />
@@ -92,6 +95,7 @@
     <Compile Include="Interface\IModel.cs" />
     <Compile Include="Interface\IView.cs" />
     <Compile Include="Model\Element\DockElement.cs" />
+    <Compile Include="Model\Layout\AttachObject.cs" />
     <Compile Include="Model\Layout\BaseLayoutGroup.cs" />
     <Compile Include="Model\Layout\LayoutGroup.cs" />
     <Compile Include="Model\Layout\DockSideGroup.cs" />
