@@ -199,8 +199,7 @@ namespace YDock.View
             {
                 if (DockViewParent is ILayoutPanel)
                 {
-                    var panel = DockViewParent as ILayoutPanel;
-                    if (panel.IsDocumentPanel && panel.Count == 1)
+                    if ((DockViewParent as ILayoutPanel).IsDocumentPanel)
                         return false;
                 }
                 var parent = Parent;

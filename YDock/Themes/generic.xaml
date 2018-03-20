@@ -963,16 +963,18 @@
                                     <RowDefinition Height="32"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
-                                <StackPanel x:Name="Header_Title_Image" Orientation="Horizontal">
-                                    <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
-                                    <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" FontSize="12" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
-                                </StackPanel>
-                                <StackPanel x:Name="HeaderPanel" FlowDirection="RightToLeft" Orientation="Horizontal">
-                                    <Button Height="24" Style="{StaticResource Window_Close}" Command="{x:Static command:GlobalCommands.CloseCommand}"/>
-                                    <Button x:Name="Maximize_Btn" Height="24" Style="{StaticResource Window_Maximize}" Command="{x:Static command:GlobalCommands.MaximizeCommand}"/>
-                                    <Button x:Name="Restore_Btn" Height="24" Visibility="Collapsed" Style="{StaticResource Window_Restore}" Command="{x:Static command:GlobalCommands.RestoreCommand}"/>
-                                    <Button Style="{StaticResource Window_Minimize}" Command="{x:Static command:GlobalCommands.MinimizeCommand}"/>
-                                </StackPanel>
+                                <DockPanel x:Name="PART_Header">
+                                    <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                                        <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
+                                        <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" FontSize="12" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
+                                    </StackPanel>
+                                    <StackPanel DockPanel.Dock="Right" FlowDirection="RightToLeft" Orientation="Horizontal">
+                                        <Button Height="24" Style="{StaticResource Window_Close}" Command="{x:Static command:GlobalCommands.CloseCommand}"/>
+                                        <Button x:Name="Maximize_Btn" Height="24" Style="{StaticResource Window_Maximize}" Command="{x:Static command:GlobalCommands.MaximizeCommand}"/>
+                                        <Button x:Name="Restore_Btn" Height="24" Visibility="Collapsed" Style="{StaticResource Window_Restore}" Command="{x:Static command:GlobalCommands.RestoreCommand}"/>
+                                        <Button Style="{StaticResource Window_Minimize}" Command="{x:Static command:GlobalCommands.MinimizeCommand}"/>
+                                    </StackPanel>
+                                </DockPanel>
                                 <AdornerDecorator Grid.Row="1">
                                     <Border Padding="6,0,6,6">
                                         <ContentPresenter Content="{TemplateBinding Content}"/>

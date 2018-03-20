@@ -63,81 +63,86 @@ namespace YDock.View
                 }
                 else panel = DockViewParent as LayoutGroupPanel;
 
-                int index = panel.Children.IndexOf(this);
-                switch (DropMode)
-                {
-                    case DropMode.Left:
-                        if (panel.Direction == Direction.UpToDown)
-                        {
-                            var _subpanel = new LayoutGroupPanel(Model.Side)
-                            {
-                                Direction = Direction.LeftToRight,
-                                DesiredWidth = ActualWidth,
-                                DesiredHeight = ActualHeight,
-                                IsAnchorPanel = true
-                            };
-                            panel._DetachChild(this);
-                            panel._AttachChild(_subpanel, Math.Min(index, panel.Count));
-                            _subpanel._AttachChild(this, 0);
-                            _subpanel.AttachChild(child, AttachMode.Left, 0);
-                        }
-                        else panel._AttachChild(child, index);
-                        break;
-                    case DropMode.Top:
-                        if (panel.Direction == Direction.LeftToRight)
-                        {
-                            var _subpanel = new LayoutGroupPanel(Model.Side)
-                            {
-                                Direction = Direction.UpToDown,
-                                DesiredWidth = ActualWidth,
-                                DesiredHeight = ActualHeight,
-                                IsAnchorPanel = true
-                            };
-                            panel._DetachChild(this);
-                            panel._AttachChild(_subpanel, Math.Min(index, panel.Count));
-                            _subpanel._AttachChild(this, 0);
-                            _subpanel.AttachChild(child, AttachMode.Top, 0);
-                        }
-                        else panel._AttachChild(child, index);
-                        break;
-                    case DropMode.Right:
-                        if (panel.Direction == Direction.UpToDown)
-                        {
-                            var _subpanel = new LayoutGroupPanel(Model.Side)
-                            {
-                                Direction = Direction.LeftToRight,
-                                DesiredWidth = ActualWidth,
-                                DesiredHeight = ActualHeight,
-                                IsAnchorPanel = true
-                            };
-                            panel._DetachChild(this);
-                            _subpanel._AttachChild(this, 0);
-                            _subpanel.AttachChild(child, AttachMode.Right, 1);
-                            panel._AttachChild(_subpanel, Math.Min(index, panel.Count));
-                        }
-                        else panel._AttachChild(child, index + 1);
-                        break;
-                    case DropMode.Bottom:
-                        if (panel.Direction == Direction.LeftToRight)
-                        {
-                            var _subpanel = new LayoutGroupPanel(Model.Side)
-                            {
-                                Direction = Direction.UpToDown,
-                                DesiredWidth = ActualWidth,
-                                DesiredHeight = ActualHeight,
-                                IsAnchorPanel = true
-                            };
-                            panel._DetachChild(this);
-                            _subpanel._AttachChild(this, 0);
-                            _subpanel.AttachChild(child, AttachMode.Bottom, 1);
-                            panel._AttachChild(_subpanel, Math.Min(index, panel.Count));
-                        }
-                        else panel._AttachChild(child, index + 1);
-                        break;
-                }
+                AttachTo(panel, child, DropMode);
             }
             else base.OnDrop(source);
             (source.RelativeObj as BaseFloatWindow).Close();
+        }
+
+        public void AttachTo(LayoutGroupPanel panel, IDockView source, DropMode mode)
+        {
+            int index = panel.Children.IndexOf(this);
+            switch (mode)
+            {
+                case DropMode.Left:
+                    if (panel.Direction == Direction.UpToDown)
+                    {
+                        var _subpanel = new LayoutGroupPanel(Model.Side)
+                        {
+                            Direction = Direction.LeftToRight,
+                            DesiredWidth = ActualWidth,
+                            DesiredHeight = ActualHeight,
+                            IsAnchorPanel = true
+                        };
+                        panel._DetachChild(this);
+                        panel._AttachChild(_subpanel, Math.Min(index, panel.Count));
+                        _subpanel._AttachChild(this, 0);
+                        _subpanel.AttachChild(source, AttachMode.Left, 0);
+                    }
+                    else panel._AttachChild(source, index);
+                    break;
+                case DropMode.Top:
+                    if (panel.Direction == Direction.LeftToRight)
+                    {
+                        var _subpanel = new LayoutGroupPanel(Model.Side)
+                        {
+                            Direction = Direction.UpToDown,
+                            DesiredWidth = ActualWidth,
+                            DesiredHeight = ActualHeight,
+                            IsAnchorPanel = true
+                        };
+                        panel._DetachChild(this);
+                        panel._AttachChild(_subpanel, Math.Min(index, panel.Count));
+                        _subpanel._AttachChild(this, 0);
+                        _subpanel.AttachChild(source, AttachMode.Top, 0);
+                    }
+                    else panel._AttachChild(source, index);
+                    break;
+                case DropMode.Right:
+                    if (panel.Direction == Direction.UpToDown)
+                    {
+                        var _subpanel = new LayoutGroupPanel(Model.Side)
+                        {
+                            Direction = Direction.LeftToRight,
+                            DesiredWidth = ActualWidth,
+                            DesiredHeight = ActualHeight,
+                            IsAnchorPanel = true
+                        };
+                        panel._DetachChild(this);
+                        _subpanel._AttachChild(this, 0);
+                        _subpanel.AttachChild(source, AttachMode.Right, 1);
+                        panel._AttachChild(_subpanel, Math.Min(index, panel.Count));
+                    }
+                    else panel._AttachChild(source, index + 1);
+                    break;
+                case DropMode.Bottom:
+                    if (panel.Direction == Direction.LeftToRight)
+                    {
+                        var _subpanel = new LayoutGroupPanel(Model.Side)
+                        {
+                            Direction = Direction.UpToDown,
+                            DesiredWidth = ActualWidth,
+                            DesiredHeight = ActualHeight,
+                            IsAnchorPanel = true
+                        };
+                        panel._DetachChild(this);
+                        _subpanel._AttachChild(this, 0);
+                        _subpanel.AttachChild(source, AttachMode.Bottom, 1);
+                        panel._AttachChild(_subpanel, Math.Min(index, panel.Count));
+                    }
+                    else panel._AttachChild(source, index + 1);
+                    break;
+            }
         }
     }
 }

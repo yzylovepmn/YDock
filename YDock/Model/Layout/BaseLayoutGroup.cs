@@ -151,7 +151,7 @@ namespace YDock.Model
 
         public void RaisePropertyChanged(string propertyName)
         {
-            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public virtual void SetActive(IDockElement element)

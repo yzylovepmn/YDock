@@ -32,27 +32,77 @@ namespace YDock.Model
 
         private AttachMode _mode;
 
-        internal void AttachTo()
+        internal bool AttachTo()
         {
-            if (_parent is AnchorSideGroupControl)
+            if (_parent is BaseGroupControl)
             {
-                var _group = (_parent as AnchorSideGroupControl).Model as LayoutGroup;
-                var _children = _relativeObj.Children.ToList();
-                _children.Reverse();
-                _relativeObj.Dispose();
-                foreach (var child in _children)
-                    _group.Attach(child, _index);
+                if (_mode == AttachMode.None)
+                {
+                    var _group = (_parent as BaseGroupControl).Model as ILayoutGroup;
+                    var _children = _relativeObj.Children.ToList();
+                    _children.Reverse();
+                    _relativeObj.Dispose();
+                    foreach (var child in _children)
+                        _group.Attach(child, Math.Min(_index, _group.Children.Count() - 1));
+                }
+                else
+                {
+                    var targetctrl = _parent as AnchorSideGroupControl;
+                    if (targetctrl.DockViewParent != null)
+                    {
+                        if (_relativeObj.View == null)
+                            new AnchorSideGroupControl(_relativeObj);
+                        var ctrl = _relativeObj.View as AnchorSideGroupControl;
+                        if (ctrl.TryDeatchFromParent(false))
+                        {
+                            switch (_mode)
+                            {
+                                case AttachMode.Left:
+                                    targetctrl.AttachTo(targetctrl.DockViewParent as LayoutGroupPanel, ctrl, DropMode.Left);
+                                    break;
+                                case AttachMode.Top:
+                                    targetctrl.AttachTo(targetctrl.DockViewParent as LayoutGroupPanel, ctrl, DropMode.Top);
+                                    break;
+                                case AttachMode.Right:
+                                    targetctrl.AttachTo(targetctrl.DockViewParent as LayoutGroupPanel, ctrl, DropMode.Right);
+                                    break;
+                                case AttachMode.Bottom:
+                                    targetctrl.AttachTo(targetctrl.DockViewParent as LayoutGroupPanel, ctrl, DropMode.Bottom);
+                                    break;
+                            }
+                        }
+                        else return false;
+                    }
+                    else return false;
+                    Dispose();
+                }
             }
             if (_parent is LayoutGroupPanel)
             {
-                var panel = _parent as LayoutGroupPanel;
                 if (_relativeObj.View == null)
                     new AnchorSideGroupControl(_relativeObj);
                 var ctrl = _relativeObj.View as AnchorSideGroupControl;
-                if (ctrl.TryDeatchFromParent(false))
-                    panel.AttachChild(_relativeObj.View, _mode, _index);
+                if (_mode == AttachMode.None)
+                {
+                    var panel = _parent as LayoutGroupPanel;
+                    if (ctrl.TryDeatchFromParent(false))
+                        panel.AttachChild(_relativeObj.View, _mode, Math.Min(_index, panel.Children.Count - 1));
+                    else return false;
+                }
+                else
+                {
+                    var panel = (_parent as LayoutGroupPanel).DockViewParent as LayoutGroupPanel;
+                    if (panel != null)
+                    {
+                        if (ctrl.TryDeatchFromParent(false))
+                            panel.AttachChild(_relativeObj.View, _mode, Math.Min(_index, panel.Children.Count - 1));
+                        else return false;
+                    }
+                    else return false;
+                }
                 Dispose();
             }
+            return true;
         }
 
         private void OnDisposed(object sender, EventArgs e)

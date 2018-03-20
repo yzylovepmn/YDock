@@ -331,18 +331,14 @@ namespace YDock.Model
             if (!CanDock) return;
             if (_container != null)
             {
-                //默认向下停靠
-                if (Side == DockSide.None)
-                    Side = DockSide.Bottom;
-
                 Mode = DockMode.Normal;
-
                 var dockManager = DockManager;
                 var group = _container as LayoutGroup;
-                if (group.AttachObj != null)
-                    group.AttachObj.AttachTo();
-                else
+                if (group.AttachObj == null || !group.AttachObj.AttachTo())
                 {
+                    //默认向下停靠
+                    if (Side == DockSide.None)
+                        Side = DockSide.Bottom;
                     _container.Detach(this);
                     _container = null;
                     _ToRoot(dockManager);

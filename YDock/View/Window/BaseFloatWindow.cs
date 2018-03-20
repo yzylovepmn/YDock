@@ -25,7 +25,7 @@ namespace YDock.View
             MinHeight = 60;
             _widthEceeed = Constants.FloatWindowResizeLength * 2;
             _heightEceeed = Constants.FloatWindowResizeLength * 2;
-            _needReCreate = needReCreate;
+            NeedReCreate = needReCreate;
             AllowsTransparency = true;
             WindowStyle = WindowStyle.None;
             ShowActivated = true;

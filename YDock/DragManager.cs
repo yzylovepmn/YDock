@@ -196,6 +196,7 @@ namespace YDock
             _isDragOverRoot = false;
             BaseDropPanel.ActiveVisual = null;
             BaseDropPanel.CurrentRect = null;
+            CommandManager.InvalidateRequerySuggested();
         }
         #endregion
 
@@ -216,9 +217,11 @@ namespace YDock
                         var _parent = _layoutGroup.View.DockViewParent as LayoutGroupPanel;
                         var _mode = _parent.Direction == Direction.LeftToRight ? AttachMode.Left : AttachMode.Top;
                         if (_parent.Direction == Direction.None)
-                            _mode = AttachMode.None;
+                                _mode = AttachMode.None;
                         var _index = _parent.IndexOf(_layoutGroup.View);
-                        _layoutGroup.AttachObj = new AttachObject(_layoutGroup, _parent, _index, _mode);
+                        if (_parent.Children.Count - 1 > _index)
+                            _layoutGroup.AttachObj = new AttachObject(_layoutGroup, _parent.Children[_index + 2] as INotifyDisposable, _index, _mode);
+                        else _layoutGroup.AttachObj = new AttachObject(_layoutGroup, _parent.Children[_index - 2] as INotifyDisposable, _index, _mode);
                         #endregion
 
                         //这里移动的一定是AnchorSideGroup，故将其从父级LayoutGroupPanel移走，但不Dispose留着构造浮动窗口
@@ -380,7 +383,9 @@ namespace YDock
                             if (_parent.Direction == Direction.None)
                                 _mode = AttachMode.None;
                             var _index = _parent.IndexOf(group.View);
-                            group.AttachObj = new AttachObject(group, _parent, _index, _mode);
+                            if (_parent.Children.Count - 1 > _index)
+                                group.AttachObj = new AttachObject(group, _parent.Children[_index + 2] as INotifyDisposable, _index, _mode);
+                            else group.AttachObj = new AttachObject(group, _parent.Children[_index - 2] as INotifyDisposable, _index, _mode);
                             #endregion
 
                             //这里移动的一定是AnchorSideGroup，故将其从父级LayoutGroupPanel移走，但不Dispose留着构造浮动窗口

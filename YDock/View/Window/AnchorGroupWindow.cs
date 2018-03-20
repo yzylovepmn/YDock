@@ -14,6 +14,7 @@ using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
 using System.Windows.Input;
+using System.Windows.Controls;
 
 namespace YDock.View
 {
@@ -111,7 +112,7 @@ namespace YDock.View
         {
             if (_needReCreate)
             {
-                _needReCreate = false;
+                NeedReCreate = false;
                 if (Child != null)
                 {
                     var layoutCtrl = Child as BaseGroupControl;
@@ -136,12 +137,16 @@ namespace YDock.View
 
         protected override void OnMaximizeCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = IsSingleMode && WindowState == WindowState.Normal;
+            if ((e.OriginalSource as Button)?.Name == "Maximize")
+                e.CanExecute = IsSingleMode && WindowState == WindowState.Normal;
+            else e.CanExecute = true;
         }
 
         protected override void OnRestoreCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = IsSingleMode && WindowState == WindowState.Maximized;
+            if ((e.OriginalSource as Button)?.Name == "Restore")
+                e.CanExecute = IsSingleMode && WindowState == WindowState.Maximized;
+            else e.CanExecute = true;
         }
 
         private void ActiveSelf()

@@ -265,7 +265,7 @@ namespace YDock.View
                         for (int i = 0; i < InternalChildren.Count; i += 2)
                         {
                             (InternalChildren[i] as ILayoutSize).DesiredHeight = stars[i / 2] * availableLength;
-                            InternalChildren[i].Measure(new Size(availableSize.Width, stars[i / 2] * (InternalChildren[i] as ILayoutSize).DesiredHeight));
+                            InternalChildren[i].Measure(new Size(availableSize.Width, (InternalChildren[i] as ILayoutSize).DesiredHeight));
                             if (i + 1 < InternalChildren.Count)
                                 InternalChildren[i + 1].Measure(new Size(availableSize.Width, Constants.SplitterSpan));
                         }

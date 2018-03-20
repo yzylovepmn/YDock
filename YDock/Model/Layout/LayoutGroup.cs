@@ -63,9 +63,7 @@ namespace YDock.Model
                 (_view as TabControl).SelectedIndex = IndexOf(element);
             else//_view不存在则要创建新的_view
             {
-                if (_attachObj != null)
-                    _attachObj.AttachTo();
-                else
+                if (_attachObj == null || !_attachObj.AttachTo())
                 {
                     if (this is LayoutDocumentGroup)
                     {
