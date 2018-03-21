@@ -468,6 +468,13 @@ namespace YDock
                     ClearAttachObj(_view);
         }
 
+        internal static void FormatChildSize(ILayoutSize child, Size size)
+        {
+            if (child == null) return;
+            child.DesiredWidth = Math.Min(child.DesiredWidth, size.Width / 2);
+            child.DesiredHeight = Math.Min(child.DesiredHeight, size.Height / 2);
+        }
+
         internal static void ChangeDockMode(IDockView view, DockMode mode)
         {
             if (view is BaseGroupControl)

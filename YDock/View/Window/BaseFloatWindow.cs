@@ -260,6 +260,13 @@ namespace YDock.View
             if (child == Content)
             {
                 DockManager.RemoveFloatWindow(this);
+                //保存Size信息
+                if (child is ILayoutSize)
+                {
+                    var _child = child as ILayoutSize;
+                    _child.DesiredWidth = ActualWidth;
+                    _child.DesiredHeight = ActualHeight;
+                }
                 if (child is BaseGroupControl)
                     (child as BaseGroupControl).IsDraggingFromDock = false;
                 Content = null;

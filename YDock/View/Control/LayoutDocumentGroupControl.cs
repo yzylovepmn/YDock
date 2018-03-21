@@ -49,10 +49,12 @@ namespace YDock.View
                     DockManager.ChangeSide(child, Model.Side);
                     if (DockViewParent == null)
                     {
-                        var parent = Parent as ILayoutViewParent;
+                        var parent = Parent as BaseFloatWindow;
                         parent.DetachChild(this, false);
                         var panel = new LayoutGroupDocumentPanel()
                         {
+                            DesiredWidth = parent.ActualWidth,
+                            DesiredHeight = parent.ActualHeight,
                             Direction = (DropMode == DropMode.Left_WithSplit || DropMode == DropMode.Right_WithSplit) ? Direction.LeftToRight : Direction.UpToDown
                         };
                         panel._AttachChild(this, 0);

@@ -1450,8 +1450,10 @@ namespace YDock.View
             var child = (source.RelativeObj as BaseFloatWindow).Child;
             (source.RelativeObj as BaseFloatWindow).DetachChild(child);
             DockManager.ChangeDockMode(child, DockMode.Normal);
+            DockManager.FormatChildSize(child as ILayoutSize, new Size(ActualWidth, ActualHeight));
             //取消AttachObj信息
             DockManager.ClearAttachObj(child);
+
 
             switch (DropMode)
             {
