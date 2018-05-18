@@ -35,7 +35,7 @@ namespace YDock.Global
 
         public static event EventHandler LanaguageChanged = delegate { };
 
-        public void RaiseLanaguageChanged()
+        public static void RaiseLanaguageChanged()
         {
             LanaguageChanged(null, new EventArgs());
         }

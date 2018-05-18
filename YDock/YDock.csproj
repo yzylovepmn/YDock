@@ -89,6 +89,8 @@
     <Compile Include="Enum\DragMode.cs" />
     <Compile Include="Enum\DropMode.cs" />
     <Compile Include="Global\Extension\ResourceExtension.cs" />
+    <Compile Include="Interface\IDockManager.cs" />
+    <Compile Include="Interface\IDockSource.cs" />
     <Compile Include="Interface\IDrag.cs" />
     <Compile Include="Interface\IDrop.cs" />
     <Compile Include="Interface\ILayout.cs" />

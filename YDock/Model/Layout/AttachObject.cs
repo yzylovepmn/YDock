@@ -51,10 +51,11 @@ namespace YDock.Model
                     if (targetctrl.DockViewParent != null)
                     {
                         if (_relativeObj.View == null)
-                            new AnchorSideGroupControl(_relativeObj);
+                            _relativeObj.View = new AnchorSideGroupControl(_relativeObj);
                         var ctrl = _relativeObj.View as AnchorSideGroupControl;
                         if (ctrl.TryDeatchFromParent(false))
                         {
+                            if (targetctrl.DockViewParent == null) return false;
                             switch (_mode)
                             {
                                 case AttachMode.Left:
@@ -80,7 +81,7 @@ namespace YDock.Model
             if (_parent is LayoutGroupPanel)
             {
                 if (_relativeObj.View == null)
-                    new AnchorSideGroupControl(_relativeObj);
+                    _relativeObj.View = new AnchorSideGroupControl(_relativeObj);
                 var ctrl = _relativeObj.View as AnchorSideGroupControl;
                 if (_mode == AttachMode.None)
                 {

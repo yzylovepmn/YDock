@@ -42,8 +42,8 @@ namespace YDock.Model
 
         public override void SetActive(IDockElement element)
         {
-            base.SetActive(element);
             DockManager.AutoHideElement = element;
+            base.SetActive(element);
         }
 
         public override void Detach(IDockElement element)

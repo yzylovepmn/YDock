@@ -12,7 +12,7 @@ namespace YDock.View
 {
     public class DocumentPanel : Panel
     {
-        public DocumentPanel()
+        internal DocumentPanel()
         {
             FlowDirection = FlowDirection.LeftToRight;
         }
@@ -60,18 +60,17 @@ namespace YDock.View
             {
                 var selecteditem = visibleChildren[index];
                 int startindex = index - 1;
-                for (; startindex > 0; startindex--)
+                for (; startindex >= 0; startindex--)
                 {
                     var item = visibleChildren[startindex];
                     width -= item.DesiredSize.Width + item.Margin.Left + item.Margin.Right;
-                    if (width <= finalSize.Width) break;
+                    if (width <= finalSize.Width || startindex == 0) break;
                 }
                 width -= selecteditem.DesiredSize.Width + selecteditem.Margin.Left + selecteditem.Margin.Right;
 
                 IDockElement element = selecteditem.Content as IDockElement;
                 ILayoutGroup tab = element.Container;
                 tab.MoveTo(index, startindex);
-                //((TabControl)tab.View).SelectedIndex = startindex;
 
                 for (; startindex < visibleChildren.Count; startindex++)
                 {

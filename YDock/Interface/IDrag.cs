@@ -7,7 +7,7 @@ using YDock.Enum;
 
 namespace YDock.Interface
 {
-    public interface IDragTarget
+    public interface IDragTarget : IAttcah
     {
         DockManager DockManager { get; }
         DragMode Mode { get; }
@@ -17,5 +17,10 @@ namespace YDock.Interface
         void CloseDropWindow();
         void Update(Point mouseP);
         DropMode DropMode { get; set; }
+    }
+
+    public interface IAttcah
+    {
+        void AttachWith(IDockView source, AttachMode mode = AttachMode.Center);
     }
 }

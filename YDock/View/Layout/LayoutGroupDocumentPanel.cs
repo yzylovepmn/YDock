@@ -11,7 +11,7 @@ namespace YDock.View
 {
     public class LayoutGroupDocumentPanel : LayoutGroupPanel
     {
-        public LayoutGroupDocumentPanel()
+        internal LayoutGroupDocumentPanel()
         {
             
         }
@@ -21,7 +21,7 @@ namespace YDock.View
             if (index < 0 || index > Count) throw new ArgumentOutOfRangeException("index out of range!");
             if (!_AssertMode(mode)) throw new ArgumentException("mode is illegal!");
 
-            if (Count == 1)
+            if (Count == 1 && ActualWidth > 0 && ActualHeight > 0)
             {
                 ILayoutSize size = Children[0] as ILayoutSize;
                 size.DesiredWidth = ActualWidth;
@@ -90,6 +90,8 @@ namespace YDock.View
             else
             {
                 _DetachChild(child);
+                if (DockViewParent != null)
+                    DockManager.Root.DocumentModels.Remove(child.Model as BaseLayoutGroup);
                 if (Count < 2)
                     Direction = Direction.None;
                 if (Count == 1)
@@ -99,7 +101,7 @@ namespace YDock.View
                         var _child = Children[0];
                         var wnd = Parent as ILayoutViewParent;
                         wnd.DetachChild(this, false);
-                        Dispose();
+                        _Dispose();
                         wnd.AttachChild(_child as IDockView, AttachMode.None, 0);
                     }
                 }
@@ -113,6 +115,9 @@ namespace YDock.View
                 if (Direction == Direction.None)
                     Direction = (mode == AttachMode.Left_WithSplit || mode == AttachMode.Right_WithSplit) ? Direction.LeftToRight : Direction.UpToDown;
                 _AttachChild(child, index);
+
+                if (DockViewParent != null)
+                    DockManager.Root.DocumentModels.Add(child.Model as BaseLayoutGroup);
             }
 
             if (child is AnchorSideGroupControl)

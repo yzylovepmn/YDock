@@ -68,8 +68,8 @@ namespace YDock.View
                     {
                         _isDragging = true;
                         if (this is AnchorGroupWindow)
-                            DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Anchor, new Point(), Rect.Empty, new Size(ActualWidth, ActualWidth)), true);
-                        else DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Document, new Point(), Rect.Empty, new Size(ActualWidth, ActualWidth)), true);
+                            DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Anchor, new Point(), Rect.Empty, new Size(ActualWidth, ActualHeight)), true);
+                        else DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Document, new Point(), Rect.Empty, new Size(ActualWidth, ActualHeight)), true);
                     }
                     break;
                 case Win32Helper.WM_MOVING:
@@ -79,8 +79,8 @@ namespace YDock.View
                     {
                         _isDragging = true;
                         if (this is AnchorGroupWindow)
-                            DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Anchor, new Point(), Rect.Empty, new Size(ActualWidth, ActualWidth)), true);
-                        else DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Document, new Point(), Rect.Empty, new Size(ActualWidth, ActualWidth)), true);
+                            DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Anchor, new Point(), Rect.Empty, new Size(ActualWidth, ActualHeight)), true);
+                        else DockManager.DragManager.IntoDragAction(new DragItem(this, DockMode.Float, DragMode.Document, new Point(), Rect.Empty, new Size(ActualWidth, ActualHeight)), true);
                     }
                     break;
                 case Win32Helper.WM_EXITSIZEMOVE:
@@ -264,8 +264,8 @@ namespace YDock.View
                 if (child is ILayoutSize)
                 {
                     var _child = child as ILayoutSize;
-                    _child.DesiredWidth = ActualWidth;
-                    _child.DesiredHeight = ActualHeight;
+                    _child.DesiredWidth = Math.Max(ActualWidth - _widthEceeed, Constants.SideLength);
+                    _child.DesiredHeight = Math.Max(ActualHeight - _heightEceeed, Constants.SideLength);
                 }
                 if (child is BaseGroupControl)
                     (child as BaseGroupControl).IsDraggingFromDock = false;

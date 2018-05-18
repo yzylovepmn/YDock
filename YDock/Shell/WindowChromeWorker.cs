@@ -247,8 +247,11 @@ namespace Microsoft.Windows.Shell
 
             if (!_isHooked)
             {
-                _hwndSource.AddHook(_WndProc);
-                _isHooked = true;
+                if (!_hwndSource.IsDisposed)
+                {
+                    _hwndSource.AddHook(_WndProc);
+                    _isHooked = true;
+                }
             }
 
             _FixupFrameworkIssues();

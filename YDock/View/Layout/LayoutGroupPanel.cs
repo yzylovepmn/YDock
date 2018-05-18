@@ -21,7 +21,7 @@ namespace YDock.View
     /// </summary>
     public class LayoutGroupPanel : Panel, ILayoutPanel, IDragTarget
     {
-        public LayoutGroupPanel(DockSide side = DockSide.None)
+        internal LayoutGroupPanel(DockSide side = DockSide.None)
         {
             _side = side;
         }
@@ -1316,7 +1316,7 @@ namespace YDock.View
                         var index = parent.IndexOf(this);
                         //从父容器中移除自己
                         parent.DetachChild(this, false);
-                        Dispose();
+                        _Dispose();
                         //从父容器中加入自己的子元素
                         if (parent is LayoutGroupPanel)
                         {
@@ -1348,7 +1348,6 @@ namespace YDock.View
 
         internal void _AttachChild(IDockView child, int index)
         {
-            //DockManager.ChangeDockMode(child, DockManager == null ? DockMode.Float : DockMode.Normal);
             Children.Insert(index, child as UIElement);
             if (Children.Count > 1)
             {
@@ -1447,8 +1446,14 @@ namespace YDock.View
         DropWindow _dragWnd;
         public void OnDrop(DragItem source)
         {
-            var child = (source.RelativeObj as BaseFloatWindow).Child;
-            (source.RelativeObj as BaseFloatWindow).DetachChild(child);
+            IDockView child;
+            if (source.RelativeObj is BaseFloatWindow)
+            {
+                child = (source.RelativeObj as BaseFloatWindow).Child;
+                (source.RelativeObj as BaseFloatWindow).DetachChild(child);
+            }
+            else child = source.RelativeObj as IDockView;
+
             DockManager.ChangeDockMode(child, DockMode.Normal);
             DockManager.FormatChildSize(child as ILayoutSize, new Size(ActualWidth, ActualHeight));
             //取消AttachObj信息
@@ -1475,7 +1480,8 @@ namespace YDock.View
                     break;
             }
 
-            (source.RelativeObj as BaseFloatWindow).Close();
+            if (source.RelativeObj is BaseFloatWindow)
+                (source.RelativeObj as BaseFloatWindow).Close();
         }
 
         public void CreateDropWindow()
@@ -1515,10 +1521,46 @@ namespace YDock.View
         }
         #endregion
 
+        #region Attach
+        public void AttachWith(IDockView source, AttachMode mode = AttachMode.Center)
+        {
+            switch (mode)
+            {
+                case AttachMode.Left:
+                    _dropMode = DropMode.Left;
+                    break;
+                case AttachMode.Top:
+                    _dropMode = DropMode.Top;
+                    break;
+                case AttachMode.Right:
+                    _dropMode = DropMode.Right;
+                    break;
+                case AttachMode.Bottom:
+                    _dropMode = DropMode.Bottom;
+                    break;
+                default:
+                    _dropMode = DropMode.None;
+                    break;
+            }
+            DragItem item = new DragItem(source, DockMode.Normal, DragMode.None, new Point(), Rect.Empty, Size.Empty);
+            OnDrop(item);
+            _dropMode = DropMode.None;
+        }
+        #endregion
+
         public event EventHandler Disposed = delegate { };
+
+        protected void _Dispose()
+        {
+            Children.Clear();
+            Disposed(this, new EventArgs());
+        }
 
         public void Dispose()
         {
+            foreach (var child in Children)
+                if (child is IDisposable)
+                    (child as IDisposable).Dispose();
             Children.Clear();
             Disposed(this ,new EventArgs());
         }

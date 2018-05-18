@@ -10,7 +10,7 @@ namespace YDock
         #region Constants
         public const double SideLength = 30;
         public const double SplitterSpan = 6;
-        public const double DragOpacity = 0.4;
+        public const double DragOpacity = 0.5;
         public const double DockDefaultWidthLength = 300;
         public const double DockDefaultHeightLength = 300;
         public const double FloatWindowHeaderHeight = 32;

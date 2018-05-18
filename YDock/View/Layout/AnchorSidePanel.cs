@@ -10,7 +10,7 @@ namespace YDock.View
 {
     public class AnchorSidePanel : Panel
     {
-        //此标志位表示Arrange时是否需要补偿子元素打宽度
+        //此标志位表示Arrange时是否需要补偿子元素的宽度
         private bool _needCompensate = false;
         /// <summary>
         /// 测量阶段若子元素总宽度超过可用宽度，则对子元素的宽度进行排序后依次裁剪多余得到宽度
