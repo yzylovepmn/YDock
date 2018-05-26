@@ -20,7 +20,7 @@ namespace YDock.View
             DefaultStyleKeyProperty.OverrideMetadata(typeof(AnchorHeaderControl), new FrameworkPropertyMetadata(default(AnchorHeaderControl)));
         }
 
-        public AnchorHeaderControl()
+        internal AnchorHeaderControl()
         {
         }
 

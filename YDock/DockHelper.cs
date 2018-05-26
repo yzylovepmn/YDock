@@ -637,6 +637,7 @@ namespace YDock
         public static readonly SolidColorBrush SplitterBrushHorizontal;
         public static readonly SolidColorBrush DropRectBrush;
         public static readonly SolidColorBrush RectBrush;
+        public static readonly SolidColorBrush WindowBorderBrush;
         public static readonly Pen ActiveDashPen;
         public static readonly Pen DisActiveDashPen;
         public static readonly Pen BlueDashPen;
@@ -676,6 +677,14 @@ namespace YDock
                 R = 0x1D,
                 G = 0x7A,
                 B = 0xEE,
+                A = 0xFF
+            });
+
+            WindowBorderBrush = new SolidColorBrush(new Color()
+            {
+                R = 0x9B,
+                G = 0x9F,
+                B = 0xB9,
                 A = 0xFF
             });
 

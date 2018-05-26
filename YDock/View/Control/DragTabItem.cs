@@ -21,8 +21,9 @@ namespace YDock.View
             DefaultStyleKeyProperty.OverrideMetadata(typeof(DragTabItem), new FrameworkPropertyMetadata(typeof(DragTabItem)));
         }
 
-        public DragTabItem(BaseGroupControl dockViewParent)
+        internal DragTabItem(BaseGroupControl dockViewParent)
         {
+            AllowDrop = true;
             _dockViewParent = dockViewParent;
         }
 
@@ -66,10 +67,19 @@ namespace YDock.View
         protected override void OnContentChanged(object oldContent, object newContent)
         {
             base.OnContentChanged(oldContent, newContent);
-            if (oldContent != null) ContextMenu = null;
-            if (newContent != null)
+            if (oldContent != null)
+                ContextMenu = null;
+            if (newContent is IDockItem)
                 if (_dockViewParent is AnchorSideGroupControl)
                     ContextMenu = new DockMenu(newContent as IDockItem);
+            ToolTip = string.Empty;
+        }
+
+        protected override void OnToolTipOpening(ToolTipEventArgs e)
+        {
+            if (Content is DockElement)
+                ToolTip = (Content as DockElement).ToolTip;
+            base.OnToolTipOpening(e);
         }
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
@@ -175,6 +185,14 @@ namespace YDock.View
             base.OnMouseMove(e);
         }
 
+        protected override void OnDragOver(DragEventArgs e)
+        {
+            base.OnDragOver(e);
+            BaseGroupControl ctrl = _dockViewParent as BaseGroupControl;
+            if (ctrl != null)
+                ctrl.SelectedItem = Content;
+        }
+
         private void MoveTo(int src, int des, Panel parent)
         {
             Container.MoveTo(src, des);
@@ -198,7 +216,7 @@ namespace YDock.View
         private void OnCommandExecute(object sender, ExecutedRoutedEventArgs e)
         {
             var ele = Content as DockElement;
-            ele.Hide();
+            ele.DockControl.Hide();
         }
 
         public void Dispose()

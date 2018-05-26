@@ -52,7 +52,7 @@ namespace YDock.Model
                 {
                     //重新进入的元素排到第一个
                     _children.Remove(sender as DockElement);
-                    _children.Insert(Children_CanSelect.Count(), sender as DockElement);
+                    _children.Insert(0, sender as DockElement);
                 }
                 _children.CollectionChanged += OnChildrenCollectionChanged;
                 RaisePropertyChanged("Children_CanSelect");
@@ -69,6 +69,7 @@ namespace YDock.Model
         {
             get
             {
+                if (_children == null) yield break;
                 foreach (DockElement child in _children)
                     if (child.CanSelect)
                         yield return child;
@@ -156,12 +157,10 @@ namespace YDock.Model
 
         public virtual void SetActive(IDockElement element)
         {
+            if (element != null && !element.CanSelect)
+                (element as DockElement).CanSelect = true;
             if (_view != null)
-            {
-                if (element != null && !element.CanSelect)
-                    (element as DockElement).CanSelect = true;
                 DockManager.ActiveElement = element;
-            }
         }
 
         public virtual void SetActive(int index)
@@ -186,9 +185,7 @@ namespace YDock.Model
         {
             if (element == null || element.Container != null)
                 throw new InvalidOperationException("Attach Failed!");
-            if (index < 0)
-                _children.Add(element);
-            else _children.Insert(index, element);
+            _children.Insert(Math.Max(index, 0), element);
             (element as DockElement).Mode = _mode;
         }
 

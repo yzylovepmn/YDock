@@ -28,9 +28,10 @@ namespace YDock.Model
         {
             base.OnChildrenCollectionChanged(sender, e);
             if (_view == null) return;
-            if (e.NewItems?.Count > 0)
-                (_view as TabControl).SelectedIndex = IndexOf(e.NewItems[e.NewItems.Count - 1] as IDockElement);
-            else (_view as TabControl).SelectedIndex = Children_CanSelect.Count() - 1;
+            var tab = _view as TabControl;
+            if (e.NewItems?.Count > 0 && (e.NewItems[e.NewItems.Count - 1] as IDockElement).CanSelect)
+                tab.SelectedIndex = IndexOf(e.NewItems[e.NewItems.Count - 1] as IDockElement);
+            else tab.SelectedIndex = Math.Max(0, tab.SelectedIndex);
         }
 
         protected override void OnChildrenPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -72,7 +73,7 @@ namespace YDock.Model
                         var dockManager = _dockManager;
                         Dispose();
                         foreach (var child in _children)
-                            dockManager.Root.DocumentModel.Attach(child);
+                            dockManager.Root.DocumentModels[0].Attach(child);
                     }
                     else
                     {
@@ -133,10 +134,7 @@ namespace YDock.Model
             _attachObj?.Dispose();
             _attachObj = null;
             if (_view != null)
-            {
                 _dockManager.DragManager.OnDragStatusChanged -= (_view as BaseGroupControl).OnDragStatusChanged;
-                (_view as BaseGroupControl).TryDeatchFromParent();
-            }
             base.Dispose();
             _dockManager = null;
         }
@@ -195,20 +193,6 @@ namespace YDock.Model
         {
             base.Detach(element);
             if (element.IsActive) IsActive = false;
-            if (Children_CanSelect.Count() == 0 && _view?.DockViewParent != null)
-            {
-                var ctrl = _view as LayoutDocumentGroupControl;
-                var panel = _view.DockViewParent as LayoutGroupDocumentPanel;
-                if (panel.Children.Count > 1)
-                {
-                    panel.DetachChild(_view);
-                    if (DockManager.Root.DocumentModel == this)
-                    {
-                        var child = panel.Children[0] as LayoutDocumentGroupControl;
-                        DockManager.Root.DocumentModel = child.Model as BaseLayoutGroup;
-                    }
-                }
-            }
         }
     }
 }

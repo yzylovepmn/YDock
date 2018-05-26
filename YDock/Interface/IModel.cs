@@ -26,7 +26,7 @@ namespace YDock.Interface
     public interface IDockOrigin : ILayout, ILayoutSize, IDockItem, INotifyPropertyChanged, IDisposable
     {
         int ID { get; }
-        string Title { get; }
+        string Title { get; set; }
         ImageSource ImageSource { get; }
         UIElement Content { get; }
         bool IsDocument { get; }
@@ -34,12 +34,18 @@ namespace YDock.Interface
         bool IsVisible { get; }
         bool IsActive { get; }
         bool CanSelect { get; }
+        bool IsDocked { get; }
+        bool IsFloat { get; }
+        bool IsAutoHide { get; }
         ILayoutGroup Container { get; }
     }
 
     public interface IDockControl : IDockOrigin
     {
-
+        IDockElement ProtoType { get; }
+        void Show();
+        void Close();
+        void SetActive(bool _isActive = true);
     }
 
     public interface IDockItem

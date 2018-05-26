@@ -16,7 +16,7 @@ namespace YDock
 {
     public class DragItem : IDisposable
     {
-        public DragItem(object relativeObj, DockMode dockMode, DragMode dragMode, Point clickPos, Rect clickRect, Size size)
+        internal DragItem(object relativeObj, DockMode dockMode, DragMode dragMode, Point clickPos, Rect clickRect, Size size)
         {
             _relativeObj = relativeObj;
             _dockMode = dockMode;
@@ -120,7 +120,11 @@ namespace YDock
                         _dragTarget.ShowDropWindow();
                 }
                 else if (_dragTarget != null && !_isDragOverRoot)
+                {
+                    if (_dragItem.DragMode == DragMode.Document && _dragTarget.Mode == DragMode.Anchor)
+                        return;
                     _dragTarget.Update(_mouseP);
+                }
             }
         }
 
@@ -176,7 +180,6 @@ namespace YDock
 
         internal void DoDragDrop()
         {
-            //TODO Drop
             if (DockManager.LayoutRootPanel.RootGroupPanel?.DropMode != DropMode.None)
                 DockManager.LayoutRootPanel.RootGroupPanel?.OnDrop(_dragItem);
             else if (DragTarget?.DropMode != DropMode.None)
@@ -261,7 +264,6 @@ namespace YDock
                         //再加入新的逻辑父级
                         group.Attach(ele);
                         //创建新的浮动窗口，并初始化位置
-                        //这里可知引起drag的时DragTabItem故这里创建临时的DragTabWindow
                         if (ele.IsDocument)
                         {
                             _dragWnd = new DocumentGroupWindow(DockManager) { NeedReCreate = true };
@@ -314,9 +316,13 @@ namespace YDock
                         var ctrl = ele.Container.View as BaseGroupControl;
                         if (ctrl.Items.Count == 1 && ctrl.Parent is BaseFloatWindow)
                         {
-                            _dragWnd = (ctrl.Parent as BaseFloatWindow);
-                            _dragWnd.Hide();
-                            (ctrl.Parent as BaseFloatWindow).Recreate();
+                            _dragWnd = ctrl.Parent as BaseFloatWindow;
+                            _dragWnd.DetachChild(ctrl);
+                            _dragWnd.Close();
+                            ctrl.BorderThickness = new Thickness(1);
+                            ctrl.IsDraggingFromDock = true;
+                            _dragWnd = new DocumentGroupWindow(DockManager) { NeedReCreate = true, Background = Brushes.Transparent, BorderBrush = Brushes.Transparent };
+                            _dragWnd.AttachChild(ctrl, AttachMode.None, 0);
                             _dragWnd.Top = mouseP.Y - _dragItem.ClickPos.Y - Constants.FloatWindowHeaderHeight - Constants.FloatWindowResizeLength;
                             _dragWnd.Left = mouseP.X - _dragItem.ClickPos.X - _dragItem.ClickRect.Left - Constants.FloatWindowResizeLength - Constants.DocumentWindowPadding;
                             _dragWnd.Show();
@@ -433,6 +439,12 @@ namespace YDock
         #region DragEvent
         internal void OnMouseMove()
         {
+            if (Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                DockManager.LayoutRootPanel.RootGroupPanel?.HideDropWindow();
+                DragTarget = null;
+                return;
+            }
             bool flag = false;
             _mouseP = DockHelper.GetMousePosition(DockManager);
             foreach (var wnd in DockManager.FloatWindows)
@@ -503,7 +515,7 @@ namespace YDock
 
     public class DragStatusChangedEventArgs : EventArgs
     {
-        public DragStatusChangedEventArgs(bool status)
+        internal DragStatusChangedEventArgs(bool status)
         {
             _isDragging = status;
         }

@@ -18,7 +18,7 @@ namespace YDock.View
 {
     public class BaseGroupControl : TabControl, ILayoutGroupControl, IDragTarget
     {
-        internal BaseGroupControl(ILayoutGroup model)
+        internal BaseGroupControl(ILayoutGroup model, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength)
         {
             Model = model;
             SetBinding(ItemsSourceProperty, new Binding("Model.Children_CanSelect") { Source = this });
@@ -26,6 +26,11 @@ namespace YDock.View
             {
                 DesiredWidth = model.Children.First().DesiredWidth;
                 DesiredHeight = model.Children.First().DesiredHeight;
+            }
+            else
+            {
+                DesiredWidth = desiredWidth;
+                DesiredHeight = desiredHeight;
             }
         }
 
@@ -59,7 +64,12 @@ namespace YDock.View
             set
             {
                 if (_desiredWidth != value)
+                {
                     _desiredWidth = value;
+                    if (_model != null)
+                        foreach (ILayoutSize item in _model.Children)
+                            item.DesiredWidth = value;
+                }
             }
         }
 
@@ -73,7 +83,12 @@ namespace YDock.View
             set
             {
                 if (_desiredHeight != value)
+                {
                     _desiredHeight = value;
+                    if (_model != null)
+                        foreach (ILayoutSize item in _model.Children)
+                            item.DesiredHeight = value;
+                }
             }
         }
 
@@ -208,7 +223,22 @@ namespace YDock.View
                 if (DockViewParent is ILayoutPanel)
                 {
                     if ((DockViewParent as ILayoutPanel).IsDocumentPanel)
-                        return false;
+                    {
+                        var ctrl = this as LayoutDocumentGroupControl;
+                        var panel = DockViewParent as LayoutGroupDocumentPanel;
+                        if (panel.Children.Count > 1 || DockManager.MainWindow != Window.GetWindow(panel))
+                        {
+                            panel.DetachChild(this);
+                            if (isDispose)
+                                Dispose();
+                            return true;
+                        }
+                        else
+                        {
+                            DockManager.RaiseDocumentToEmpty();
+                            return false;
+                        }
+                    }
                 }
                 var parent = Parent;
                 (parent as ILayoutViewParent).DetachChild(this);
@@ -251,6 +281,7 @@ namespace YDock.View
         public event EventHandler Disposed = delegate { };
         public virtual void Dispose()
         {
+            SelectedItem = null;
             BindingOperations.ClearBinding(this, ItemsSourceProperty);
             Items.Clear();
             Model = null;
@@ -271,8 +302,13 @@ namespace YDock.View
         DropWindow _dragWnd;
         public virtual void OnDrop(DragItem source)
         {
-            var child = (source.RelativeObj as BaseFloatWindow).Child;
-            (source.RelativeObj as BaseFloatWindow).DetachChild(child);
+            IDockView child;
+            if (source.RelativeObj is BaseFloatWindow)
+            {
+                child = (source.RelativeObj as BaseFloatWindow).Child;
+                (source.RelativeObj as BaseFloatWindow).DetachChild(child);
+            }
+            else child = source.RelativeObj as IDockView;
 
             DockManager.FormatChildSize(child as ILayoutSize, new Size(ActualWidth, ActualHeight));
             DockManager.ChangeDockMode(child, (Model as ILayoutGroup).Mode);
@@ -366,6 +402,48 @@ namespace YDock.View
         {
             if (!args.IsDragging)
                 CloseDropWindow();
+        }
+        #endregion
+
+        #region Attach
+        public void AttachWith(IDockView source, AttachMode mode = AttachMode.Center)
+        {
+            switch (mode)
+            {
+                case AttachMode.Left:
+                    _dropMode = DropMode.Left;
+                    break;
+                case AttachMode.Top:
+                    _dropMode = DropMode.Top;
+                    break;
+                case AttachMode.Right:
+                    _dropMode = DropMode.Right;
+                    break;
+                case AttachMode.Bottom:
+                    _dropMode = DropMode.Bottom;
+                    break;
+                case AttachMode.Left_WithSplit:
+                    _dropMode = DropMode.Left_WithSplit;
+                    break;
+                case AttachMode.Top_WithSplit:
+                    _dropMode = DropMode.Top_WithSplit;
+                    break;
+                case AttachMode.Right_WithSplit:
+                    _dropMode = DropMode.Right_WithSplit;
+                    break;
+                case AttachMode.Bottom_WithSplit:
+                    _dropMode = DropMode.Bottom_WithSplit;
+                    break;
+                case AttachMode.Center:
+                    _dropMode = DropMode.Center;
+                    break;
+                default:
+                    _dropMode = DropMode.None;
+                    break;
+            }
+            DragItem item = new DragItem(source, DockMode.Normal, DragMode.None, new Point(), Rect.Empty, Size.Empty);
+            OnDrop(item);
+            _dropMode = DropMode.None;
         }
         #endregion
 

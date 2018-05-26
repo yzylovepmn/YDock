@@ -24,7 +24,7 @@ namespace YDock.View
             FocusableProperty.OverrideMetadata(typeof(LayoutRootPanel), new FrameworkPropertyMetadata(false));
         }
 
-        public LayoutRootPanel(IDockModel model)
+        internal LayoutRootPanel(IDockModel model)
         {
             Model = model;
             _InitContent();
@@ -35,7 +35,7 @@ namespace YDock.View
             AHWindow = new AutoHideWindow();
             //先初始化Document区域
             RootGroupPanel = new LayoutGroupDocumentPanel();
-            var _documentControl = new LayoutDocumentGroupControl((_model as DockRoot).DocumentModel);
+            var _documentControl = new LayoutDocumentGroupControl((_model as DockRoot).DocumentModels[0]);
             RootGroupPanel._AttachChild(_documentControl, 0);
         }
 

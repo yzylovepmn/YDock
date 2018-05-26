@@ -89,7 +89,10 @@ namespace YDock.View
             if (e.OldValue != null && e.OldValue is IDockElement)
                 (e.OldValue as IDockElement).PropertyChanged -= OnModelPropertyChanged;
             if (e.NewValue != null && e.NewValue is IDockElement)
+            {
                 (e.NewValue as IDockElement).PropertyChanged += OnModelPropertyChanged;
+                UpdateChildren();
+            }
         }
 
         private void OnModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

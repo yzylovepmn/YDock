@@ -30,7 +30,7 @@ namespace YDock.View
                 BeginTime = TimeSpan.FromSeconds(0.4)
             };
             _backgroundAnimation = new ColorAnimation(Colors.Transparent, ResourceManager.SplitterBrushVertical.Color, new Duration(TimeSpan.FromMilliseconds(1)));
-            _borderBrushAnimation = new ColorAnimation(Colors.Transparent, ResourceManager.SplitterBrushHorizontal.Color, new Duration(TimeSpan.FromMilliseconds(1)))
+            _borderBrushAnimation = new ColorAnimation(Colors.Transparent, ResourceManager.WindowBorderBrush.Color, new Duration(TimeSpan.FromMilliseconds(1)))
             {
                 BeginTime = TimeSpan.FromSeconds(0.2)
             };

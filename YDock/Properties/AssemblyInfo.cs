@@ -10,7 +10,7 @@ using System.Windows;
 [assembly: AssemblyTitle("YDock")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("yangzheyu")]
 [assembly: AssemblyProduct("YDock")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]

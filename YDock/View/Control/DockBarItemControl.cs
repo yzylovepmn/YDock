@@ -20,7 +20,7 @@ namespace YDock.View
             DefaultStyleKeyProperty.OverrideMetadata(typeof(DockBarItemControl), new FrameworkPropertyMetadata(typeof(DockBarItemControl)));
         }
 
-        public DockBarItemControl(IDockView dockViewParent)
+        internal DockBarItemControl(IDockView dockViewParent)
         {
             _dockViewParent = dockViewParent;
         }

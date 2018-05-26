@@ -19,7 +19,7 @@ namespace YDock.View
             DefaultStyleKeyProperty.OverrideMetadata(typeof(CustomToggleButton), new FrameworkPropertyMetadata(typeof(CustomToggleButton)));
         }
 
-        public CustomToggleButton()
+        internal CustomToggleButton()
         {
 
         }

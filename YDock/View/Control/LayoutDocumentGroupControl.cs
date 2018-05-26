@@ -20,7 +20,7 @@ namespace YDock.View
             FocusableProperty.OverrideMetadata(typeof(LayoutDocumentGroupControl), new FrameworkPropertyMetadata(false));
         }
 
-        internal LayoutDocumentGroupControl(ILayoutGroup model) : base(model)
+        internal LayoutDocumentGroupControl(ILayoutGroup model, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength) : base(model, desiredWidth, desiredHeight)
         {
         }
 
@@ -39,8 +39,13 @@ namespace YDock.View
                 base.OnDrop(source);
             else
             {
-                var child = (source.RelativeObj as BaseFloatWindow).Child;
-                (source.RelativeObj as BaseFloatWindow).DetachChild(child);
+                IDockView child;
+                if (source.RelativeObj is BaseFloatWindow)
+                {
+                    child = (source.RelativeObj as BaseFloatWindow).Child;
+                    (source.RelativeObj as BaseFloatWindow).DetachChild(child);
+                }
+                else child = source.RelativeObj as IDockView;
                 DockManager.ChangeDockMode(child, (Model as ILayoutGroup).Mode);
 
                 if (_AssertSplitMode(DropMode))
@@ -59,8 +64,8 @@ namespace YDock.View
                         };
                         panel._AttachChild(this, 0);
                         if (DropMode == DropMode.Left_WithSplit || DropMode == DropMode.Top_WithSplit)
-                            panel._AttachChild(child, 0);
-                        else panel._AttachChild(child, 1);
+                            panel.AttachChild(child, DropMode == DropMode.Left_WithSplit ? AttachMode.Left_WithSplit : AttachMode.Top_WithSplit, 0);
+                        else panel.AttachChild(child, DropMode == DropMode.Right_WithSplit ? AttachMode.Right_WithSplit : AttachMode.Bottom_WithSplit, 1);
                         parent.AttachChild(panel, AttachMode.None, 0);
                     }
                     else
@@ -192,7 +197,9 @@ namespace YDock.View
                     }
                 }
             }
-            (source.RelativeObj as BaseFloatWindow).Close();
+
+            if (source.RelativeObj is BaseFloatWindow)
+                (source.RelativeObj as BaseFloatWindow).Close();
         }
 
         private bool _AssertSplitMode(DropMode mode)

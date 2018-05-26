@@ -19,7 +19,7 @@ namespace YDock.View
             FocusableProperty.OverrideMetadata(typeof(AnchorSideGroupControl), new FrameworkPropertyMetadata(false));
         }
 
-        internal AnchorSideGroupControl(ILayoutGroup model) : base(model)
+        internal AnchorSideGroupControl(ILayoutGroup model, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength) : base(model, desiredWidth, desiredHeight)
         {
             
         }
@@ -39,8 +39,14 @@ namespace YDock.View
                 || DropMode == DropMode.Top
                 || DropMode == DropMode.Bottom)
             {
-                var child = (source.RelativeObj as BaseFloatWindow).Child;
-                (source.RelativeObj as BaseFloatWindow).DetachChild(child);
+                IDockView child;
+                if (source.RelativeObj is BaseFloatWindow)
+                {
+                    child = (source.RelativeObj as BaseFloatWindow).Child;
+                    (source.RelativeObj as BaseFloatWindow).DetachChild(child);
+                }
+                else child = source.RelativeObj as IDockView;
+
                 DockManager.ChangeDockMode(child, (Model as ILayoutGroup).Mode);
                 //must to changside
                 DockManager.ChangeSide(child, Model.Side);
@@ -66,7 +72,9 @@ namespace YDock.View
                 AttachTo(panel, child, DropMode);
             }
             else base.OnDrop(source);
-            (source.RelativeObj as BaseFloatWindow).Close();
+
+            if (source.RelativeObj is BaseFloatWindow)
+                (source.RelativeObj as BaseFloatWindow).Close();
         }
 
         public void AttachTo(LayoutGroupPanel panel, IDockView source, DropMode mode)

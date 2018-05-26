@@ -508,7 +508,7 @@ namespace YDock.View
             }
             if ((Flag & DragManager.ACTIVE) == 0)
                 ctx.PushOpacity(Constants.DragOpacity * 1.8);
-            ctx.DrawRectangle(Brushes.White, null, new Rect(hoffset += Constants.DropGlassLength, voffset += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
+            ctx.DrawRoundedRectangle(Brushes.White, null, new Rect(hoffset += Constants.DropGlassLength, voffset += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2), 3, 3);
             hoffset += Constants.DropGlassLength;
             voffset += Constants.DropGlassLength;
             ctx.DrawLine(ResourceManager.DropRectPen_Heavy, new Point(hoffset - 0.5, voffset), new Point(hoffset + 12.5, voffset));
@@ -551,7 +551,7 @@ namespace YDock.View
             if ((Flag & DragManager.ACTIVE) == 0)
                 ctx.PushOpacity(Constants.DragOpacity * 1.8);
 
-            ctx.DrawRectangle(Brushes.White, null, new Rect(hoffset += Constants.DropGlassLength, voffset += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
+            ctx.DrawRoundedRectangle(Brushes.White, null, new Rect(hoffset += Constants.DropGlassLength, voffset += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2), 3, 3);
             hoffset += Constants.DropGlassLength;
             voffset += Constants.DropGlassLength;
 
@@ -595,7 +595,7 @@ namespace YDock.View
 
             if ((Flag & DragManager.ACTIVE) == 0)
                 ctx.PushOpacity(Constants.DragOpacity * 1.8);
-            ctx.DrawRectangle(Brushes.White, null, new Rect((hoffset -= Constants.DropGlassLength) - (Constants.DropUnitLength - Constants.DropGlassLength * 2), voffset += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
+            ctx.DrawRoundedRectangle(Brushes.White, null, new Rect((hoffset -= Constants.DropGlassLength) - (Constants.DropUnitLength - Constants.DropGlassLength * 2), voffset += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2), 3, 3);
             hoffset -= Constants.DropGlassLength;
             voffset += Constants.DropGlassLength;
             ctx.DrawLine(ResourceManager.DropRectPen_Heavy, new Point(hoffset + 0.5, voffset), new Point(hoffset - 12.5, voffset));
@@ -639,7 +639,7 @@ namespace YDock.View
             if ((Flag & DragManager.ACTIVE) == 0)
                 ctx.PushOpacity(Constants.DragOpacity * 1.8);
 
-            ctx.DrawRectangle(Brushes.White, null, new Rect(hoffset += Constants.DropGlassLength, (voffset -= Constants.DropGlassLength) - (Constants.DropUnitLength - Constants.DropGlassLength * 2), Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
+            ctx.DrawRoundedRectangle(Brushes.White, null, new Rect(hoffset += Constants.DropGlassLength, (voffset -= Constants.DropGlassLength) - (Constants.DropUnitLength - Constants.DropGlassLength * 2), Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2), 3, 3);
             hoffset += Constants.DropGlassLength;
             voffset -= Constants.DropGlassLength;
 
@@ -678,7 +678,7 @@ namespace YDock.View
             if ((Flag & DragManager.ACTIVE) == 0)
                 ctx.PushOpacity(Constants.DragOpacity * 1.8);
 
-            ctx.DrawRectangle(Brushes.White, null, new Rect(currentX += Constants.DropGlassLength, currentY += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2));
+            ctx.DrawRoundedRectangle(Brushes.White, null, new Rect(currentX += Constants.DropGlassLength, currentY += Constants.DropGlassLength, Constants.DropUnitLength - Constants.DropGlassLength * 2, Constants.DropUnitLength - Constants.DropGlassLength * 2), 3, 3);
             currentX += Constants.DropGlassLength;
             currentY += Constants.DropGlassLength + 2;
 

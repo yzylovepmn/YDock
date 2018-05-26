@@ -21,6 +21,7 @@
     <SolidColorBrush x:Key="MouseOnBackground" Color="#FF1C97EA"/>
     <SolidColorBrush x:Key="SelectedBackground" Color="#FFD4D4D4"/>
     <SolidColorBrush x:Key="BorderBrush" Color="#FFCCCEDB"/>
+    <SolidColorBrush x:Key="WindowBorderBrush" Color="#FF9B9FB9"/>
     <SolidColorBrush x:Key="ActiveHeaderBackground" Color="#FF007ACC"/>
     <SolidColorBrush x:Key="DisActiveHeaderBackground" Color="#FFEEEEF2"/>
     <SolidColorBrush x:Key="AnchorPanelBackground" Color="#FFEEEEF2"/>
@@ -444,7 +445,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:LayoutDragSplitter}">
-                    <Rectangle Fill="{TemplateBinding Background}"/>
+                    <Rectangle SnapsToDevicePixels="True" Fill="{TemplateBinding Background}"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -455,7 +456,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:AnchorHeaderControl}">
-                    <Border Background="{TemplateBinding Background}" Padding="3">
+                    <Border SnapsToDevicePixels="True"
+                        Background="{TemplateBinding Background}" Padding="3">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -463,8 +465,8 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock x:Name="HeaderTextBlock" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Text="{Binding Title}"/>
-                            <view:TexturePanel DataContext="{Binding}" Grid.Column="1" Margin="10,0,10,0"/>
-                            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                            <view:TexturePanel DataContext="{Binding}" Grid.Column="1" SnapsToDevicePixels="True" Margin="10,0,10,0"/>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" SnapsToDevicePixels="True">
                                 <ToggleButton x:Name="PART_DropMenu" IsChecked="{Binding RelativeSource={RelativeSource Self},Path=ContextMenu.IsOpen}" IsThreeState="False" Style="{StaticResource Header_TB_Style}"/>
                                 <Button x:Name="Maximize" Style="{StaticResource Anchor_Maximize}" Command="{x:Static command:GlobalCommands.MaximizeCommand}" Visibility="{Binding RelativeSource={RelativeSource Self},Path=IsEnabled,Converter={StaticResource BoolToVisibilityConverter}}"/>
                                 <Button x:Name="Restore" Style="{StaticResource Anchor_Restore}" Command="{x:Static command:GlobalCommands.RestoreCommand}" Visibility="{Binding RelativeSource={RelativeSource Self},Path=IsEnabled,Converter={StaticResource BoolToVisibilityConverter}}"/>
@@ -498,7 +500,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <view:AnchorHeaderControl DataContext="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model}" Style="{StaticResource LayoutHeaderControlStyle}"/>
+                            <view:AnchorHeaderControl SnapsToDevicePixels="True" DataContext="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model}" Style="{StaticResource LayoutHeaderControlStyle}"/>
                             <ContentPresenter Grid.Row="1" Content="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Content}"/>
                         </Grid>
                     </Border>
@@ -524,14 +526,15 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type view:DockBarItemControl}">
-                                <Border x:Name="Border" Margin="{TemplateBinding Margin}" Background="{TemplateBinding Background}">
-                                    <Grid>
+                                <Border x:Name="Border" Margin="{TemplateBinding Margin}" SnapsToDevicePixels="True"
+                                        Background="{TemplateBinding Background}">
+                                    <Grid SnapsToDevicePixels="True">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="3"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <Rectangle x:Name="Rect" Fill="{StaticResource BorderBrush}" Height="6" Grid.Row="2"/>
+                                        <Rectangle x:Name="Rect" SnapsToDevicePixels="True" Fill="{StaticResource BorderBrush}" Height="6" Grid.Row="2"/>
                                         <TextBlock x:Name="Title" VerticalAlignment="Center" Text="{Binding Path=Title}" TextTrimming="CharacterEllipsis"/>
                                     </Grid>
                                 </Border>
@@ -558,14 +561,15 @@
     </Style>
 
     <ControlTemplate x:Key="DocumentHeaderTemplate" TargetType="{x:Type view:DragTabItem}">
-        <Border Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
-            <Grid Margin="4,3">
+        <Border Name="Border" SnapsToDevicePixels="True"
+                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+            <Grid Margin="4,2,4,1" SnapsToDevicePixels="True">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Image VerticalAlignment="Center" Source="{Binding Path=ImageSource,Converter={StaticResource NullToDoNothingConverter}}" Stretch="Uniform"/>
+                <Image VerticalAlignment="Center" Height="12" Source="{Binding Path=ImageSource,Converter={StaticResource NullToDoNothingConverter}}" Stretch="Uniform"/>
                 <TextBlock x:Name="title" VerticalAlignment="Center" Margin="4,0,0,0" Text="{Binding Path=Title}" Grid.Column="1"/>
                 <Button x:Name="PART_Close" Margin="8,0,0,0" Grid.Column="2" Visibility="Hidden"
                         Style="{StaticResource Header_Close}" Command="{x:Static command:GlobalCommands.HideStatusCommand}"/>
@@ -598,12 +602,12 @@
             </Grid.RowDefinitions>
             <Rectangle x:Name="Rect" Height="2" SnapsToDevicePixels="True" Grid.Row="1" Fill="{StaticResource BorderBrush}"/>
             <Border x:Name="Border" SnapsToDevicePixels="True">
-                <Grid>
+                <Grid SnapsToDevicePixels="True">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="16"/>
                     </Grid.ColumnDefinitions>
-                    <view:DocumentPanel IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
+                    <view:DocumentPanel IsItemsHost="True" SnapsToDevicePixels="True" KeyboardNavigation.TabIndex="1"/>
                     <view:CustomToggleButton IsChecked="{Binding RelativeSource={RelativeSource Self},Path=DropContextMenu.IsOpen}" IsThreeState="False" Grid.Column="1" Style="{StaticResource DocumentToggleButtonStyle}">
                         <view:CustomToggleButton.DropContextMenu>
                             <view:CustomContextMenu ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.ChildrenSorted}">
@@ -612,7 +616,7 @@
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="{x:Type view:CustomContextMenu}">
-                                                    <Grid>
+                                                    <Grid SnapsToDevicePixels="True">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="*"/>
                                                             <ColumnDefinition Width="2"/>
@@ -643,7 +647,7 @@
                                                                         <ColumnDefinition Width="32"/>
                                                                         <ColumnDefinition Width="*"/>
                                                                     </Grid.ColumnDefinitions>
-                                                                    <Image Source="{Binding ImageSource}"/>
+                                                                    <Image Height="14" Source="{Binding ImageSource}"/>
                                                                     <TextBlock Foreground="Black" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Title}" Margin="10,0,50,0"/>
                                                                 </Grid>
                                                                 <ControlTemplate.Triggers>
@@ -690,7 +694,7 @@
     </ControlTemplate>
 
     <ControlTemplate x:Key="DocumentGroupControlDrag" TargetType="{x:Type view:LayoutDocumentGroupControl}">
-        <Grid KeyboardNavigation.TabNavigation="Local">
+        <Grid KeyboardNavigation.TabNavigation="Local" SnapsToDevicePixels="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -716,12 +720,12 @@
     </ControlTemplate>
 
     <ControlTemplate x:Key="AnchorSideGroupControlNormal" TargetType="{x:Type view:AnchorSideGroupControl}">
-        <Grid KeyboardNavigation.TabNavigation="Local">
+        <Grid KeyboardNavigation.TabNavigation="Local" SnapsToDevicePixels="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Border Background="Transparent" Grid.RowSpan="2"/>
+            <Border Background="Transparent" Grid.RowSpan="2" SnapsToDevicePixels="True"/>
             <Border x:Name="ContentPanel"
                                 VerticalAlignment="Stretch"
                                 HorizontalAlignment="Stretch"
@@ -736,7 +740,7 @@
                                               Margin="{TemplateBinding Padding}"
                                               SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
             </Border>
-            <view:AnchorSidePanel Grid.Row="1" x:Name="ItemsHost" Background="{StaticResource WindowBackground}" IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
+            <view:AnchorSidePanel Grid.Row="1" SnapsToDevicePixels="True" x:Name="ItemsHost" Background="{StaticResource WindowBackground}" IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
         </Grid>
         <ControlTemplate.Triggers>
             <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self},Path=Items.Count}" Value="1">
@@ -746,12 +750,12 @@
     </ControlTemplate>
 
     <ControlTemplate x:Key="AnchorSideGroupControlDrag" TargetType="{x:Type view:AnchorSideGroupControl}">
-        <Grid KeyboardNavigation.TabNavigation="Local">
+        <Grid KeyboardNavigation.TabNavigation="Local" SnapsToDevicePixels="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Border Background="Transparent" Grid.RowSpan="2"/>
+            <Border Background="Transparent" Grid.RowSpan="2" SnapsToDevicePixels="True"/>
             <Border x:Name="ContentPanel"
                                 VerticalAlignment="Stretch"
                                 HorizontalAlignment="Stretch"
@@ -815,7 +819,7 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type view:DragTabItem}">
-                                <Grid Background="{TemplateBinding Background}" HorizontalAlignment="Stretch">
+                                <Grid SnapsToDevicePixels="True" Background="{TemplateBinding Background}" HorizontalAlignment="Stretch">
                                     <Border Padding="4,2" SnapsToDevicePixels="True" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
                                         <TextBlock Foreground="{TemplateBinding Foreground}" TextTrimming="CharacterEllipsis" Text="{Binding Title}"/>
                                     </Border>
@@ -894,10 +898,10 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="8"/>
             </Grid.ColumnDefinitions>
-            <Border Margin="{TemplateBinding Padding}" Grid.Row="1" Grid.Column="1" ClipToBounds="True" BorderBrush="{TemplateBinding BorderBrush}"
+            <Border Margin="{TemplateBinding Padding}" Grid.Row="1" Grid.Column="1" SnapsToDevicePixels="True" BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}">
-                <Grid>
+                <Grid SnapsToDevicePixels="True">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="32"/>
                         <RowDefinition Height="*"/>
@@ -928,7 +932,7 @@
     </ControlTemplate>
 
     <Style TargetType="{x:Type view:DocumentGroupWindow}">
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource WindowBorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
         <Setter Property="shell:WindowChrome.WindowChrome">
@@ -937,14 +941,15 @@
                     ResizeBorderThickness="8"
                     CaptionHeight="28"
                     CornerRadius="0"
-                    GlassFrameThickness="0"
+                    GlassFrameThickness="2"
                     ShowSystemMenu="True"/>
             </Setter.Value>
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:DocumentGroupWindow}">
-                    <Grid Background="#01FFFFFF" Margin="{TemplateBinding Padding}">
+                    <Grid Background="#01FFFFFF" SnapsToDevicePixels="True"
+                          Margin="{TemplateBinding Padding}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="8"/>
                             <RowDefinition Height="*"/>
@@ -955,10 +960,10 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="8"/>
                         </Grid.ColumnDefinitions>
-                        <Border Grid.Row="1" Grid.Column="1" ClipToBounds="True" BorderBrush="{TemplateBinding BorderBrush}"
+                        <Border Grid.Row="1" Grid.Column="1" SnapsToDevicePixels="True" BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}">
-                            <Grid>
+                            <Grid SnapsToDevicePixels="True">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="32"/>
                                     <RowDefinition Height="*"/>
@@ -996,7 +1001,7 @@
     </Style>
 
     <Style TargetType="{x:Type view:AnchorGroupWindow}">
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource WindowBorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
         <Setter Property="shell:WindowChrome.WindowChrome">
@@ -1005,7 +1010,7 @@
                     ResizeBorderThickness="9"
                     CaptionHeight="20.5"
                     CornerRadius="0"
-                    GlassFrameThickness="0"
+                    GlassFrameThickness="2"
                     ShowSystemMenu="False"/>
             </Setter.Value>
         </Setter>
@@ -1031,7 +1036,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ydock:DockManager}">
-                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                    <Border Background="{TemplateBinding Background}" SnapsToDevicePixels="True"
+                            BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid FlowDirection="LeftToRight">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>

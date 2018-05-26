@@ -22,7 +22,7 @@ namespace YDock.View
             FocusableProperty.OverrideMetadata(typeof(DockBarGroupControl), new FrameworkPropertyMetadata(false));
         }
 
-        public DockBarGroupControl(ILayoutGroup model)
+        internal DockBarGroupControl(ILayoutGroup model)
         {
             Model = model;
 
@@ -57,7 +57,8 @@ namespace YDock.View
                 if (_model != value)
                 {
                     _model = value as ILayoutGroup;
-                    (_model as DockSideGroup).View = this;
+                    if (_model != null)
+                        (_model as DockSideGroup).View = this;
                 }
             }
         }

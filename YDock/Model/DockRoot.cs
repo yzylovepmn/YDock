@@ -24,7 +24,8 @@ namespace YDock.Model
             RightSide = new DockSideGroup();
             TopSide = new DockSideGroup();
             BottomSide = new DockSideGroup();
-            _documentModel = new LayoutDocumentGroup(DockMode.Normal, _dockManager);
+            _documentModels = new List<BaseLayoutGroup>();
+            _documentModels.Add(new LayoutDocumentGroup(DockMode.Normal, _dockManager));
         }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
@@ -35,7 +36,6 @@ namespace YDock.Model
         {
             get { return _dockManager; }
         }
-
         #endregion
 
 
@@ -147,14 +147,14 @@ namespace YDock.Model
             }
         }
 
-        private BaseLayoutGroup _documentModel;
-        internal BaseLayoutGroup DocumentModel
+        private List<BaseLayoutGroup> _documentModels;
+        internal List<BaseLayoutGroup> DocumentModels
         {
-            get { return _documentModel; }
+            get { return _documentModels; }
             set
             {
-                if (_documentModel != value)
-                    _documentModel = value;
+                if (_documentModels != value)
+                    _documentModels = value;
             }
         }
 
@@ -179,6 +179,8 @@ namespace YDock.Model
 
         public void Dispose()
         {
+            _documentModels.Clear();
+            _documentModels = null;
             LeftSide = null;
             RightSide = null;
             TopSide = null;

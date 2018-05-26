@@ -16,17 +16,22 @@ namespace YDock
     {
         internal DockControl(IDockElement prototype)
         {
-            _prototype = prototype;
-            (_prototype as DockElement).DockControl = this;
-            prototype.PropertyChanged += PropertyChanged;
+            _protoType = prototype;
+            (_protoType as DockElement).DockControl = this;
+            prototype.PropertyChanged += OnPrototypePropertyChanged;
+        }
+
+        private void OnPrototypePropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            PropertyChanged(_protoType, new PropertyChangedEventArgs(e.PropertyName));
         }
 
         #region ProtoType
-        private IDockElement _prototype;
+        private IDockElement _protoType;
 
-        public IDockElement Prototype
+        public IDockElement ProtoType
         {
-            get { return _prototype; }
+            get { return _protoType; }
         }
         #endregion
 
@@ -35,7 +40,7 @@ namespace YDock
         {
             get
             {
-                return _prototype.ID;
+                return _protoType.ID;
             }
         }
 
@@ -43,15 +48,16 @@ namespace YDock
         {
             get
             {
-                return _prototype.Title;
+                return _protoType.Title;
             }
+            set { _protoType.Title = value; }
         }
 
         public ImageSource ImageSource
         {
             get
             {
-                return _prototype.ImageSource;
+                return _protoType.ImageSource;
             }
         }
 
@@ -59,7 +65,7 @@ namespace YDock
         {
             get
             {
-                return _prototype.Content;
+                return _protoType.Content;
             }
         }
 
@@ -67,7 +73,7 @@ namespace YDock
         {
             get
             {
-                return _prototype.Side;
+                return _protoType.Side;
             }
         }
 
@@ -75,7 +81,7 @@ namespace YDock
         {
             get
             {
-                return _prototype.DockManager;
+                return _protoType.DockManager;
             }
         }
 
@@ -83,12 +89,12 @@ namespace YDock
         {
             get
             {
-                return _prototype.DesiredWidth;
+                return _protoType.DesiredWidth;
             }
 
             set
             {
-                _prototype.DesiredWidth = value;
+                _protoType.DesiredWidth = value;
             }
         }
 
@@ -96,47 +102,53 @@ namespace YDock
         {
             get
             {
-                return _prototype.DesiredHeight;
+                return _protoType.DesiredHeight;
             }
 
             set
             {
-                _prototype.DesiredHeight = value;
+                _protoType.DesiredHeight = value;
             }
         }
 
         public bool IsDocument
         {
-            get { return _prototype.IsDocument; }
+            get { return _protoType.IsDocument; }
         }
 
         public DockMode Mode
         {
             get
             {
-                return _prototype.Mode;
+                return _protoType.Mode;
             }
         }
 
         public bool IsVisible
         {
-            get { return _prototype.IsVisible; }
+            get { return _protoType.IsVisible; }
         }
 
         public bool IsActive
         {
-            get { return _prototype.IsActive; }
+            get { return _protoType.IsActive; }
         }
 
         public bool CanSelect
         {
-            get { return _prototype.CanSelect; }
+            get { return _protoType.CanSelect; }
         }
 
         public ILayoutGroup Container
         {
-            get { return _prototype.Container; }
+            get { return _protoType.Container; }
         }
+
+        public bool IsDocked => _protoType.IsDocked;
+
+        public bool IsFloat => _protoType.IsFloat;
+
+        public bool IsAutoHide => _protoType.IsAutoHide;
 
         /// <summary>
         /// 是否可以转为浮动模式
@@ -145,7 +157,7 @@ namespace YDock
         {
             get
             {
-                return _prototype == null ? false : _prototype.CanFloat;
+                return _protoType == null ? false : _protoType.CanFloat;
             }
         }
 
@@ -156,7 +168,7 @@ namespace YDock
         {
             get
             {
-                return _prototype == null ? false : _prototype.CanDock;
+                return _protoType == null ? false : _protoType.CanDock;
             }
         }
 
@@ -167,7 +179,7 @@ namespace YDock
         {
             get
             {
-                return _prototype == null ? false : _prototype.CanDockAsDocument;
+                return _protoType == null ? false : _protoType.CanDockAsDocument;
             }
         }
 
@@ -178,7 +190,7 @@ namespace YDock
         {
             get
             {
-                return _prototype == null ? false : _prototype.CanSwitchAutoHideStatus;
+                return _protoType == null ? false : _protoType.CanSwitchAutoHideStatus;
             }
         }
 
@@ -189,23 +201,27 @@ namespace YDock
         {
             get
             {
-                return _prototype == null ? false : _prototype.CanHide;
+                return _protoType == null ? false : _protoType.CanHide;
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
         #endregion
+
         /// <summary>
         /// 通用显示的方法。
         /// 显示的模式（Dock，Float，AnchorSide）与当前Status有关
         /// </summary>
         public void Show()
         {
-            if (IsVisible) return;
+            if (IsVisible && IsActive) return;
             if (Mode == DockMode.Float)
-                ToFloat();
-            else Container.SetActive(_prototype);
+            {
+                if (!IsDocument)
+                    ToFloat();
+                else ToDockAsDocument();
+            }
+            else Container.SetActive(_protoType);
         }
 
         /// <summary>
@@ -213,7 +229,10 @@ namespace YDock
         /// </summary>
         public void Hide()
         {
-            _prototype?.Hide();
+            if (Content is IDockDocSource
+                && !(Content as IDockDocSource).AllowClose())
+                return;
+            _protoType?.Hide();
         }
 
         /// <summary>
@@ -221,7 +240,7 @@ namespace YDock
         /// </summary>
         public void ToFloat()
         {
-            _prototype?.ToFloat();
+            _protoType?.ToFloat();
         }
 
         /// <summary>
@@ -229,7 +248,7 @@ namespace YDock
         /// </summary>
         public void ToDock()
         {
-            _prototype?.ToDock();
+            _protoType?.ToDock();
         }
 
         /// <summary>
@@ -237,7 +256,7 @@ namespace YDock
         /// </summary>
         public void ToDockAsDocument()
         {
-            _prototype?.ToDockAsDocument();
+            _protoType?.ToDockAsDocument();
         }
 
         /// <summary>
@@ -245,7 +264,7 @@ namespace YDock
         /// </summary>
         public void SwitchAutoHideStatus()
         {
-            _prototype?.SwitchAutoHideStatus();
+            _protoType?.SwitchAutoHideStatus();
         }
 
         /// <summary>
@@ -257,17 +276,27 @@ namespace YDock
             Hide();
         }
 
+        public void SetActive(bool _isActive = true)
+        {
+            if (_isActive)
+                _protoType.Container.SetActive(_protoType);
+            else if(DockManager.ActiveElement == _protoType)
+                DockManager.ActiveElement = null;
+        }
+
         private bool _isDisposed = false;
         public bool IsDisposed
         {
             get { return _isDisposed; }
         }
+
         public void Dispose()
         {
             if (_isDisposed) return;
-            _prototype.PropertyChanged -= PropertyChanged;
-            _prototype.Dispose();
-            _prototype = null;
+            DockManager.RemoveDockControl(this);
+            _protoType.PropertyChanged -= OnPrototypePropertyChanged;
+            _protoType.Dispose();
+            _protoType = null;
             _isDisposed = true;
         }
     }
