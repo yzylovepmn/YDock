@@ -150,6 +150,8 @@ namespace YDock
         #region Drag Action
         internal void IntoDragAction(DragItem dragItem, bool _isInvokeByFloatWnd = false)
         {
+            DockManager.UpdateWindowZOrder();
+
             _dragItem = dragItem;
             //被浮动窗口调用则不需要调用BeforeDrag()
             if (_isInvokeByFloatWnd)
@@ -440,6 +442,10 @@ namespace YDock
                     && !(wnd is DocumentGroupWindow && _dragItem.DragMode == DragMode.Anchor)
                     && !(wnd is AnchorGroupWindow && _dragItem.DragMode == DragMode.Document))
                 {
+                    if (wnd is DocumentGroupWindow)
+                        if (DockManager.IsBehindToMainWindow(wnd))
+                            continue;
+
                     if (wnd != DockManager.FloatWindows.First())
                     {
                         DockManager.MoveFloatTo(wnd);

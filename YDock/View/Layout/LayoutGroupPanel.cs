@@ -1348,7 +1348,6 @@ namespace YDock.View
 
         internal void _AttachChild(IDockView child, int index)
         {
-            //DockManager.ChangeDockMode(child, DockManager == null ? DockMode.Float : DockMode.Normal);
             Children.Insert(index, child as UIElement);
             if (Children.Count > 1)
             {

@@ -334,7 +334,7 @@ namespace YDock.Model
                 Mode = DockMode.Normal;
                 var dockManager = DockManager;
                 var group = _container as LayoutGroup;
-                if (group.AttachObj == null || !group.AttachObj.AttachTo())
+                if (group?.AttachObj == null || !group.AttachObj.AttachTo())
                 {
                     //默认向下停靠
                     if (Side == DockSide.None)
@@ -437,6 +437,8 @@ namespace YDock.Model
         public void Dispose()
         {
             if (_isDisposed) return;
+            if (_container != null)
+                _container.Detach(this);
             _dockControl = null;
             _content = null;
             _container = null;

@@ -156,13 +156,21 @@ namespace YDock.View
         }
 
 
-        public int ChildrenCount
+        public int ParentChildrenCount
         {
             get
             {
                 if (DockViewParent is LayoutGroupPanel)
                     return (DockViewParent as LayoutGroupPanel).Count;
                 else return 1;
+            }
+        }
+
+        public int ChildrenCount
+        {
+            get
+            {
+                return (_model as LayoutGroup).Children_CanSelect.Count();
             }
         }
 

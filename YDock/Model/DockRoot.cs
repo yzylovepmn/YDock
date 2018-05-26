@@ -12,8 +12,9 @@ namespace YDock.Model
 {
     public class DockRoot : DependencyObject, INotifyPropertyChanged, IDockModel
     {
-        public DockRoot()
+        public DockRoot(DockManager dockManager)
         {
+            _dockManager = dockManager;
             _InitSide();
         }
 
@@ -23,6 +24,7 @@ namespace YDock.Model
             RightSide = new DockSideGroup();
             TopSide = new DockSideGroup();
             BottomSide = new DockSideGroup();
+            _documentModel = new LayoutDocumentGroup(DockMode.Normal, _dockManager);
         }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
@@ -32,7 +34,6 @@ namespace YDock.Model
         public DockManager DockManager
         {
             get { return _dockManager; }
-            set { _dockManager = value; }
         }
 
         #endregion

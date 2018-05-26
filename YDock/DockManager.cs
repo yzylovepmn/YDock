@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Markup;
 using System.Windows.Media;
 using YDock.Enum;
@@ -26,7 +27,7 @@ namespace YDock
 
         public DockManager()
         {
-            Root = new DockRoot();
+            Root = new DockRoot(this);
             _dragManager = new DragManager(this);
             _dockControls = new List<IDockControl>();
             _floatWindows = new List<BaseFloatWindow>();
@@ -44,25 +45,34 @@ namespace YDock
                     if (_root != null)
                         _root.Dispose();
                     _root = value;
-                    if (_root != null)
-                        _root.DockManager = this;
                 }
             }
         }
         #endregion
 
-        #region DragManager
+        #region Drag
         private DragManager _dragManager;
         internal DragManager DragManager
         {
             get { return _dragManager; }
         }
+
+        public bool IsDragging { get { return _dragManager.IsDragging; } }
         #endregion
 
         #region MainWindow
+        private Window _mainWindow;
         public Window MainWindow
         {
-            get { return Window.GetWindow(this); }
+            get
+            {
+                if (_mainWindow == null)
+                {
+                    _mainWindow = Window.GetWindow(this);
+                    _mainWindow.Closing += OnMainWindowClosing;
+                }
+                return _mainWindow;
+            }
         }
         #endregion
 
@@ -495,6 +505,42 @@ namespace YDock
                 _floatWindows.Remove(window);
         }
 
+        internal List<Window> _windows = new List<Window>();
+        internal void UpdateWindowZOrder()
+        {
+            _windows.Clear();
+            List<Window> unsorts = new List<Window>();
+            foreach (Window wnd in Application.Current.Windows)
+                if (wnd is BaseFloatWindow)
+                    unsorts.Add(wnd);
+            unsorts.Add(MainWindow);
+            _windows.AddRange(SortWindowsTopToBottom(unsorts));
+        }
+
+        internal bool IsBehindToMainWindow(BaseFloatWindow wnd)
+        {
+            if (wnd is AnchorGroupWindow)
+                return false;
+            int index1 = _windows.IndexOf(_mainWindow);
+            int index2 = _windows.IndexOf(wnd);
+            return index2 > index1;
+        }
+
+        private IEnumerable<Window> SortWindowsTopToBottom(IEnumerable<Window> unsorted)
+        {
+            var byHandle = unsorted.ToDictionary(win =>
+              ((new WindowInteropHelper(win)).Handle));
+
+            for (IntPtr hWnd = Win32Helper.GetTopWindow(IntPtr.Zero); hWnd != IntPtr.Zero; hWnd = Win32Helper.GetWindow(hWnd, Win32Helper.GW_HWNDNEXT))
+                if (byHandle.ContainsKey(hWnd))
+                    yield return byHandle[hWnd];
+        }
+
+        private void OnMainWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            foreach (var fwnd in _floatWindows)
+                fwnd.Close();
+        }
 
         public void Dispose()
         {
@@ -507,6 +553,10 @@ namespace YDock
             _dockControls.Clear();
             _dockControls = null;
             Root = null;
+            _mainWindow.Closing -= OnMainWindowClosing;
+            _mainWindow = null;
+            _windows.Clear();
+            _windows = null;
         }
     }
 }

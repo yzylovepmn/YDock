@@ -328,7 +328,7 @@ namespace YDock.View
                                 if (layoutCrtl.DockViewParent != null)
                                 {
                                     layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
-                                    flag &= layoutpanel.Direction != Direction.UpToDown;
+                                    flag &= layoutpanel.Direction != Direction.UpToDown && layoutCrtl.ChildrenCount > 0;
                                 }
                                 if (flag)
                                 {
@@ -372,7 +372,7 @@ namespace YDock.View
                                 if (layoutCrtl.DockViewParent != null)
                                 {
                                     layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
-                                    flag &= layoutpanel.Direction != Direction.UpToDown;
+                                    flag &= layoutpanel.Direction != Direction.UpToDown && layoutCrtl.ChildrenCount > 0;
                                 }
                                 if (flag)
                                 {
@@ -416,7 +416,7 @@ namespace YDock.View
                                 if (layoutCrtl.DockViewParent != null)
                                 {
                                     layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
-                                    flag &= layoutpanel.Direction != Direction.LeftToRight;
+                                    flag &= layoutpanel.Direction != Direction.LeftToRight && layoutCrtl.ChildrenCount > 0;
                                 }
                                 if (flag)
                                 {
@@ -460,7 +460,7 @@ namespace YDock.View
                                 if (layoutCrtl.DockViewParent != null)
                                 {
                                     layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
-                                    flag &= layoutpanel.Direction != Direction.LeftToRight;
+                                    flag &= layoutpanel.Direction != Direction.LeftToRight && layoutCrtl.ChildrenCount > 0;
                                 }
                                 if (flag)
                                 {

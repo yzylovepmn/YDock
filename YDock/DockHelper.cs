@@ -21,18 +21,6 @@ namespace YDock
             return (T)template.FindName(name, templateParent);
         }
 
-        public static Window CreateTransparentWindow()
-        {
-            return new Window()
-            {
-                AllowsTransparency = true,
-                Background = Brushes.LightSkyBlue,
-                WindowStyle = WindowStyle.None,
-                ShowInTaskbar = false,
-                ShowActivated = false
-            };
-        }
-
         public static Rect CreateChildRectFromParent(FrameworkElement parent, FrameworkElement child)
         {
             var originP = parent.PointToScreenDPIWithoutFlowDirection(new Point());
@@ -87,7 +75,7 @@ namespace YDock
                         wnd.Width += hrectoffset;
                         left -= hrectoffset;
                     }
-                    if (index == dcrt.ChildrenCount - 1)
+                    if (index == dcrt.ParentChildrenCount - 1)
                         wnd.Width += hrectoffset;
                 }
                 if (wnd.DropPanel.InnerRect.Height < wnd.MinHeight)
@@ -98,7 +86,7 @@ namespace YDock
                         wnd.Height += vrectoffset;
                         top -= vrectoffset;
                     }
-                    if (index == dcrt.ChildrenCount - 1)
+                    if (index == dcrt.ParentChildrenCount - 1)
                         wnd.Height += vrectoffset;
                 }
 
@@ -450,7 +438,6 @@ namespace YDock
 
         public const uint GW_HWNDNEXT = 2;
         public const uint GW_HWNDPREV = 3;
-
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
