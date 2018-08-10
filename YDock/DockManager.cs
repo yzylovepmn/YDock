@@ -27,7 +27,7 @@ namespace YDock
 
         public DockManager()
         {
-            Root = new DockRoot(this);
+            Root = new DockRoot();
             _dragManager = new DragManager(this);
             _dockControls = new Dictionary<int, IDockControl>();
             _floatWindows = new List<BaseFloatWindow>();
@@ -47,6 +47,8 @@ namespace YDock
                     if (_root != null)
                         _root.Dispose();
                     _root = value;
+                    if (_root != null)
+                        _root.DockManager = this;
                 }
             }
         }

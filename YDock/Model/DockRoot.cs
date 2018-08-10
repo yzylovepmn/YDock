@@ -12,11 +12,7 @@ namespace YDock.Model
 {
     public class DockRoot : DependencyObject, INotifyPropertyChanged, IDockModel
     {
-        public DockRoot(DockManager dockManager)
-        {
-            _dockManager = dockManager;
-            _InitSide();
-        }
+        public DockRoot() { }
 
         private void _InitSide()
         {
@@ -35,6 +31,12 @@ namespace YDock.Model
         public DockManager DockManager
         {
             get { return _dockManager; }
+            set
+            {
+                _dockManager = value;
+                if (_dockManager != null)
+                    _InitSide();
+            }
         }
         #endregion
 
