@@ -127,6 +127,32 @@ namespace YDock.View
             }
         }
 
+        public double FloatLeft
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public double FloatTop
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         private Direction _direction = Direction.None;
         public Direction Direction
         {
@@ -1443,6 +1469,7 @@ namespace YDock.View
             get { return _dropMode; }
             set { _dropMode = value; }
         }
+
         DropWindow _dragWnd;
         public void OnDrop(DragItem source)
         {

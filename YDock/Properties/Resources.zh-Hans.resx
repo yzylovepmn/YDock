@@ -150,4 +150,16 @@
   <data name="Window_Position" xml:space="preserve">
     <value>窗口位置</value>
   </data>
+  <data name="Close_All_Except" xml:space="preserve">
+    <value>除此之外全部关闭(_A)</value>
+  </data>
+  <data name="Close_All" xml:space="preserve">
+    <value>全部关闭</value>
+  </data>
+  <data name="Float_All" xml:space="preserve">
+    <value>全部浮动</value>
+  </data>
+  <data name="_Close" xml:space="preserve">
+    <value>关闭(_C)</value>
+  </data>
 </root>

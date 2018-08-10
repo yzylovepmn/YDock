@@ -51,9 +51,9 @@ namespace YDock.Interface
     public interface IDockItem
     {
         bool IsDisposed { get; }
-        void ToFloat();
-        void ToDock();
-        void ToDockAsDocument();
+        void ToFloat(bool isActive = true);
+        void ToDock(bool isActive = true);
+        void ToDockAsDocument(bool isActive = true);
         void SwitchAutoHideStatus();
         void Hide();
         bool CanFloat { get; }

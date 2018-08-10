@@ -119,6 +119,55 @@ namespace YDock.Model
             base.Attach(element, index);
         }
 
+        public override void ToFloat()
+        {
+            BaseFloatWindow wnd;
+            BaseGroupControl ctrl;
+            BaseLayoutGroup group;
+            var dockManager = _dockManager;
+            var children = _children.ToList();
+            var ele = children.First();
+            //hide all first
+            foreach (var child in children)
+                Detach(child);
+
+            if (this is LayoutDocumentGroup)
+            {
+                group = new LayoutDocumentGroup(DockMode.Float, dockManager);
+                foreach (var child in children)
+                    group.Attach(child);
+
+                ctrl = new LayoutDocumentGroupControl(group) { DesiredHeight = ele.DesiredHeight, DesiredWidth = ele.DesiredWidth };
+                wnd = new DocumentGroupWindow(dockManager)
+                {
+                    Height = ele.DesiredHeight,
+                    Width = ele.DesiredWidth,
+                    Left = ele.FloatLeft,
+                    Top = ele.FloatTop
+                };
+            }
+            else
+            {
+                group = new LayoutGroup(_side, DockMode.Float, dockManager);
+                foreach (var child in children)
+                    group.Attach(child);
+
+                ctrl = new AnchorSideGroupControl(group) { DesiredHeight = ele.DesiredHeight, DesiredWidth = ele.DesiredWidth };
+                wnd = new AnchorGroupWindow(dockManager)
+                {
+                    Height = ele.DesiredHeight,
+                    Width = ele.DesiredWidth,
+                    Left = ele.FloatLeft,
+                    Top = ele.FloatTop
+                };
+            }
+
+            wnd.AttachChild(ctrl, AttachMode.None, 0);
+            wnd.Show();
+
+            dockManager.ActiveControl.SetActive();
+        }
+
         private void _DetachFromParent()
         {
             if ((_view as ILayoutGroupControl).TryDeatchFromParent())

@@ -189,6 +189,21 @@ namespace YDock.Model
             (element as DockElement).Mode = _mode;
         }
 
+        public void CloseAll()
+        {
+            foreach (var child in _children.ToList())
+                child.Hide();
+        }
+
+        public void CloseAllExcept(IDockElement element)
+        {
+            foreach (var child in _children.ToList())
+                if (child != element)
+                    child.Hide();
+        }
+
+        public abstract void ToFloat();
+
         public virtual void Dispose()
         {
             _children.CollectionChanged -= OnChildrenCollectionChanged;

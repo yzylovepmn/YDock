@@ -17,6 +17,7 @@ namespace YDock.View
             using (var ctx = RenderOpen())
             {
                 var model = (VisualParent as FrameworkElement).DataContext as DockElement;
+                if (model == null) return;
                 if (model.IsActive)
                 {
                     ctx.DrawLine(ResourceManager.ActiveDashPen, new Point(0, voffset), new Point(size.Width, voffset));

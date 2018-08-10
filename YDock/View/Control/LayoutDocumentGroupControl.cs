@@ -58,8 +58,8 @@ namespace YDock.View
                         parent.DetachChild(this, false);
                         var panel = new LayoutGroupDocumentPanel()
                         {
-                            DesiredWidth = parent.ActualWidth,
-                            DesiredHeight = parent.ActualHeight,
+                            DesiredWidth = Math.Max(parent.ActualWidth, Constants.DockDefaultWidthLength),
+                            DesiredHeight = Math.Max(parent.ActualHeight, Constants.DockDefaultHeightLength),
                             Direction = (DropMode == DropMode.Left_WithSplit || DropMode == DropMode.Right_WithSplit) ? Direction.LeftToRight : Direction.UpToDown
                         };
                         panel._AttachChild(this, 0);
@@ -92,7 +92,10 @@ namespace YDock.View
                 }
                 else
                 {
+                    DockManager.FormatChildSize(child as ILayoutSize, new Size(ActualWidth, ActualHeight));
+
                     var _parent = Parent as LayoutGroupDocumentPanel;
+                    var child_size = child as ILayoutSize;
                     if (_parent.DockViewParent is LayoutRootPanel)
                     {
                         var rootPanel = _parent.DockViewParent as LayoutRootPanel;

@@ -111,6 +111,32 @@ namespace YDock
             }
         }
 
+        public double FloatLeft
+        {
+            get
+            {
+                return _protoType.FloatLeft;
+            }
+
+            set
+            {
+                _protoType.FloatLeft = value;
+            }
+        }
+
+        public double FloatTop
+        {
+            get
+            {
+                return _protoType.FloatTop;
+            }
+
+            set
+            {
+                _protoType.FloatTop = value;
+            }
+        }
+
         public bool IsDocument
         {
             get { return _protoType.IsDocument; }
@@ -238,25 +264,25 @@ namespace YDock
         /// <summary>
         /// 转为浮动窗口
         /// </summary>
-        public void ToFloat()
+        public void ToFloat(bool isActive = true)
         {
-            _protoType?.ToFloat();
+            _protoType?.ToFloat(isActive);
         }
 
         /// <summary>
         /// 转为Dock模式
         /// </summary>
-        public void ToDock()
+        public void ToDock(bool isActive = true)
         {
-            _protoType?.ToDock();
+            _protoType?.ToDock(isActive);
         }
 
         /// <summary>
         /// 转为Document模式
         /// </summary>
-        public void ToDockAsDocument()
+        public void ToDockAsDocument(bool isActive = true)
         {
-            _protoType?.ToDockAsDocument();
+            _protoType?.ToDockAsDocument(isActive);
         }
 
         /// <summary>

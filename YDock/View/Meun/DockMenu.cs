@@ -19,33 +19,6 @@ namespace YDock.View
             ResourceExtension.LanaguageChanged += OnLanaguageChanged;
         }
 
-        private void OnLanaguageChanged(object sender, EventArgs e)
-        {
-            int index = 0;
-            foreach (MenuItem item in Items)
-            {
-                switch (index)
-                {
-                    case 0:
-                        item.Header = Properties.Resources.Float;
-                        break;
-                    case 1:
-                        item.Header = Properties.Resources.Dock;
-                        break;
-                    case 2:
-                        item.Header = Properties.Resources.Dock_Document;
-                        break;
-                    case 3:
-                        item.Header = Properties.Resources.AutoHide;
-                        break;
-                    case 4:
-                        item.Header = Properties.Resources.Hide;
-                        break;
-                }
-                index++;
-            }
-        }
-
         private IDockItem _targetObj;
         public IDockItem TargetObj { get { return _targetObj; } }
 
@@ -79,6 +52,33 @@ namespace YDock.View
                         break;
                 }
                 Items.Add(item);
+            }
+        }
+
+        private void OnLanaguageChanged(object sender, EventArgs e)
+        {
+            int index = 0;
+            foreach (MenuItem item in Items)
+            {
+                switch (index)
+                {
+                    case 0:
+                        item.Header = Properties.Resources.Float;
+                        break;
+                    case 1:
+                        item.Header = Properties.Resources.Dock;
+                        break;
+                    case 2:
+                        item.Header = Properties.Resources.Dock_Document;
+                        break;
+                    case 3:
+                        item.Header = Properties.Resources.AutoHide;
+                        break;
+                    case 4:
+                        item.Header = Properties.Resources.Hide;
+                        break;
+                }
+                index++;
             }
         }
 
@@ -129,6 +129,7 @@ namespace YDock.View
 
         public void Dispose()
         {
+            ResourceExtension.LanaguageChanged -= OnLanaguageChanged;
             _targetObj = null;
         }
     }

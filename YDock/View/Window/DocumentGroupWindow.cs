@@ -29,8 +29,8 @@ namespace YDock.View
             {
                 BeginTime = TimeSpan.FromSeconds(0.4)
             };
-            _backgroundAnimation = new ColorAnimation(Colors.Transparent, ResourceManager.SplitterBrushVertical.Color, new Duration(TimeSpan.FromMilliseconds(1)));
-            _borderBrushAnimation = new ColorAnimation(Colors.Transparent, ResourceManager.WindowBorderBrush.Color, new Duration(TimeSpan.FromMilliseconds(1)))
+            _backgroundAnimation = new ColorAnimation(Colors.WhiteSmoke, ResourceManager.SplitterBrushVertical.Color, new Duration(TimeSpan.FromMilliseconds(1)));
+            _borderBrushAnimation = new ColorAnimation(Colors.WhiteSmoke, ResourceManager.WindowBorderBrush.Color, new Duration(TimeSpan.FromMilliseconds(1)))
             {
                 BeginTime = TimeSpan.FromSeconds(0.2)
             };
@@ -53,7 +53,7 @@ namespace YDock.View
 
         private void OnMinimizeExecute(object sender, ExecutedRoutedEventArgs e)
         {
-            WindowState = WindowState.Minimized;
+            SystemCommands.MinimizeWindow(this);
         }
 
         public override void AttachChild(IDockView child, AttachMode mode, int index)
@@ -85,13 +85,14 @@ namespace YDock.View
                 Storyboard.SetTarget(_borderBrushAnimation, this);
                 Storyboard.SetTargetProperty(_borderBrushAnimation, new PropertyPath("(0).(1)", new DependencyProperty[] { BorderBrushProperty, SolidColorBrush.ColorProperty }));
                 _board.Begin(this);
+
+                Top -= Constants.FloatWindowHeaderHeight;
             }
             else
             {
                 NeedReCreate = true;
-                header.Visibility = Visibility.Hidden;
-                Background = Brushes.Transparent;
-                BorderBrush = Brushes.Transparent;
+                Background = Brushes.WhiteSmoke;
+                BorderBrush = Brushes.WhiteSmoke;
                 var layoutCtrl = Child as BaseGroupControl;
                 layoutCtrl.BorderThickness = new Thickness(1);
                 layoutCtrl.IsDraggingFromDock = true;
@@ -104,7 +105,7 @@ namespace YDock.View
             base.OnApplyTemplate();
             header = (DockPanel)GetTemplateChild("PART_Header");
             if (_needReCreate)
-                header.Visibility = Visibility.Hidden;
+                header.Visibility = Visibility.Collapsed;
         }
     }
 }

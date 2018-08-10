@@ -53,6 +53,12 @@ namespace YDock.Model
                 DockManager.AutoHideElement = null;
         }
 
+        public override void ToFloat()
+        {
+            foreach (var child in _children.ToList())
+                child.ToFloat();
+        }
+
         public override void Dispose()
         {
             base.Dispose();

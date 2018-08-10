@@ -70,6 +70,15 @@ namespace YDock.Properties {
         }
         
         /// <summary>
+        ///   查找类似 Close(_C) 的本地化字符串。
+        /// </summary>
+        public static string _Close {
+            get {
+                return ResourceManager.GetString("_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 AutoHide(_A) 的本地化字符串。
         /// </summary>
         public static string AutoHide {
@@ -84,6 +93,24 @@ namespace YDock.Properties {
         public static string Close {
             get {
                 return ResourceManager.GetString("Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Close all 的本地化字符串。
+        /// </summary>
+        public static string Close_All {
+            get {
+                return ResourceManager.GetString("Close_All", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Close all except this(_A) 的本地化字符串。
+        /// </summary>
+        public static string Close_All_Except {
+            get {
+                return ResourceManager.GetString("Close_All_Except", resourceCulture);
             }
         }
         
@@ -111,6 +138,15 @@ namespace YDock.Properties {
         public static string Float {
             get {
                 return ResourceManager.GetString("Float", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Float all 的本地化字符串。
+        /// </summary>
+        public static string Float_All {
+            get {
+                return ResourceManager.GetString("Float_All", resourceCulture);
             }
         }
         

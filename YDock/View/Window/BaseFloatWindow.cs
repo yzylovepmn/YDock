@@ -23,11 +23,11 @@ namespace YDock.View
             _dockManager = dockManager;
             MinWidth = 150;
             MinHeight = 60;
-            _widthEceeed = Constants.FloatWindowResizeLength * 2;
-            _heightEceeed = Constants.FloatWindowResizeLength * 2;
+            _widthEceeed = 0;
+            _heightEceeed = 0;
             NeedReCreate = needReCreate;
-            AllowsTransparency = true;
-            WindowStyle = WindowStyle.None;
+            //AllowsTransparency = true;
+            //WindowStyle = WindowStyle.None;
             ShowActivated = true;
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -118,7 +118,11 @@ namespace YDock.View
                         _UpdateLocation(child as IDockView);
 
                 if (obj is BaseGroupControl)
-                    _UpdateLocation((obj as BaseGroupControl).Model);
+                {
+                    var size = obj as ILayoutSize;
+                    size.FloatLeft = Left;
+                    size.FloatTop = Top;
+                }
 
                 if (obj is BaseLayoutGroup)
                 {
@@ -147,7 +151,7 @@ namespace YDock.View
 
         protected void OnMaximizeExecute(object sender, ExecutedRoutedEventArgs e)
         {
-            WindowState = WindowState.Maximized;
+            SystemCommands.MaximizeWindow(this);
         }
 
         protected virtual void OnRestoreCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -157,7 +161,7 @@ namespace YDock.View
 
         protected void OnRestoreExecute(object sender, ExecutedRoutedEventArgs e)
         {
-            WindowState = WindowState.Normal;
+            SystemCommands.RestoreWindow(this);
         }
 
         protected void OnCloseCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -167,11 +171,17 @@ namespace YDock.View
 
         protected void OnCloseExecute(object sender, ExecutedRoutedEventArgs e)
         {
+            SystemCommands.CloseWindow(this);
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            if (_dockManager == null) return;
             var child = Child;
             DetachChild(Child);
             if (child is IDisposable)
                 (child as IDisposable).Dispose();
-            Close();
         }
         #endregion
 
@@ -200,14 +210,6 @@ namespace YDock.View
         {
             get { return _needReCreate; }
             set { _needReCreate = value; }
-        }
-
-        internal Rect Location
-        {
-            get
-            {
-                return new Rect(Left, Top, Width, Height);
-            }
         }
 
         protected bool _isDragging = false;

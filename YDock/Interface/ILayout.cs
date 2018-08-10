@@ -36,6 +36,8 @@ namespace YDock.Interface
     {
         double DesiredWidth { get; set; }
         double DesiredHeight { get; set; }
+        double FloatLeft { get; set; }
+        double FloatTop { get; set; }
     }
 
     public interface ILayoutGroup : IDockModel, INotifyPropertyChanged
@@ -49,6 +51,9 @@ namespace YDock.Interface
         void Detach(IDockElement element);
         void Attach(IDockElement element, int index = -1);
         void RaisePropertyChanged(string propertyName);
+        void CloseAll();
+        void CloseAllExcept(IDockElement element);
+        void ToFloat();
     }
 
     public interface ILayoutGroupControl : ILayoutViewWithSize, INotifyDisposable, INotifyPropertyChanged

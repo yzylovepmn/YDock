@@ -83,8 +83,8 @@ namespace YDock.View
         {
             base.OnClick();
             var ele = DataContext as IDockElement;
-            if (ele.Container is LayoutDocumentGroup)
-                (ele.Container as LayoutDocumentGroup).SetActive(ele);
+            if (ele.Container is ILayoutGroup)
+                (ele.Container as ILayoutGroup).SetActive(ele);
         }
     }
 }

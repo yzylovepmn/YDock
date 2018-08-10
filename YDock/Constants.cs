@@ -14,7 +14,6 @@ namespace YDock
         public const double DockDefaultWidthLength = 300;
         public const double DockDefaultHeightLength = 300;
         public const double FloatWindowHeaderHeight = 32;
-        public const double FloatWindowResizeLength = 8;
         public const double DocumentWindowPadding = 6;
         public const double DropUnitLength = 40;
         public const double DropCornerLength = 10;

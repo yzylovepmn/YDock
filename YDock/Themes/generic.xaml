@@ -3,7 +3,6 @@
                     xmlns:ydock="clr-namespace:YDock"
                     xmlns:view="clr-namespace:YDock.View"
                     xmlns:enum="clr-namespace:YDock.Enum"
-                    xmlns:shell="clr-namespace:Microsoft.Windows.Shell"
                     xmlns:converters="clr-namespace:YDock.Converters"
                     xmlns:command="clr-namespace:YDock.Commands"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
@@ -27,148 +26,67 @@
     <SolidColorBrush x:Key="AnchorPanelBackground" Color="#FFEEEEF2"/>
     <SolidColorBrush x:Key="ActivePanelItemBackground" Color="#FFC9DEF5"/>
 
+    <Style x:Key="CustomContextMenuStyle" TargetType="{x:Type view:CustomContextMenu}">
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type view:CustomContextMenu}">
+                    <Grid SnapsToDevicePixels="True">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="8"/>
+                        </Grid.RowDefinitions>
+                        <Grid.Effect>
+                            <DropShadowEffect Opacity="0.4" Color="Black" ShadowDepth="3"/>
+                        </Grid.Effect>
+                        <Border Background="#FFF6F6F6" Padding="2" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True">
+                            <StackPanel IsItemsHost="True"/>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="{x:Type view:CustomMenuItem}">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type view:CustomMenuItem}">
+                                <Grid Background="{TemplateBinding Background}" Height="22">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="32"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Height="14" Source="{Binding ImageSource}"/>
+                                    <TextBlock Foreground="Black" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Title}" Margin="10,0,50,0"/>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource ActivePanelItemBackground}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="WindowButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="VerticalAlignment" Value="Top"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
         <Setter Property="Background" Value="{StaticResource DisActiveHeaderBackground}"/>
         <Setter Property="Height" Value="20"/>
         <Setter Property="Width" Value="24"/>
-    </Style>
-
-    <Style x:Key="Window_Close" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
-        <Setter Property="ToolTip" Value="{Global:Resource Key=Close}"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                        <Image x:Name="Image" Height="10" Source="/YDock;component/Resource/Image/Close_Black.png"/>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="White"/>
-                            <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Close_Active.png"/>
-                        </Trigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsMouseOver" Value="True"/>
-                                <Condition Property="IsPressed" Value="True"/>
-                            </MultiTrigger.Conditions>
-                            <MultiTrigger.Setters>
-                                <Setter Property="Background" Value="{StaticResource ActiveHeaderBackground}"/>
-                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Close_White.png"/>
-                            </MultiTrigger.Setters>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsMouseOver" Value="False"/>
-                                <Condition Property="IsPressed" Value="True"/>
-                            </MultiTrigger.Conditions>
-                            <MultiTrigger.Setters>
-                                <Setter Property="Background" Value="White"/>
-                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Close_Active.png"/>
-                            </MultiTrigger.Setters>
-                        </MultiTrigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="Window_Restore" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
-        <Setter Property="ToolTip" Value="{Global:Resource Key=Restore}"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                        <Image x:Name="Image" Height="10" Source="/YDock;component/Resource/Image/Restore_Black.png"/>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="White"/>
-                            <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Restore_Active.png"/>
-                        </Trigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsMouseOver" Value="True"/>
-                                <Condition Property="IsPressed" Value="True"/>
-                            </MultiTrigger.Conditions>
-                            <MultiTrigger.Setters>
-                                <Setter Property="Background" Value="{StaticResource ActiveHeaderBackground}"/>
-                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Restore_White.png"/>
-                            </MultiTrigger.Setters>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsMouseOver" Value="False"/>
-                                <Condition Property="IsPressed" Value="True"/>
-                            </MultiTrigger.Conditions>
-                            <MultiTrigger.Setters>
-                                <Setter Property="Background" Value="White"/>
-                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Restore_Active.png"/>
-                            </MultiTrigger.Setters>
-                        </MultiTrigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="Window_Maximize" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
-        <Setter Property="ToolTip" Value="{Global:Resource Key=Maximize}"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                        <Image x:Name="Image" Height="10" Source="/YDock;component/Resource/Image/Maximize_Black.png"/>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="White"/>
-                            <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Maximize_Active.png"/>
-                        </Trigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsMouseOver" Value="True"/>
-                                <Condition Property="IsPressed" Value="True"/>
-                            </MultiTrigger.Conditions>
-                            <MultiTrigger.Setters>
-                                <Setter Property="Background" Value="{StaticResource ActiveHeaderBackground}"/>
-                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Maximize_White.png"/>
-                            </MultiTrigger.Setters>
-                        </MultiTrigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsMouseOver" Value="False"/>
-                                <Condition Property="IsPressed" Value="True"/>
-                            </MultiTrigger.Conditions>
-                            <MultiTrigger.Setters>
-                                <Setter Property="Background" Value="White"/>
-                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Maximize_Active.png"/>
-                            </MultiTrigger.Setters>
-                        </MultiTrigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="Window_Minimize" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
-        <Setter Property="ToolTip" Value="{Global:Resource Key=Minimize}"/>
-        <Setter Property="Height" Value="24"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                        <Path VerticalAlignment="Center" Data="M0,0 L10,0 Z" Width="10" StrokeThickness="5" Stroke="{TemplateBinding Foreground}"/>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="IsTabStop" Value="False"/>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="White"/>
@@ -184,32 +102,85 @@
                     <Setter Property="Foreground" Value="White"/>
                 </MultiTrigger.Setters>
             </MultiTrigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsMouseOver" Value="False"/>
-                    <Condition Property="IsPressed" Value="True"/>
-                </MultiTrigger.Conditions>
-                <MultiTrigger.Setters>
-                    <Setter Property="Background" Value="White"/>
-                    <Setter Property="Foreground" Value="{StaticResource ActiveHeaderBackground}"/>
-                </MultiTrigger.Setters>
-            </MultiTrigger>
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="Window_Close" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid SnapsToDevicePixels="True" Background="{TemplateBinding Background}" ToolTip="{Global:Resource Key=Close}">
+                        <Path VerticalAlignment="Center" HorizontalAlignment="Center"
+                              Data="M2,1 L6,5 L10,1 L11,2 L7,6 L11,10 L10,11 L6,7 L2,11 L1,10 L5,6 L1,2 Z"
+                              Width="12" Height="12" UseLayoutRounding="True"
+                              Fill="{TemplateBinding Foreground}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Window_Restore" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid SnapsToDevicePixels="True" ToolTip="{Global:Resource Key=Restore}" Background="{TemplateBinding Background}">
+                        <Path VerticalAlignment="Center" HorizontalAlignment="Center"
+                              Data="M1,5 L1,11 L8,11 L8,5 Z M4,2 L4,3 L9,3 L9,8 L11,8 L11,2 Z M3,0 L12,0 L12,9 L9,9 L9,12 L0,12 L0,3 L3,3 Z"
+                              Width="12" Height="12" UseLayoutRounding="True"
+                              Fill="{TemplateBinding Foreground}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Window_Maximize" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid SnapsToDevicePixels="True" ToolTip="{Global:Resource Key=Maximize}" Background="{TemplateBinding Background}">
+                        <Path VerticalAlignment="Center" HorizontalAlignment="Center"
+                              Data="M1,4 L1,11 L11,11 L11,4 Z M0,1 L12,1 L12,12 L0,12 Z"
+                              Width="12" Height="12" UseLayoutRounding="True"
+                              Fill="{TemplateBinding Foreground}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Window_Minimize" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowButtonStyle}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid SnapsToDevicePixels="True" ToolTip="{Global:Resource Key=Minimize}" Background="{TemplateBinding Background}">
+                        <Path VerticalAlignment="Center" HorizontalAlignment="Center"
+                              Data="M0,5 L12,5 L12,7 L0,7 Z"
+                              Width="12" Height="12" UseLayoutRounding="True"
+                              Fill="{TemplateBinding Foreground}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="Header_Close" TargetType="{x:Type Button}">
-        <Setter Property="ToolTip" Value="{Global:Resource Key=Close}"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
         <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="White"/>
         <Setter Property="Height" Value="16"/>
         <Setter Property="Width" Value="16"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                    <Border SnapsToDevicePixels="True" ToolTip="{Global:Resource Key=Close}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}">
-                        <Image x:Name="Image" Height="8" Source="/YDock;component/Resource/Image/Close_White.png"/>
+                        <Path VerticalAlignment="Center" HorizontalAlignment="Center"
+                              Data="M2,1 L6,5 L10,1 L11,2 L7,6 L11,10 L10,11 L6,7 L2,11 L1,10 L5,6 L1,2 Z"
+                              Width="12" Height="12" UseLayoutRounding="True"
+                              Fill="{TemplateBinding Foreground}"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <MultiDataTrigger>
@@ -218,7 +189,7 @@
                                 <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type view:DragTabItem}},Path=Content.IsActive}" Value="False"/>
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.Setters>
-                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Close_Black.png"/>
+                                <Setter Property="Foreground" Value="Black"/>
                             </MultiDataTrigger.Setters>
                         </MultiDataTrigger>
                     </ControlTemplate.Triggers>
@@ -263,10 +234,10 @@
     </Style>
 
     <Style x:Key="CustomToggleButtonStyle" TargetType="{x:Type ToggleButton}">
-        <Setter Property="Width" Value="16"/>
+        <Setter Property="Width" Value="18"/>
         <Setter Property="Height" Value="16"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -280,7 +251,6 @@
     </Style>
 
     <Style x:Key="Header_TB_Style" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource CustomToggleButtonStyle}">
-        <Setter Property="ToolTip" Value="{Global:Resource Key=Window_Position}"/>
         <Setter Property="Foreground" Value="Black"/>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
@@ -328,14 +298,18 @@
 
     <Style x:Key="Anchor_Btn" TargetType="{x:Type Button}">
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
         <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="White"/>
         <Setter Property="Height" Value="16"/>
-        <Setter Property="Width" Value="16"/>
+        <Setter Property="Width" Value="18"/>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="#FFF7F7F9"/>
             </Trigger>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DataContext.IsActive}" Value="False">
+                <Setter Property="Foreground" Value="Black"/>
+            </DataTrigger>
             <MultiDataTrigger>
                 <MultiDataTrigger.Conditions>
                     <Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=IsMouseOver}" Value="True"/>
@@ -352,90 +326,298 @@
                 </MultiTrigger.Conditions>
                 <MultiTrigger.Setters>
                     <Setter Property="Background" Value="#FF0E6198"/>
+                    <Setter Property="Foreground" Value="White"/>
                 </MultiTrigger.Setters>
             </MultiTrigger>
         </Style.Triggers>
     </Style>
 
     <Style x:Key="Anchor_Close" TargetType="{x:Type Button}" BasedOn="{StaticResource Anchor_Btn}">
-        <Setter Property="ToolTip" Value="{Global:Resource Key=Close}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                    <Border SnapsToDevicePixels="True" ToolTip="{Global:Resource Key=Close}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}">
-                        <Image x:Name="Image" Height="8" Source="/YDock;component/Resource/Image/Close_White.png"/>
+                        <Path VerticalAlignment="Center" HorizontalAlignment="Center" SnapsToDevicePixels="True"
+                              Data="M2,1 L6,5 L10,1 L11,2 L7,6 L11,10 L10,11 L6,7 L2,11 L1,10 L5,6 L1,2 Z"
+                              Width="12" Height="12" UseLayoutRounding="True"
+                              Fill="{TemplateBinding Foreground}"/>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type view:AnchorHeaderControl}},Path=DataContext.IsActive}" Value="False">
-                            <DataTrigger.Setters>
-                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Close_Black.png"/>
-                            </DataTrigger.Setters>
-                        </DataTrigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
     <Style x:Key="Anchor_AutoHide" TargetType="{x:Type Button}" BasedOn="{StaticResource Anchor_Btn}">
-        <Setter Property="ToolTip" Value="{Global:Resource Key=_AutoHide}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                    <Border SnapsToDevicePixels="True" ToolTip="{Global:Resource Key=_AutoHide}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}">
-                        <Image x:Name="Image" Height="10" Source="/YDock;component/Resource/Image/AutoHide_White.png" LayoutTransform="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type view:AnchorHeaderControl}},Path=DataContext.Mode,Converter={StaticResource DockModeToTransformConverter}}"/>
+                        <Path VerticalAlignment="Center" HorizontalAlignment="Center" SnapsToDevicePixels="True"
+                              Data="M3,0 L9,0 L9,6 L10,6 L10,7 L6.5,7 L6.5,11 L5.5,11 L5.5,7 L2,7 L2,6 L3,6 Z M4,1 L6,1 L6,6 L4,6 Z"
+                              Width="12" Height="12" UseLayoutRounding="True"
+                              Fill="{TemplateBinding Foreground}"
+                              LayoutTransform="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type view:AnchorHeaderControl}},Path=DataContext.Mode,Converter={StaticResource DockModeToTransformConverter}}"/>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type view:AnchorHeaderControl}},Path=DataContext.IsActive}" Value="False">
-                            <DataTrigger.Setters>
-                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/AutoHide_Black.png"/>
-                            </DataTrigger.Setters>
-                        </DataTrigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
     <Style x:Key="Anchor_Maximize" TargetType="{x:Type Button}" BasedOn="{StaticResource Anchor_Btn}">
-        <Setter Property="ToolTip" Value="{Global:Resource Key=Maximize}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                    <Border SnapsToDevicePixels="True" ToolTip="{Global:Resource Key=Maximize}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}">
-                        <Image x:Name="Image" Height="10" Source="/YDock;component/Resource/Image/Maximize_White.png"/>
+                        <Path VerticalAlignment="Center" HorizontalAlignment="Center"
+                              Data="M1,4 L1,11 L11,11 L11,4 Z M0,1 L12,1 L12,12 L0,12 Z"
+                              Width="12" Height="12" UseLayoutRounding="True"
+                              Fill="{TemplateBinding Foreground}"/>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type view:AnchorHeaderControl}},Path=DataContext.IsActive}" Value="False">
-                            <DataTrigger.Setters>
-                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Maximize_Black.png"/>
-                            </DataTrigger.Setters>
-                        </DataTrigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
     <Style x:Key="Anchor_Restore" TargetType="{x:Type Button}" BasedOn="{StaticResource Anchor_Btn}">
-        <Setter Property="ToolTip" Value="{Global:Resource Key=Restore}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                    <Border SnapsToDevicePixels="True" ToolTip="{Global:Resource Key=Restore}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}">
-                        <Image x:Name="Image" Height="10" Source="/YDock;component/Resource/Image/Restore_White.png"/>
+                        <Path VerticalAlignment="Center" HorizontalAlignment="Center"
+                              Data="M1,5 L1,11 L8,11 L8,5 Z M4,2 L4,3 L9,3 L9,8 L11,8 L11,2 Z M3,0 L12,0 L12,9 L9,9 L9,12 L0,12 L0,3 L3,3 Z"
+                              Width="12" Height="12" UseLayoutRounding="True"
+                              Fill="{TemplateBinding Foreground}"/>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type view:AnchorHeaderControl}},Path=DataContext.IsActive}" Value="False">
-                            <DataTrigger.Setters>
-                                <Setter TargetName="Image" Property="Source" Value="/YDock;component/Resource/Image/Restore_Black.png"/>
-                            </DataTrigger.Setters>
-                        </DataTrigger>
-                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="view:TransitioningContentControl">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="view:TransitioningContentControl">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="2">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="PresentationStates">
+                                <VisualState x:Name="DefaultTransition">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                                       Storyboard.TargetName="CurrentContentPresentationSite"
+                                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00"
+                                                                  Value="0" />
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00.400"
+                                                                  Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+
+                                        <DoubleAnimation BeginTime="00:00:00"
+                                                         Duration="00:00:00.500"
+                                                         Storyboard.TargetName="CurrentContentPresentationSite"
+                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)"
+                                                         From="50"
+                                                         To="0">
+                                            <DoubleAnimation.EasingFunction>
+                                                <CubicEase EasingMode="EaseOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                                       Storyboard.TargetName="PreviousContentPresentationSite"
+                                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00"
+                                                                  Value="1" />
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00.100"
+                                                                  Value="0" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                                       Storyboard.TargetName="PreviousContentPresentationSite"
+                                                                       Storyboard.TargetProperty="(UIElement.Visibility)">
+                                            <DiscreteObjectKeyFrame KeyTime="00:00:00">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <Visibility>Collapsed</Visibility>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="UpTransition">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                                       Storyboard.TargetName="CurrentContentPresentationSite"
+                                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00"
+                                                                  Value="0" />
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00.300"
+                                                                  Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                                       Storyboard.TargetName="CurrentContentPresentationSite"
+                                                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00"
+                                                                  Value="30" />
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00.300"
+                                                                  Value="0" />
+                                        </DoubleAnimationUsingKeyFrames>
+
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                                       Storyboard.TargetName="PreviousContentPresentationSite"
+                                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00"
+                                                                  Value="1" />
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00.300"
+                                                                  Value="0" />
+                                        </DoubleAnimationUsingKeyFrames>
+
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                                       Storyboard.TargetName="PreviousContentPresentationSite"
+                                                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00"
+                                                                  Value="0" />
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00.300"
+                                                                  Value="-30" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="DownTransition">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                                       Storyboard.TargetName="CurrentContentPresentationSite"
+                                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00"
+                                                                  Value="0" />
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00.300"
+                                                                  Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                                       Storyboard.TargetName="CurrentContentPresentationSite"
+                                                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00"
+                                                                  Value="-40" />
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00.300"
+                                                                  Value="0" />
+                                        </DoubleAnimationUsingKeyFrames>
+
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                                       Storyboard.TargetName="PreviousContentPresentationSite"
+                                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00"
+                                                                  Value="1" />
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00.300"
+                                                                  Value="0" />
+                                        </DoubleAnimationUsingKeyFrames>
+
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                                       Storyboard.TargetName="PreviousContentPresentationSite"
+                                                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00"
+                                                                  Value="0" />
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00.300"
+                                                                  Value="40" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="ScaleTransition">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                                       Storyboard.TargetName="CurrentContentPresentationSite"
+                                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00"
+                                                                  Value="0" />
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00.200"
+                                                                  Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+
+                                        <DoubleAnimation BeginTime="00:00:00"
+                                                         Duration="00:00:00.300"
+                                                         Storyboard.TargetName="CurrentContentPresentationSite"
+                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
+                                                         From="0.6"
+                                                         To="1">
+                                            <DoubleAnimation.EasingFunction>
+                                                <QuarticEase EasingMode="EaseOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+
+                                        <DoubleAnimation BeginTime="00:00:00"
+                                                         Duration="00:00:00.300"
+                                                         Storyboard.TargetName="CurrentContentPresentationSite"
+                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
+                                                         From="0.6"
+                                                         To="1">
+                                            <DoubleAnimation.EasingFunction>
+                                                <QuarticEase EasingMode="EaseOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                                       Storyboard.TargetName="PreviousContentPresentationSite"
+                                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00"
+                                                                  Value="1" />
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00.200"
+                                                                  Value="0" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Grid>
+                            <ContentPresenter x:Name="PreviousContentPresentationSite"
+                                              Content="{x:Null}" RenderTransformOrigin="0.5, 0.5"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                <ContentPresenter.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform/>
+                                        <SkewTransform />
+                                        <RotateTransform />
+                                        <TranslateTransform />
+                                    </TransformGroup>
+                                </ContentPresenter.RenderTransform>
+                            </ContentPresenter>
+
+                            <ContentPresenter x:Name="CurrentContentPresentationSite"
+                                              Content="{x:Null}" RenderTransformOrigin="0.5, 0.5"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                <ContentPresenter.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform/>
+                                        <SkewTransform />
+                                        <RotateTransform />
+                                        <TranslateTransform />
+                                    </TransformGroup>
+                                </ContentPresenter.RenderTransform>
+                            </ContentPresenter>
+                        </Grid>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -457,8 +639,8 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:AnchorHeaderControl}">
                     <Border SnapsToDevicePixels="True"
-                        Background="{TemplateBinding Background}" Padding="3">
-                        <Grid>
+                        Background="{TemplateBinding Background}" Padding="3.5">
+                        <Grid SnapsToDevicePixels="True">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
@@ -467,7 +649,7 @@
                             <TextBlock x:Name="HeaderTextBlock" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Text="{Binding Title}"/>
                             <view:TexturePanel DataContext="{Binding}" Grid.Column="1" SnapsToDevicePixels="True" Margin="10,0,10,0"/>
                             <StackPanel Grid.Column="2" Orientation="Horizontal" SnapsToDevicePixels="True">
-                                <ToggleButton x:Name="PART_DropMenu" IsChecked="{Binding RelativeSource={RelativeSource Self},Path=ContextMenu.IsOpen}" IsThreeState="False" Style="{StaticResource Header_TB_Style}"/>
+                                <ToggleButton x:Name="PART_DropMenu" ToolTip="{Global:Resource Key=Window_Position}" IsChecked="{Binding RelativeSource={RelativeSource Self},Path=ContextMenu.IsOpen}" IsThreeState="False" Style="{StaticResource Header_TB_Style}"/>
                                 <Button x:Name="Maximize" Style="{StaticResource Anchor_Maximize}" Command="{x:Static command:GlobalCommands.MaximizeCommand}" Visibility="{Binding RelativeSource={RelativeSource Self},Path=IsEnabled,Converter={StaticResource BoolToVisibilityConverter}}"/>
                                 <Button x:Name="Restore" Style="{StaticResource Anchor_Restore}" Command="{x:Static command:GlobalCommands.RestoreCommand}" Visibility="{Binding RelativeSource={RelativeSource Self},Path=IsEnabled,Converter={StaticResource BoolToVisibilityConverter}}"/>
                                 <Button Style="{StaticResource Anchor_AutoHide}" Command="{x:Static command:GlobalCommands.SwitchAutoHideStatusCommand}" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DataContext.Mode,Converter={StaticResource DockModeToVisibilityConverter}}"/>
@@ -511,16 +693,23 @@
 
 
     <Style TargetType="{x:Type view:DockBarGroupControl}">
+        <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:DockBarGroupControl}">
-                    <view:SingelLinePanel IsItemsHost="True"/>
+                    <Border SnapsToDevicePixels="True" Background="{TemplateBinding Background}">
+                        <Border.ContextMenu>
+                            <view:CustomContextMenu ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Children_CanSelect}" Style="{StaticResource CustomContextMenuStyle}"/>
+                        </Border.ContextMenu>
+                        <view:SingelLinePanel SnapsToDevicePixels="True" IsItemsHost="True"/>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="{x:Type view:DockBarItemControl}">
+                    <Setter Property="MaxWidth" Value="240"/>
                     <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
                     <Setter Property="Margin" Value="0,0,4,0"/>
                     <Setter Property="Template">
@@ -563,14 +752,14 @@
     <ControlTemplate x:Key="DocumentHeaderTemplate" TargetType="{x:Type view:DragTabItem}">
         <Border Name="Border" SnapsToDevicePixels="True"
                 BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
-            <Grid Margin="4,2,4,1" SnapsToDevicePixels="True">
+            <Grid Margin="4,3,4,2" SnapsToDevicePixels="True">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Image VerticalAlignment="Center" Height="12" Source="{Binding Path=ImageSource,Converter={StaticResource NullToDoNothingConverter}}" Stretch="Uniform"/>
-                <TextBlock x:Name="title" VerticalAlignment="Center" Margin="4,0,0,0" Text="{Binding Path=Title}" Grid.Column="1"/>
+                <Image VerticalAlignment="Center" Height="14" Source="{Binding Path=ImageSource,Converter={StaticResource NullToDoNothingConverter}}" Stretch="Uniform"/>
+                <TextBlock x:Name="title" VerticalAlignment="Center" Margin="4,0,0,0" Text="{Binding Path=Title}" Grid.Column="1" TextTrimming="CharacterEllipsis"/>
                 <Button x:Name="PART_Close" Margin="8,0,0,0" Grid.Column="2" Visibility="Hidden"
                         Style="{StaticResource Header_Close}" Command="{x:Static command:GlobalCommands.HideStatusCommand}"/>
             </Grid>
@@ -610,60 +799,7 @@
                     <view:DocumentPanel IsItemsHost="True" SnapsToDevicePixels="True" KeyboardNavigation.TabIndex="1"/>
                     <view:CustomToggleButton IsChecked="{Binding RelativeSource={RelativeSource Self},Path=DropContextMenu.IsOpen}" IsThreeState="False" Grid.Column="1" Style="{StaticResource DocumentToggleButtonStyle}">
                         <view:CustomToggleButton.DropContextMenu>
-                            <view:CustomContextMenu ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.ChildrenSorted}">
-                                <view:CustomContextMenu.Style>
-                                    <Style TargetType="{x:Type view:CustomContextMenu}">
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="{x:Type view:CustomContextMenu}">
-                                                    <Grid SnapsToDevicePixels="True">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="2"/>
-                                                        </Grid.ColumnDefinitions>
-                                                        <Grid.RowDefinitions>
-                                                            <RowDefinition Height="*"/>
-                                                            <RowDefinition Height="2"/>
-                                                        </Grid.RowDefinitions>
-                                                        <Grid.Effect>
-                                                            <DropShadowEffect Opacity="0.4" Color="Black" ShadowDepth="8"/>
-                                                        </Grid.Effect>
-                                                        <Border Background="#FFF6F6F6" Padding="2" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" SnapsToDevicePixels="True">
-                                                            <StackPanel IsItemsHost="True"/>
-                                                        </Border>
-                                                    </Grid>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Setter Property="ItemContainerStyle">
-                                            <Setter.Value>
-                                                <Style TargetType="{x:Type view:CustomMenuItem}">
-                                                    <Setter Property="Background" Value="Transparent"/>
-                                                    <Setter Property="Template">
-                                                        <Setter.Value>
-                                                            <ControlTemplate TargetType="{x:Type view:CustomMenuItem}">
-                                                                <Grid Background="{TemplateBinding Background}" Height="22">
-                                                                    <Grid.ColumnDefinitions>
-                                                                        <ColumnDefinition Width="32"/>
-                                                                        <ColumnDefinition Width="*"/>
-                                                                    </Grid.ColumnDefinitions>
-                                                                    <Image Height="14" Source="{Binding ImageSource}"/>
-                                                                    <TextBlock Foreground="Black" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Title}" Margin="10,0,50,0"/>
-                                                                </Grid>
-                                                                <ControlTemplate.Triggers>
-                                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                                        <Setter Property="Background" Value="#FFC9DEF5"/>
-                                                                    </Trigger>
-                                                                </ControlTemplate.Triggers>
-                                                            </ControlTemplate>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Style>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </view:CustomContextMenu.Style>
-                            </view:CustomContextMenu>
+                            <view:CustomContextMenu ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.ChildrenSorted}" Style="{StaticResource CustomContextMenuStyle}"/>
                         </view:CustomToggleButton.DropContextMenu>
                     </view:CustomToggleButton>
                 </Grid>
@@ -694,7 +830,7 @@
     </ControlTemplate>
 
     <ControlTemplate x:Key="DocumentGroupControlDrag" TargetType="{x:Type view:LayoutDocumentGroupControl}">
-        <Grid KeyboardNavigation.TabNavigation="Local" SnapsToDevicePixels="True">
+        <Grid SnapsToDevicePixels="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -750,28 +886,27 @@
     </ControlTemplate>
 
     <ControlTemplate x:Key="AnchorSideGroupControlDrag" TargetType="{x:Type view:AnchorSideGroupControl}">
-        <Grid KeyboardNavigation.TabNavigation="Local" SnapsToDevicePixels="True">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Border Background="Transparent" Grid.RowSpan="2" SnapsToDevicePixels="True"/>
-            <Border x:Name="ContentPanel"
-                                VerticalAlignment="Stretch"
-                                HorizontalAlignment="Stretch"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Background="{TemplateBinding Background}"
-                                KeyboardNavigation.DirectionalNavigation="Contained"
-                                KeyboardNavigation.TabIndex="2"
-                                KeyboardNavigation.TabNavigation="Cycle"
-                                SnapsToDevicePixels="True">
+        <Border x:Name="ContentPanel"
+                VerticalAlignment="Stretch"
+                HorizontalAlignment="Stretch"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                Background="{TemplateBinding Background}"
+                KeyboardNavigation.DirectionalNavigation="Contained"
+                KeyboardNavigation.TabIndex="2"
+                KeyboardNavigation.TabNavigation="Cycle"
+                SnapsToDevicePixels="True">
+            <Grid KeyboardNavigation.TabNavigation="Local" SnapsToDevicePixels="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
                 <ContentPresenter ContentSource="SelectedContent"
                                               Margin="{TemplateBinding Padding}"
                                               SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-            </Border>
-            <view:AnchorSidePanel Grid.Row="1" x:Name="ItemsHost" Background="Transparent" IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
-        </Grid>
+                <view:AnchorSidePanel Grid.Row="1" x:Name="ItemsHost" IsItemsHost="True" Background="{StaticResource WindowBackground}" KeyboardNavigation.TabIndex="1"/>
+            </Grid>
+        </Border>
     </ControlTemplate>
 
     <Style TargetType="{x:Type view:LayoutDocumentGroupControl}">
@@ -783,9 +918,10 @@
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="{x:Type view:DragTabItem}">
-                    <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+                    <Setter Property="MaxWidth" Value="240"/>
+                    <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
                     <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
-                    <Setter Property="Template" Value="{Binding DockManager.DocumentHeaderTemplate}"/>
+                    <Setter Property="Template" Value="{StaticResource DocumentHeaderTemplate}"/>
                 </Style>
             </Setter.Value>
         </Setter>
@@ -863,70 +999,49 @@
     </Style>
 
     <ControlTemplate x:Key="AnchorGroupWindow_Single" TargetType="{x:Type view:AnchorGroupWindow}">
-        <Grid Background="#01FFFFFF" Margin="{TemplateBinding Padding}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="8"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="8"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="8"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="8"/>
-            </Grid.ColumnDefinitions>
-            <Border Grid.Column="1" Grid.Row="1"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Background="{TemplateBinding Background}"
-                                SnapsToDevicePixels="True">
-                <AdornerDecorator>
-                    <ContentPresenter Content="{TemplateBinding Content}"/>
-                </AdornerDecorator>
-            </Border>
-        </Grid>
+        <Border BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    Background="{TemplateBinding Background}"
+                    SnapsToDevicePixels="True" Padding="{TemplateBinding Padding}">
+            <AdornerDecorator>
+                <view:TransitioningContentControl IsRandom="True" Content="{TemplateBinding Content}"/>
+            </AdornerDecorator>
+        </Border>
     </ControlTemplate>
 
     <ControlTemplate x:Key="AnchorGroupWindow_Multi" TargetType="{x:Type view:AnchorGroupWindow}">
-        <Grid Background="#01FFFFFF">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="8"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="8"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="8"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="8"/>
-            </Grid.ColumnDefinitions>
-            <Border Margin="{TemplateBinding Padding}" Grid.Row="1" Grid.Column="1" SnapsToDevicePixels="True" BorderBrush="{TemplateBinding BorderBrush}"
+        <Border Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True" BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}">
-                <Grid SnapsToDevicePixels="True">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="32"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <StackPanel x:Name="Header_Title_Image" Orientation="Horizontal">
-                        <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
-                        <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" FontSize="12" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
-                    </StackPanel>
-                    <StackPanel x:Name="HeaderPanel" FlowDirection="RightToLeft" Orientation="Horizontal">
-                        <Button Style="{StaticResource Window_Close}" Command="{x:Static command:GlobalCommands.CloseCommand}"/>
-                        <Button x:Name="Maximize_Btn" Style="{StaticResource Window_Maximize}" Command="{x:Static command:GlobalCommands.MaximizeCommand}"/>
-                        <Button x:Name="Restore_Btn" Visibility="Collapsed" Style="{StaticResource Window_Restore}" Command="{x:Static command:GlobalCommands.RestoreCommand}"/>
-                    </StackPanel>
-                    <AdornerDecorator Grid.Row="1">
-                        <Border>
-                            <ContentPresenter Content="{TemplateBinding Content}"/>
-                        </Border>
-                    </AdornerDecorator>
-                </Grid>
-            </Border>
-        </Grid>
+            <Grid SnapsToDevicePixels="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="32"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel x:Name="Header_Title_Image" Orientation="Horizontal">
+                    <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
+                    <TextBlock x:Name="Title" Margin="5,0,0,0" VerticalAlignment="Center" FontSize="12" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
+                </StackPanel>
+                <StackPanel x:Name="HeaderPanel" FlowDirection="RightToLeft" Orientation="Horizontal">
+                    <Button Style="{StaticResource Window_Close}" Command="{x:Static command:GlobalCommands.CloseCommand}"/>
+                    <Button x:Name="Maximize_Btn" Style="{StaticResource Window_Maximize}" Command="{x:Static command:GlobalCommands.MaximizeCommand}"/>
+                    <Button x:Name="Restore_Btn" Visibility="Collapsed" Style="{StaticResource Window_Restore}" Command="{x:Static command:GlobalCommands.RestoreCommand}"/>
+                </StackPanel>
+                <AdornerDecorator Grid.Row="1">
+                    <Border>
+                        <view:TransitioningContentControl IsRandom="True" Content="{TemplateBinding Content}"/>
+                    </Border>
+                </AdornerDecorator>
+            </Grid>
+        </Border>
         <ControlTemplate.Triggers>
             <Trigger Property="WindowState" Value="Maximized">
                 <Setter TargetName="Restore_Btn" Property="Visibility" Value="Visible"/>
                 <Setter TargetName="Maximize_Btn" Property="Visibility" Value="Collapsed"/>
+            </Trigger>
+            <Trigger Property="IsActive" Value="False">
+                <Setter Property="BorderBrush" Value="#FF8D8D8D"/>
+                <Setter TargetName="Title" Property="Foreground" Value="#FFB2B2B2"/>
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
@@ -935,64 +1050,54 @@
         <Setter Property="BorderBrush" Value="{StaticResource WindowBorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
-        <Setter Property="shell:WindowChrome.WindowChrome">
+        <Setter Property="WindowChrome.WindowChrome">
             <Setter.Value>
-                <shell:WindowChrome
-                    ResizeBorderThickness="8"
+                <WindowChrome
+                    ResizeBorderThickness="6"
                     CaptionHeight="28"
                     CornerRadius="0"
-                    GlassFrameThickness="2"
-                    ShowSystemMenu="True"/>
+                    GlassFrameThickness="2"/>
             </Setter.Value>
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:DocumentGroupWindow}">
-                    <Grid Background="#01FFFFFF" SnapsToDevicePixels="True"
-                          Margin="{TemplateBinding Padding}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="8"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="8"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="8"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Row="1" Grid.Column="1" SnapsToDevicePixels="True" BorderBrush="{TemplateBinding BorderBrush}"
+                    <Border SnapsToDevicePixels="True" BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            Background="{TemplateBinding Background}">
-                            <Grid SnapsToDevicePixels="True">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="32"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <DockPanel x:Name="PART_Header">
-                                    <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-                                        <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
-                                        <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" FontSize="12" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
-                                    </StackPanel>
-                                    <StackPanel DockPanel.Dock="Right" FlowDirection="RightToLeft" Orientation="Horizontal">
-                                        <Button Height="24" Style="{StaticResource Window_Close}" Command="{x:Static command:GlobalCommands.CloseCommand}"/>
-                                        <Button x:Name="Maximize_Btn" Height="24" Style="{StaticResource Window_Maximize}" Command="{x:Static command:GlobalCommands.MaximizeCommand}"/>
-                                        <Button x:Name="Restore_Btn" Height="24" Visibility="Collapsed" Style="{StaticResource Window_Restore}" Command="{x:Static command:GlobalCommands.RestoreCommand}"/>
-                                        <Button Style="{StaticResource Window_Minimize}" Command="{x:Static command:GlobalCommands.MinimizeCommand}"/>
-                                    </StackPanel>
-                                </DockPanel>
-                                <AdornerDecorator Grid.Row="1">
-                                    <Border Padding="6,0,6,6">
-                                        <ContentPresenter Content="{TemplateBinding Content}"/>
-                                    </Border>
-                                </AdornerDecorator>
-                            </Grid>
-                        </Border>
-                    </Grid>
+                            Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                        <Grid SnapsToDevicePixels="True">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <DockPanel x:Name="PART_Header" Height="32">
+                                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                                    <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
+                                    <TextBlock x:Name="Title" Margin="5,0,0,0" VerticalAlignment="Center" FontSize="12" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
+                                </StackPanel>
+                                <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
+                                    <Button Height="24" Style="{StaticResource Window_Minimize}" Command="{x:Static command:GlobalCommands.MinimizeCommand}"/>
+                                    <Button x:Name="Maximize_Btn" Height="24" Style="{StaticResource Window_Maximize}" Command="{x:Static command:GlobalCommands.MaximizeCommand}"/>
+                                    <Button x:Name="Restore_Btn" Height="24" Visibility="Collapsed" Style="{StaticResource Window_Restore}" Command="{x:Static command:GlobalCommands.RestoreCommand}"/>
+                                    <Button Height="24" Style="{StaticResource Window_Close}" Command="{x:Static command:GlobalCommands.CloseCommand}"/>
+                                </StackPanel>
+                            </DockPanel>
+                            <AdornerDecorator Grid.Row="1">
+                                <Border Padding="6,0,6,6">
+                                    <ContentPresenter Content="{TemplateBinding Content}"/>
+                                </Border>
+                            </AdornerDecorator>
+                        </Grid>
+                    </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="WindowState" Value="Maximized">
                             <Setter TargetName="Maximize_Btn" Property="Visibility" Value="Collapsed"/>
                             <Setter TargetName="Restore_Btn" Property="Visibility" Value="Visible"/>
-                            <Setter Property="Padding" Value="-3,-3,-3,38"/>
+                            <Setter Property="Padding" Value="6"/>
+                        </Trigger>
+                        <Trigger Property="IsActive" Value="False">
+                            <Setter Property="BorderBrush" Value="#FF8D8D8D"/>
+                            <Setter TargetName="Title" Property="Foreground" Value="#FFB2B2B2"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -1004,14 +1109,13 @@
         <Setter Property="BorderBrush" Value="{StaticResource WindowBorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Background" Value="{StaticResource WindowBackground}"/>
-        <Setter Property="shell:WindowChrome.WindowChrome">
+        <Setter Property="WindowChrome.WindowChrome">
             <Setter.Value>
-                <shell:WindowChrome
-                    ResizeBorderThickness="9"
-                    CaptionHeight="20.5"
+                <WindowChrome
+                    ResizeBorderThickness="6"
+                    CaptionHeight="20"
                     CornerRadius="0"
-                    GlassFrameThickness="2"
-                    ShowSystemMenu="False"/>
+                    GlassFrameThickness="2"/>
             </Setter.Value>
         </Setter>
         <Setter Property="Template" Value="{StaticResource AnchorGroupWindow_Single}"/>
@@ -1021,11 +1125,10 @@
             </DataTrigger>
             <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self},Path=IsSingleMode}" Value="False">
                 <Setter Property="Template" Value="{StaticResource AnchorGroupWindow_Multi}"/>
-                <Setter Property="shell:WindowChrome.CaptionHeight" Value="28"/>
-                <Setter Property="shell:WindowChrome.ResizeBorderThickness" Value="8"/>
+                <Setter Property="WindowChrome.CaptionHeight" Value="28"/>
             </DataTrigger>
             <Trigger Property="WindowState" Value="Maximized">
-                <Setter Property="Padding" Value="-3,-3,-3,38"/>
+                <Setter Property="Padding" Value="6"/>
             </Trigger>
         </Style.Triggers>
     </Style>

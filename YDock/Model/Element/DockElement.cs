@@ -279,7 +279,7 @@ namespace YDock.Model
         {
             get
             {
-                return _container == null ? false : (Mode != DockMode.Float || _container?.View == null || !_canSelect);
+                return _container == null ? false : (Mode != DockMode.Float || _container?.View == null || _container.Children.Count() > 1 || _container.View.DockViewParent != null || !_canSelect);
             }
         }
 
@@ -320,11 +320,12 @@ namespace YDock.Model
             return Title.CompareTo(other.Title);
         }
 
-        public void ToFloat()
+        public void ToFloat(bool isActive = true)
         {
             if (!CanFloat)
             {
-                _dockControl.SetActive();
+                if (isActive)
+                    _dockControl.SetActive();
                 return;
             }
             if (_container != null)
@@ -366,15 +367,17 @@ namespace YDock.Model
                 wnd.AttachChild(groupctrl, AttachMode.None, 0);
                 wnd.Show();
 
-                _dockControl.SetActive();
+                if (isActive)
+                    _dockControl.SetActive();
             }
         }
 
-        public void ToDock()
+        public void ToDock(bool isActive = true)
         {
             if (!CanDock)
             {
-                _dockControl.SetActive();
+                if (isActive)
+                    _dockControl.SetActive();
                 return;
             }
             if (_container != null)
@@ -383,25 +386,26 @@ namespace YDock.Model
                 Mode = DockMode.Normal;
                 var dockManager = DockManager;
                 var group = _container as LayoutGroup;
-                if (group?.AttachObj == null || !group.AttachObj.AttachTo())
+                if (group == null || group.AttachObj?.AttachTo() == false)
                 {
                     //默认向下停靠
                     if (Side == DockSide.None)
                         Side = DockSide.Bottom;
-                    _container.Detach(this);
+                    _container?.Detach(this);
                     _container = null;
                     _ToRoot(dockManager);
                 }
-
-                _dockControl.SetActive();
+                if (isActive)
+                    _dockControl.SetActive();
             }
         }
 
-        public void ToDockAsDocument()
+        public void ToDockAsDocument(bool isActive = true)
         {
             if (!CanDockAsDocument)
             {
-                _dockControl.SetActive();
+                if (isActive)
+                    _dockControl.SetActive();
                 return;
             }
             if (_container != null)
@@ -414,7 +418,9 @@ namespace YDock.Model
                 Mode = DockMode.Normal;
 
                 dockManager.Root.DocumentModels[0].Attach(this, 0);
-                _dockControl.SetActive();
+
+                if (isActive)
+                    _dockControl.SetActive();
             }
         }
 

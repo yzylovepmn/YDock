@@ -70,8 +70,11 @@ namespace YDock.View
             if (oldContent != null)
                 ContextMenu = null;
             if (newContent is IDockItem)
+            {
                 if (_dockViewParent is AnchorSideGroupControl)
                     ContextMenu = new DockMenu(newContent as IDockItem);
+                else ContextMenu = new DocumentMenu(newContent as IDockElement);
+            }
             ToolTip = string.Empty;
         }
 
@@ -222,6 +225,8 @@ namespace YDock.View
         public void Dispose()
         {
             _dockViewParent = null;
+            if (ContextMenu is IDisposable)
+                (ContextMenu as IDisposable).Dispose();
             ContextMenu = null;
             Content = null;
         }

@@ -39,11 +39,16 @@ namespace YDock.Model
                 if (_mode == AttachMode.None)
                 {
                     var _group = (_parent as BaseGroupControl).Model as ILayoutGroup;
-                    var _children = _relativeObj.Children.ToList();
-                    _children.Reverse();
-                    _relativeObj.Dispose();
-                    foreach (var child in _children)
-                        _group.Attach(child, Math.Min(_index, _group.Children.Count() - 1));
+                    var ctrl = _relativeObj.View as AnchorSideGroupControl;
+                    if (ctrl.TryDeatchFromParent(false))
+                    {
+                        var _children = _relativeObj.Children.ToList();
+                        _children.Reverse();
+                        _relativeObj.Dispose();
+                        foreach (var child in _children)
+                            _group.Attach(child, Math.Min(_index, _group.Children.Count() - 1));
+                    }
+                    else return false;
                 }
                 else
                 {

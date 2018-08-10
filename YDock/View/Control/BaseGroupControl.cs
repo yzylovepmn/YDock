@@ -92,6 +92,38 @@ namespace YDock.View
             }
         }
 
+        private double _floatLeft;
+        public double FloatLeft
+        {
+            get { return _floatLeft; }
+            set
+            {
+                if (_floatLeft != value)
+                {
+                    _floatLeft = value;
+                    if (_model != null)
+                        foreach (ILayoutSize item in _model.Children)
+                            item.FloatLeft = value;
+                }
+            }
+        }
+
+        private double _floatTop;
+        public double FloatTop
+        {
+            get { return _floatTop; }
+            set
+            {
+                if (_floatTop != value)
+                {
+                    _floatTop = value;
+                    if (_model != null)
+                        foreach (ILayoutSize item in _model.Children)
+                            item.FloatTop = value;
+                }
+            }
+        }
+
         protected override void OnSelectionChanged(SelectionChangedEventArgs e)
         {
             base.OnSelectionChanged(e);

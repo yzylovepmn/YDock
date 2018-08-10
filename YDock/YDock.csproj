@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>YDock</RootNamespace>
     <AssemblyName>YDock</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -47,6 +47,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -56,6 +57,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -121,21 +123,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Shell\Standard\ComGuids.cs" />
-    <Compile Include="Shell\Standard\Debug.cs" />
-    <Compile Include="Shell\Standard\DoubleUtil.cs" />
-    <Compile Include="Shell\Standard\DpiHelper.cs" />
-    <Compile Include="Shell\Standard\ErrorCodes.cs" />
-    <Compile Include="Shell\Standard\MessageWindow.cs" />
-    <Compile Include="Shell\Standard\NativeMethods.cs" />
-    <Compile Include="Shell\Standard\ShellProvider.cs" />
-    <Compile Include="Shell\Standard\StreamHelper.cs" />
-    <Compile Include="Shell\Standard\Utilities.cs" />
-    <Compile Include="Shell\Standard\Verify.cs" />
-    <Compile Include="Shell\SystemCommands.cs" />
-    <Compile Include="Shell\SystemParameters2.cs" />
-    <Compile Include="Shell\WindowChrome.cs" />
-    <Compile Include="Shell\WindowChromeWorker.cs" />
     <Compile Include="View\Control\BaseGroupControl.cs" />
     <Compile Include="View\Control\CustomControl.cs" />
     <Compile Include="View\Control\DragTabItem.cs" />
@@ -153,6 +140,7 @@
     <Compile Include="View\Layout\LayoutRootPanel.cs" />
     <Compile Include="View\Control\DockBarGroupControl.cs" />
     <Compile Include="View\Meun\DockMenu.cs" />
+    <Compile Include="View\Meun\DocumentMenu.cs" />
     <Compile Include="View\Render\BaseDropPanel.cs" />
     <Compile Include="View\Render\BaseDropVisual.cs" />
     <Compile Include="View\ViewExtensions.cs" />
@@ -167,6 +155,8 @@
     <Compile Include="View\Window\BaseFloatWindow.cs" />
     <Compile Include="View\Window\DocumentGroupWindow.cs" />
     <Compile Include="View\Window\DropWindow.cs" />
+    <Compile Include="View\Window\TransitioningContentControl.cs" />
+    <Compile Include="View\Window\VisualStates.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

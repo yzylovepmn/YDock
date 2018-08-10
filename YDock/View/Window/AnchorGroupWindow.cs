@@ -1,5 +1,4 @@
-﻿using Microsoft.Windows.Shell;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -131,8 +130,8 @@ namespace YDock.View
         public void UpdateSize()
         {
             if (IsSingleMode)
-                _heightEceeed = Constants.FloatWindowResizeLength * 2;
-            else _heightEceeed = Constants.FloatWindowResizeLength * 2 + Constants.FloatWindowHeaderHeight;
+                _heightEceeed = 0;
+            else _heightEceeed = Constants.FloatWindowHeaderHeight;
         }
 
         protected override void OnMaximizeCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -147,6 +146,12 @@ namespace YDock.View
             if ((e.OriginalSource as Button)?.Name == "Restore")
                 e.CanExecute = IsSingleMode && WindowState == WindowState.Maximized;
             else e.CanExecute = true;
+        }
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            base.OnStateChanged(e);
+            CommandManager.InvalidateRequerySuggested();
         }
 
         private void ActiveSelf()

@@ -505,6 +505,13 @@ namespace YDock
         }
         #endregion
 
+        public void ShowOrHide(IDockSource source)
+        {
+            if (source.DockControl.IsVisible)
+                source.DockControl.Hide();
+            else source.DockControl.Show();
+        }
+
         internal static void ChangeSide(IDockView view, DockSide side)
         {
             if (view.Model != null && view.Model.Side == side) return;
@@ -584,13 +591,13 @@ namespace YDock
 
         private void OnMainWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            foreach (var fwnd in _floatWindows)
+            foreach (var fwnd in new List<BaseFloatWindow>(_floatWindows))
                 fwnd.Close();
         }
 
         public void HideAll()
         {
-            foreach (var wnd in _floatWindows)
+            foreach (var wnd in new List<BaseFloatWindow>(_floatWindows))
                 wnd.Close();
             _floatWindows.Clear();
             foreach (var dockControl in _dockControls.Values)
@@ -690,7 +697,7 @@ namespace YDock
         /// <param name="source">源</param>
         /// <param name="target">目标</param>
         /// <param name="mode">附加模式</param>
-        public void AttachTo(IDockControl source, IDockControl target, AttachMode mode)
+        public void AttachTo(IDockControl source, IDockControl target, AttachMode mode, double ratio = 1)
         {
             if (target.Container.View == null) throw new InvalidOperationException("target must be visible!");
             if (target.IsDisposed) throw new InvalidOperationException("target is disposed!");
@@ -700,18 +707,39 @@ namespace YDock
                 source.SetActive();
             else if (source.Container != null)
             {
+                //DockBar模式下无法合并，故先转换为Normal模式
+                if (target.Mode == DockMode.DockBar)
+                    target.ToDock();
+
                 source.Container.Detach(source.ProtoType);
+
+
+                double width = (target.Container.View as ILayoutViewWithSize).DesiredWidth
+                    , height = (target.Container.View as ILayoutViewWithSize).DesiredHeight;
+
+                if (mode == AttachMode.Right
+                    || mode == AttachMode.Left
+                    || mode == AttachMode.Left_WithSplit
+                    || mode == AttachMode.Right_WithSplit)
+                    width = (target.Container.View as ILayoutViewWithSize).DesiredWidth * ratio;
+
+                if (mode == AttachMode.Top
+                    || mode == AttachMode.Bottom
+                    || mode == AttachMode.Top_WithSplit
+                    || mode == AttachMode.Bottom_WithSplit)
+                    height = (target.Container.View as ILayoutViewWithSize).DesiredHeight * ratio;
+
                 BaseLayoutGroup group;
                 BaseGroupControl ctrl;
                 if (source.IsDocument)
                 {
                     group = new LayoutDocumentGroup(DockMode.Normal, this);
-                    ctrl = new LayoutDocumentGroupControl(group, (target.Container.View as ILayoutViewWithSize).DesiredWidth, (target.Container.View as ILayoutViewWithSize).DesiredHeight);
+                    ctrl = new LayoutDocumentGroupControl(group, width, height);
                 }
                 else
                 {
                     group = new LayoutGroup(source.Side, DockMode.Normal, this);
-                    ctrl = new AnchorSideGroupControl(group, (target.Container.View as ILayoutViewWithSize).DesiredWidth, (target.Container.View as ILayoutViewWithSize).DesiredHeight);
+                    ctrl = new AnchorSideGroupControl(group, width, height);
                 }
                 group.Attach(source.ProtoType);
                 var _atsource = target.ProtoType.Container.View as IAttcah;
@@ -728,7 +756,7 @@ namespace YDock
                 ctrl.Dispose();
             _dockControls.Clear();
             _dockControls = null;
-            foreach (var wnd in _floatWindows)
+            foreach (var wnd in new List<BaseFloatWindow>(_floatWindows))
                 wnd.Close();
             _floatWindows.Clear();
             _floatWindows = null;

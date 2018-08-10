@@ -88,8 +88,8 @@ namespace YDock.View
                         var _subpanel = new LayoutGroupPanel(Model.Side)
                         {
                             Direction = Direction.LeftToRight,
-                            DesiredWidth = ActualWidth,
-                            DesiredHeight = ActualHeight,
+                            DesiredWidth = Math.Max(ActualWidth, Constants.DockDefaultWidthLength),
+                            DesiredHeight = Math.Max(ActualHeight, Constants.DockDefaultHeightLength),
                             IsAnchorPanel = true
                         };
                         panel._DetachChild(this);
@@ -105,8 +105,8 @@ namespace YDock.View
                         var _subpanel = new LayoutGroupPanel(Model.Side)
                         {
                             Direction = Direction.UpToDown,
-                            DesiredWidth = ActualWidth,
-                            DesiredHeight = ActualHeight,
+                            DesiredWidth = Math.Max(ActualWidth, Constants.DockDefaultWidthLength),
+                            DesiredHeight = Math.Max(ActualHeight, Constants.DockDefaultHeightLength),
                             IsAnchorPanel = true
                         };
                         panel._DetachChild(this);
@@ -122,8 +122,8 @@ namespace YDock.View
                         var _subpanel = new LayoutGroupPanel(Model.Side)
                         {
                             Direction = Direction.LeftToRight,
-                            DesiredWidth = ActualWidth,
-                            DesiredHeight = ActualHeight,
+                            DesiredWidth = Math.Max(ActualWidth, Constants.DockDefaultWidthLength),
+                            DesiredHeight = Math.Max(ActualHeight, Constants.DockDefaultHeightLength),
                             IsAnchorPanel = true
                         };
                         panel._DetachChild(this);
@@ -139,8 +139,8 @@ namespace YDock.View
                         var _subpanel = new LayoutGroupPanel(Model.Side)
                         {
                             Direction = Direction.UpToDown,
-                            DesiredWidth = ActualWidth,
-                            DesiredHeight = ActualHeight,
+                            DesiredWidth = Math.Max(ActualWidth, Constants.DockDefaultWidthLength),
+                            DesiredHeight = Math.Max(ActualHeight, Constants.DockDefaultHeightLength),
                             IsAnchorPanel = true
                         };
                         panel._DetachChild(this);
