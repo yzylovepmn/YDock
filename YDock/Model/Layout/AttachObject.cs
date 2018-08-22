@@ -92,7 +92,10 @@ namespace YDock.Model
                 {
                     var panel = _parent as LayoutGroupPanel;
                     if (ctrl.TryDeatchFromParent(false))
+                    {
+                        _relativeObj.Mode = DockMode.Normal;
                         panel.AttachChild(_relativeObj.View, _mode, Math.Min(_index, panel.Children.Count - 1));
+                    }
                     else return false;
                 }
                 else
@@ -101,7 +104,10 @@ namespace YDock.Model
                     if (panel != null)
                     {
                         if (ctrl.TryDeatchFromParent(false))
+                        {
+                            _relativeObj.Mode = DockMode.Normal;
                             panel.AttachChild(_relativeObj.View, _mode, Math.Min(_index, panel.Children.Count - 1));
+                        }
                         else return false;
                     }
                     else return false;

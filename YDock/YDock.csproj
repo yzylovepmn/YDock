@@ -179,29 +179,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resource\Image\Close_Black.png" />
-    <Resource Include="Resource\Image\Close_White.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resource\Image\Restore_Active.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resource\Image\Restore_Black.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resource\Image\Restore_White.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resource\Image\AutoHide_Black.png" />
-    <Resource Include="Resource\Image\AutoHide_White.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resource\Image\Maximize_Active.png" />
-    <Resource Include="Resource\Image\Maximize_Black.png" />
-    <Resource Include="Resource\Image\Maximize_White.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resource\Image\Close_Active.png" />
+    <Folder Include="Resource\Image\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
