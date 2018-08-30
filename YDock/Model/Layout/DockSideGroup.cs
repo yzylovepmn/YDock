@@ -40,10 +40,10 @@ namespace YDock.Model
             }
         }
 
-        public override void SetActive(IDockElement element)
+        public override void ShowWithActice(IDockElement element, bool toActice = true)
         {
             DockManager.AutoHideElement = element;
-            base.SetActive(element);
+            base.ShowWithActice(element, toActice);
         }
 
         public override void Detach(IDockElement element)

@@ -57,9 +57,9 @@ namespace YDock.Model
             }
         }
 
-        public override void SetActive(IDockElement element)
+        public override void ShowWithActice(IDockElement element, bool toActice = true)
         {
-            base.SetActive(element);
+            base.ShowWithActice(element, toActice);
             if (_view != null)
                 (_view as TabControl).SelectedIndex = IndexOf(element);
             else//_view不存在则要创建新的_view

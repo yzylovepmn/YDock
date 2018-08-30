@@ -157,7 +157,7 @@ namespace YDock.View
         private void ActiveSelf()
         {
             if (IsSingleMode)
-                ((Content as ILayoutGroupControl).Model as ILayoutGroup).SetActive((Content as BaseGroupControl).SelectedIndex);
+                ((Content as ILayoutGroupControl).Model as ILayoutGroup).ShowWithActice((Content as BaseGroupControl).SelectedIndex);
             DockManager.MainWindow.Activate();
         }
     }

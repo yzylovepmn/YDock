@@ -233,14 +233,14 @@ namespace YDock.View
         {
             base.OnMouseLeftButtonDown(e);
             if (SelectedContent != null)
-                (_model as ILayoutGroup).SetActive(SelectedContent as DockElement);
+                (_model as ILayoutGroup).ShowWithActice(SelectedContent as DockElement);
         }
 
         protected override void OnMouseRightButtonDown(System.Windows.Input.MouseButtonEventArgs e)
         {
             base.OnMouseRightButtonDown(e);
             if (SelectedContent != null)
-                (_model as ILayoutGroup).SetActive(SelectedContent as DockElement);
+                (_model as ILayoutGroup).ShowWithActice(SelectedContent as DockElement);
         }
 
         protected override DependencyObject GetContainerForItemOverride()

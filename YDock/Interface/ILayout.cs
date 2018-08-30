@@ -46,8 +46,8 @@ namespace YDock.Interface
         IEnumerable<IDockElement> Children { get; }
         void MoveTo(int src, int des);
         int IndexOf(IDockElement child);
-        void SetActive(IDockElement element);
-        void SetActive(int index);
+        void ShowWithActice(IDockElement element, bool toActice = true);
+        void ShowWithActice(int index, bool toActice = true);
         void Detach(IDockElement element);
         void Attach(IDockElement element, int index = -1);
         void RaisePropertyChanged(string propertyName);

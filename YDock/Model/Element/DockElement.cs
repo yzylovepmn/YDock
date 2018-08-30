@@ -322,10 +322,9 @@ namespace YDock.Model
 
         public void ToFloat(bool isActive = true)
         {
-            if (!CanFloat)
+            if (!CanFloat && isActive)
             {
-                if (isActive)
-                    _dockControl.SetActive();
+                _dockControl.SetActive();
                 return;
             }
             if (_container != null)
@@ -374,10 +373,9 @@ namespace YDock.Model
 
         public void ToDock(bool isActive = true)
         {
-            if (!CanDock)
+            if (!CanDock && isActive)
             {
-                if (isActive)
-                    _dockControl.SetActive();
+                _dockControl.SetActive();
                 return;
             }
             if (_container != null)
@@ -402,10 +400,9 @@ namespace YDock.Model
 
         public void ToDockAsDocument(bool isActive = true)
         {
-            if (!CanDockAsDocument)
+            if (!CanDockAsDocument && isActive)
             {
-                if (isActive)
-                    _dockControl.SetActive();
+                _dockControl.SetActive();
                 return;
             }
             if (_container != null)

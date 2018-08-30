@@ -155,7 +155,7 @@ namespace YDock.Model
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public virtual void SetActive(IDockElement element)
+        public virtual void ShowWithActice(IDockElement element, bool toActice = true)
         {
             if (element != null && !element.CanSelect)
                 (element as DockElement).CanSelect = true;
@@ -163,14 +163,10 @@ namespace YDock.Model
                 DockManager.ActiveElement = element;
         }
 
-        public virtual void SetActive(int index)
+        public virtual void ShowWithActice(int index, bool toActice = true)
         {
             if (index < 0 || index >= _children.Count) throw new ArgumentOutOfRangeException("index out of range!");
-            if (_view != null)
-            {
-                (_children[index] as DockElement).CanSelect = true;
-                DockManager.ActiveElement = _children[index];
-            }
+            ShowWithActice(_children[index], toActice);
         }
 
         public virtual void Detach(IDockElement element)

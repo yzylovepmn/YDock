@@ -238,16 +238,16 @@ namespace YDock
         /// 通用显示的方法。
         /// 显示的模式（Dock，Float，AnchorSide）与当前Status有关
         /// </summary>
-        public void Show()
+        public void Show(bool toActice = true)
         {
             if (IsVisible && IsActive) return;
             if (Mode == DockMode.Float)
             {
                 if (!IsDocument)
-                    ToFloat();
-                else ToDockAsDocument();
+                    ToFloat(toActice);
+                else ToDockAsDocument(toActice);
             }
-            else Container.SetActive(_protoType);
+            else Container.ShowWithActice(_protoType, toActice);
         }
 
         /// <summary>
@@ -305,7 +305,7 @@ namespace YDock
         public void SetActive(bool _isActive = true)
         {
             if (_isActive)
-                _protoType.Container.SetActive(_protoType);
+                _protoType.Container.ShowWithActice(_protoType, _isActive);
             else if(DockManager.ActiveElement == _protoType)
                 DockManager.ActiveElement = null;
         }

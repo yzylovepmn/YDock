@@ -43,7 +43,7 @@ namespace YDock.Interface
     public interface IDockControl : IDockOrigin
     {
         IDockElement ProtoType { get; }
-        void Show();
+        void Show(bool toActice = true);
         void Close();
         void SetActive(bool _isActive = true);
     }
