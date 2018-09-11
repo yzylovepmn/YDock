@@ -683,7 +683,7 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <view:AnchorHeaderControl SnapsToDevicePixels="True" DataContext="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model}" Style="{StaticResource LayoutHeaderControlStyle}"/>
-                            <ContentPresenter Grid.Row="1" Content="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Content}"/>
+                            <ContentPresenter Grid.Row="1" SnapsToDevicePixels="True" Content="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Content}"/>
                         </Grid>
                     </Border>
                 </ControlTemplate>
