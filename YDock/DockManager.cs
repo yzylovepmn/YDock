@@ -71,10 +71,7 @@ namespace YDock
             get
             {
                 if (_mainWindow == null)
-                {
                     _mainWindow = Window.GetWindow(this);
-                    _mainWindow.Closing += OnMainWindowClosing;
-                }
                 return _mainWindow;
             }
         }
@@ -591,17 +588,8 @@ namespace YDock
                     yield return byHandle[hWnd];
         }
 
-        private void OnMainWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            foreach (var fwnd in new List<BaseFloatWindow>(_floatWindows))
-                fwnd.Close();
-        }
-
         public void HideAll()
         {
-            foreach (var wnd in new List<BaseFloatWindow>(_floatWindows))
-                wnd.Close();
-            _floatWindows.Clear();
             foreach (var dockControl in _dockControls.Values)
                 dockControl.Hide();
         }
@@ -762,11 +750,7 @@ namespace YDock
                 wnd.Close();
             _floatWindows.Clear();
             _floatWindows = null;
-            if (_mainWindow != null)
-            {
-                _mainWindow.Closing -= OnMainWindowClosing;
-                _mainWindow = null;
-            }
+            _mainWindow = null;
             Root = null;
             _windows.Clear();
             _windows = null;

@@ -104,8 +104,11 @@ namespace YDock.Model
             //保存Size信息
             if (_view != null)
             {
-                (element as DockElement).DesiredHeight = (_view as BaseGroupControl).ActualHeight;
-                (element as DockElement).DesiredWidth = (_view as BaseGroupControl).ActualWidth;
+                if ((_view as BaseGroupControl).IsInitialized)
+                {
+                    (element as DockElement).DesiredHeight = (_view as BaseGroupControl).ActualHeight;
+                    (element as DockElement).DesiredWidth = (_view as BaseGroupControl).ActualWidth;
+                }
                 //如果Children_CanSelect数量为0，且Container不是LayoutDocumentGroup，则尝试将view从界面移除
                 if (Children_CanSelect.Count() == 0) //如果Children_CanSelect数量为0
                     _DetachFromParent();

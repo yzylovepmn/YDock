@@ -40,6 +40,7 @@ namespace YDock.Model
                 {
                     var _group = (_parent as BaseGroupControl).Model as ILayoutGroup;
                     var ctrl = _relativeObj.View as AnchorSideGroupControl;
+                    if (ctrl == null) return false;
                     if (ctrl.TryDeatchFromParent(false))
                     {
                         var _children = _relativeObj.Children.ToList();
@@ -58,6 +59,7 @@ namespace YDock.Model
                         if (_relativeObj.View == null)
                             _relativeObj.View = new AnchorSideGroupControl(_relativeObj);
                         var ctrl = _relativeObj.View as AnchorSideGroupControl;
+                        if (ctrl == null) return false;
                         if (ctrl.TryDeatchFromParent(false))
                         {
                             if (targetctrl.DockViewParent == null) return false;
@@ -88,6 +90,7 @@ namespace YDock.Model
                 if (_relativeObj.View == null)
                     _relativeObj.View = new AnchorSideGroupControl(_relativeObj);
                 var ctrl = _relativeObj.View as AnchorSideGroupControl;
+                if (ctrl == null) return false;
                 if (_mode == AttachMode.None)
                 {
                     var panel = _parent as LayoutGroupPanel;
