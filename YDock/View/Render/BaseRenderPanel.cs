@@ -14,6 +14,7 @@ namespace YDock.View
         {
             _children = new List<BaseVisual>();
             DataContextChanged += OnDataContextChanged;
+            //RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
         }
 
         protected virtual void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

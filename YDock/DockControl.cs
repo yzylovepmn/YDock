@@ -61,7 +61,7 @@ namespace YDock
             }
         }
 
-        public UIElement Content
+        public object Content
         {
             get
             {

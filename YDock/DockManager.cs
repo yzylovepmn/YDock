@@ -419,7 +419,7 @@ namespace YDock
             {
                 ID = id++,
                 Title = content.Header,
-                Content = content as UIElement,
+                Content = content,
                 ImageSource = content.Icon,
                 Side = DockSide.None,
                 Mode = DockMode.Normal,
@@ -449,7 +449,7 @@ namespace YDock
             {
                 ID = id++,
                 Title = content.Header,
-                Content = content as UIElement,
+                Content = content,
                 ImageSource = content.Icon,
                 Side = side,
                 Mode = DockMode.DockBar,
@@ -489,7 +489,7 @@ namespace YDock
             {
                 ID = id++,
                 Title = content.Header,
-                Content = content as UIElement,
+                Content = content,
                 ImageSource = content.Icon,
                 Side = side,
                 Mode = DockMode.Float,

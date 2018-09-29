@@ -28,7 +28,7 @@ namespace YDock.Interface
         int ID { get; }
         string Title { get; set; }
         ImageSource ImageSource { get; }
-        UIElement Content { get; }
+        object Content { get; }
         bool IsDocument { get; }
         DockMode Mode { get; }
         bool IsVisible { get; }

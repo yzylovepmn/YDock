@@ -33,8 +33,8 @@ namespace YDock.Model
         #endregion
 
         #region Content
-        private UIElement _content;
-        public UIElement Content
+        private object _content;
+        public object Content
         {
             get { return _content; }
             internal set
