@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using YDock.Enum;
@@ -14,6 +16,99 @@ using YDock.Model;
 
 namespace YDock.View
 {
+    public class _AutoHideWindow : HwndHost, ILayout
+    {
+        public _AutoHideWindow()
+        {
+            _innerContent = new AutoHideWindow();
+        }
+
+        public DockManager DockManager
+        {
+            get
+            {
+                return _innerContent.DockManager;
+            }
+        }
+
+        public DockSide Side
+        {
+            get { return _innerContent.Side; }
+        }
+
+        public DockElement Model
+        {
+            get { return _innerContent.Model; }
+            set { _innerContent.Model = value; }
+        }
+
+        HwndSource _innerSource = null;
+        IntPtr _parentWindowHandle;
+        AutoHideWindow _innerContent;
+        bool _contentRendered;
+
+        protected override HandleRef BuildWindowCore(HandleRef hwndParent)
+        {
+            _parentWindowHandle = hwndParent.Handle;
+            _innerSource = new HwndSource(new HwndSourceParameters("static")
+            {
+                ParentWindow = hwndParent.Handle,
+                WindowStyle = Win32Helper.WS_CHILD | Win32Helper.WS_VISIBLE | Win32Helper.WS_CLIPSIBLINGS | Win32Helper.WS_CLIPCHILDREN,
+                Width = 0,
+                Height = 0,
+            });
+
+            _contentRendered = false;
+            _innerSource.ContentRendered += _OnContentRendered;
+            _innerSource.RootVisual = _innerContent;
+            AddLogicalChild(_innerContent);
+            Win32Helper.BringWindowToTop(_innerSource.Handle);
+            return new HandleRef(this, _innerSource.Handle);
+        }
+
+        protected override void DestroyWindowCore(HandleRef hwnd)
+        {
+            Win32Helper.DestroyWindow(_innerSource.Handle);
+        }
+
+        void _OnContentRendered(object sender, EventArgs e)
+        {
+            _contentRendered = true;
+        }
+
+        protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg == Win32Helper.WM_WINDOWPOSCHANGING && _contentRendered)
+                Win32Helper.BringWindowToTop(_innerSource.Handle);
+            return base.WndProc(hwnd, msg, wParam, lParam, ref handled);
+        }
+
+        protected override Size MeasureOverride(Size constraint)
+        {
+            if (_innerContent.Model == null)
+                return new Size();
+            _innerContent.Measure(constraint);
+            return _innerContent.DesiredSize;
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            _innerContent.Arrange(new Rect(finalSize));
+            return finalSize;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _innerSource.ContentRendered -= _OnContentRendered;
+                _innerContent.Dispose();
+                _innerContent = null;
+            }
+            base.Dispose(disposing);
+        }
+    }
+
     public class AutoHideWindow : Panel, ILayout, IDisposable
     {
         public AutoHideWindow()
@@ -31,7 +126,7 @@ namespace YDock.View
             _splitter.Background = ResourceManager.SplitterBrushVertical;
         }
 
-
+        Panel RootPanel { get { return (Parent as FrameworkElement).Parent as Panel; } }
 
         private Popup _dragPopup;
         private Point pToScreen;
@@ -90,6 +185,7 @@ namespace YDock.View
                 Model.DesiredHeight += _dragPopup.VerticalOffset - pToScreen.Y;
             if (Side == DockSide.Bottom)
                 Model.DesiredHeight -= _dragPopup.VerticalOffset - pToScreen.Y;
+            (Parent as FrameworkElement).InvalidateMeasure();
             InvalidateMeasure();
             _DisposeDragPopup();
         }
@@ -148,18 +244,18 @@ namespace YDock.View
         /// <param name="x2">上界</param>
         private void _ComputeDragBounds(LayoutDragSplitter splitter, ref double x1, ref double x2)
         {
-            var pToScreen = (this.Parent as FrameworkElement).PointToScreenDPIWithoutFlowDirection(new Point());
+            var pToScreen = RootPanel.PointToScreenDPIWithoutFlowDirection(new Point());
             switch (Side)
             {
                 case DockSide.Left:
                 case DockSide.Right:
                     _dragBound1 = pToScreen.X;
-                    _dragBound2 = pToScreen.X + (this.Parent as FrameworkElement).ActualWidth - Constants.SplitterSpan / 2;
+                    _dragBound2 = pToScreen.X + RootPanel.ActualWidth - Constants.SplitterSpan / 2;
                     break;
                 case DockSide.Top:
                 case DockSide.Bottom:
                     _dragBound1 = pToScreen.Y;
-                    _dragBound2 = pToScreen.Y + (this.Parent as FrameworkElement).ActualHeight - Constants.SplitterSpan / 2;
+                    _dragBound2 = pToScreen.Y + RootPanel.ActualHeight - Constants.SplitterSpan / 2;
                     break;
             }
         }
@@ -179,7 +275,7 @@ namespace YDock.View
                     _model = value;
                     if (_model != null)
                         _CreateContentForModel(_model);
-                    (Parent as Panel).InvalidateMeasure();
+                    RootPanel.InvalidateMeasure();
                 }
             }
         }

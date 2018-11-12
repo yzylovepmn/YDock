@@ -32,7 +32,7 @@ namespace YDock.View
 
         private void _InitContent()
         {
-            AHWindow = new AutoHideWindow();
+            AHWindow = new _AutoHideWindow();
             //先初始化Document区域
             RootGroupPanel = new LayoutGroupDocumentPanel();
             var _documentControl = new LayoutDocumentGroupControl((_model as DockRoot).DocumentModels[0]);
@@ -59,8 +59,8 @@ namespace YDock.View
             }
         }
 
-        private AutoHideWindow _ahWindow;
-        public AutoHideWindow AHWindow
+        private _AutoHideWindow _ahWindow;
+        public _AutoHideWindow AHWindow
         {
             get { return _ahWindow; }
             set
