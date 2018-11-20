@@ -1011,6 +1011,7 @@ namespace YDock.View
                         else _dragPopup.HorizontalOffset = _dragBound1 + Constants.SideLength;
                     }
                 }
+                else _dragPopup.HorizontalOffset = pToScreen.X;
             }
             else
             {
@@ -1027,6 +1028,7 @@ namespace YDock.View
                         else _dragPopup.VerticalOffset = _dragBound1 + Constants.SideLength;
                     }
                 }
+                else _dragPopup.VerticalOffset = pToScreen.Y;
             }
         }
 

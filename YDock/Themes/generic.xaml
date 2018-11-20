@@ -673,10 +673,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:LayoutContentControl}">
-                    <Border ClipToBounds="true" SnapsToDevicePixels="true" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                    <Border SnapsToDevicePixels="true" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}">
-                        <Grid ClipToBounds="true"
-                          SnapsToDevicePixels="true"
+                        <Grid SnapsToDevicePixels="true"
                           KeyboardNavigation.TabNavigation="Local">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>

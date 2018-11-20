@@ -85,8 +85,6 @@ namespace YDock.View
 
         protected override Size MeasureOverride(Size constraint)
         {
-            if (_innerContent.Model == null)
-                return new Size();
             _innerContent.Measure(constraint);
             return _innerContent.DesiredSize;
         }
@@ -156,6 +154,7 @@ namespace YDock.View
                         else _dragPopup.HorizontalOffset = _dragBound1 + Constants.SideLength;
                     }
                 }
+                else _dragPopup.HorizontalOffset = pToScreen.X;
             }
             else
             {
@@ -172,6 +171,7 @@ namespace YDock.View
                         else _dragPopup.VerticalOffset = _dragBound1 + Constants.SideLength;
                     }
                 }
+                else _dragPopup.VerticalOffset = pToScreen.Y;
             }
         }
 
@@ -198,17 +198,17 @@ namespace YDock.View
             pToScreen.X += _pToInterPanel.X;
             pToScreen.Y += _pToInterPanel.Y;
 
-            switch (Side)
-            {
-                case DockSide.Left:
-                case DockSide.Right:
-                    Model.DesiredWidth = ActualWidth - Constants.SplitterSpan / 2;
-                    break;
-                case DockSide.Top:
-                case DockSide.Bottom:
-                    Model.DesiredHeight = ActualHeight - Constants.SplitterSpan / 2;
-                    break;
-            }
+            //switch (Side)
+            //{
+            //    case DockSide.Left:
+            //    case DockSide.Right:
+            //        Model.DesiredWidth = ActualWidth - Constants.SplitterSpan / 2;
+            //        break;
+            //    case DockSide.Top:
+            //    case DockSide.Bottom:
+            //        Model.DesiredHeight = ActualHeight - Constants.SplitterSpan / 2;
+            //        break;
+            //}
 
             _dragPopup = new Popup()
             {
