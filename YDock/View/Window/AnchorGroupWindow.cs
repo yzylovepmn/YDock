@@ -14,6 +14,7 @@ using YDock.Interface;
 using YDock.Model;
 using System.Windows.Input;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace YDock.View
 {
@@ -87,6 +88,13 @@ namespace YDock.View
                 UpdateTemplate();
         }
 
+        DockMenu menu;
+        private void _ApplyMenu(IDockItem item)
+        {
+            menu = new DockMenu(item);
+            menu.Placement = PlacementMode.MousePoint;
+        }
+
         protected override IntPtr FilterMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             switch (msg)
@@ -95,16 +103,25 @@ namespace YDock.View
                 case Win32Helper.WM_NCRBUTTONDOWN:
                     ActiveSelf();
                     if (IsSingleMode && msg == Win32Helper.WM_NCRBUTTONDOWN)
-                        ContextMenu = new DockMenu((Child as BaseGroupControl).SelectedItem as IDockItem);
+                    {
+                        if (menu == null)
+                            _ApplyMenu((Child as BaseGroupControl).SelectedItem as IDockItem);
+                        menu.IsOpen = true;
+                    }
                     break;
             }
             return base.FilterMessage(hwnd, msg, wParam, lParam, ref handled);
         }
 
-        protected override void OnMouseRightButtonUp(MouseButtonEventArgs e)
+        protected override void OnPreviewMouseRightButtonDown(MouseButtonEventArgs e)
         {
-            ContextMenu = null;
-            base.OnMouseRightButtonUp(e);
+            base.OnPreviewMouseRightButtonDown(e);
+            if (menu != null)
+            {
+                var p = e.GetPosition(this);
+                if (p.Y < 20)
+                    menu.IsOpen = true;
+            }
         }
 
         public override void Recreate()
@@ -125,6 +142,12 @@ namespace YDock.View
             PropertyChanged(this, new PropertyChangedEventArgs("IsSingleMode"));
             PropertyChanged(this, new PropertyChangedEventArgs("NoBorder"));
             CommandManager.InvalidateRequerySuggested();
+
+            if (menu != null)
+            {
+                menu.Dispose();
+                menu = null;
+            }
         }
 
         public void UpdateSize()

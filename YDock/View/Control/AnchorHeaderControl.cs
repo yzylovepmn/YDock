@@ -28,6 +28,7 @@ namespace YDock.View
         {
             DataContext = null;
             ContextMenu = null;
+            ctb.PreviewMouseLeftButtonUp -= OnMenuOpen;
         }
 
         Point _mouseDown;
@@ -90,7 +91,7 @@ namespace YDock.View
         {
             base.OnApplyTemplate();
             ctb = (ToggleButton)GetTemplateChild("PART_DropMenu");
-            ctb.PreviewMouseLeftButtonDown += OnMenuOpen;
+            ctb.PreviewMouseLeftButtonUp += OnMenuOpen;
         }
 
         private void OnMenuOpen(object sender, MouseButtonEventArgs e)
@@ -102,11 +103,6 @@ namespace YDock.View
 
         private void _ApplyMenu()
         {
-            if (menu != null)
-            {
-                menu.Dispose();
-                menu = null;
-            }
             var ele = DataContext as DockElement;
             menu = new DockMenu(ele);
             menu.PlacementTarget = ctb;
