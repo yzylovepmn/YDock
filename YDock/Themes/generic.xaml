@@ -1017,15 +1017,17 @@
                     <RowDefinition Height="32"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <StackPanel x:Name="Header_Title_Image" Orientation="Horizontal">
-                    <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
-                    <TextBlock x:Name="Title" Margin="5,0,0,0" VerticalAlignment="Center" FontSize="12" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
-                </StackPanel>
-                <StackPanel x:Name="HeaderPanel" FlowDirection="RightToLeft" Orientation="Horizontal">
-                    <Button Style="{StaticResource Window_Close}" Command="{x:Static command:GlobalCommands.CloseCommand}"/>
-                    <Button x:Name="Maximize_Btn" Style="{StaticResource Window_Maximize}" Command="{x:Static command:GlobalCommands.MaximizeCommand}"/>
-                    <Button x:Name="Restore_Btn" Visibility="Collapsed" Style="{StaticResource Window_Restore}" Command="{x:Static command:GlobalCommands.RestoreCommand}"/>
-                </StackPanel>
+                <DockPanel>
+                    <StackPanel x:Name="Header_Title_Image" DockPanel.Dock="Left" Orientation="Horizontal">
+                        <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
+                        <TextBlock x:Name="Title" Margin="5,0,0,0" VerticalAlignment="Center" FontSize="12" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
+                    </StackPanel>
+                    <StackPanel x:Name="HeaderPanel" DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Button x:Name="Restore_Btn" Visibility="Collapsed" Style="{StaticResource Window_Restore}" Command="{x:Static command:GlobalCommands.RestoreCommand}"/>
+                        <Button x:Name="Maximize_Btn" Style="{StaticResource Window_Maximize}" Command="{x:Static command:GlobalCommands.MaximizeCommand}"/>
+                        <Button Style="{StaticResource Window_Close}" Command="{x:Static command:GlobalCommands.CloseCommand}"/>
+                    </StackPanel>
+                </DockPanel>
                 <AdornerDecorator Grid.Row="1">
                     <Border>
                         <view:TransitioningContentControl IsRandom="True" Content="{TemplateBinding Content}"/>
