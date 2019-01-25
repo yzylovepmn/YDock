@@ -10,6 +10,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Xml.Linq;
 using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
@@ -233,14 +234,14 @@ namespace YDock.View
         {
             base.OnMouseLeftButtonDown(e);
             if (SelectedContent != null)
-                (_model as ILayoutGroup).ShowWithActice(SelectedContent as DockElement);
+                (_model as ILayoutGroup).ShowWithActive(SelectedContent as DockElement);
         }
 
         protected override void OnMouseRightButtonDown(System.Windows.Input.MouseButtonEventArgs e)
         {
             base.OnMouseRightButtonDown(e);
             if (SelectedContent != null)
-                (_model as ILayoutGroup).ShowWithActice(SelectedContent as DockElement);
+                (_model as ILayoutGroup).ShowWithActive(SelectedContent as DockElement);
         }
 
         protected override DependencyObject GetContainerForItemOverride()
@@ -553,6 +554,18 @@ namespace YDock.View
         private HitTestResultBehavior _HitRessult(HitTestResult result)
         {
             return HitTestResultBehavior.Stop;
+        }
+        #endregion
+
+        #region Layout Setting
+        public XElement GenerateLayout()
+        {
+            var ele = new XElement("Group");
+            ele.SetAttributeValue("IsDocument", Mode == DragMode.Document);
+            ele.SetAttributeValue("Side", _model.Side);
+            foreach (var item in _model.Children)
+                ele.Add(new XElement("Item", item.ID));
+            return ele;
         }
         #endregion
     }

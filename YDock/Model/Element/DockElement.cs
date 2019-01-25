@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Xml.Linq;
 using YDock.Enum;
 using YDock.Interface;
 using YDock.View;
@@ -433,24 +434,31 @@ namespace YDock.Model
                 if (Mode == DockMode.Normal)
                 {
                     Mode = DockMode.DockBar;
-                    switch (Side)
-                    {
-                        case DockSide.Left:
-                            dockManager.Root.LeftSide.Attach(this);
-                            break;
-                        case DockSide.Right:
-                            dockManager.Root.RightSide.Attach(this);
-                            break;
-                        case DockSide.Top:
-                            dockManager.Root.TopSide.Attach(this);
-                            break;
-                        case DockSide.Bottom:
-                            dockManager.Root.BottomSide.Attach(this);
-                            break;
-                    }
+                    dockManager.Root.AddSideChild(this, Side);
                 }
                 else if (Mode == DockMode.DockBar)
                     _ToRoot(dockManager);
+            }
+        }
+
+        public void ToDockSide(DockSide side, bool isActive = false)
+        {
+            if (side != DockSide.Left && side != DockSide.Top && side != DockSide.Right && side != DockSide.Bottom) return;
+            if (_container != null)
+            {
+                if (side != Side || Mode != DockMode.DockBar)
+                {
+                    var dockManager = DockManager;
+                    _container.Detach(this);
+                    _container = null;
+
+                    Mode = DockMode.DockBar;
+                    Side = side;
+                    dockManager.Root.AddSideChild(this, Side);
+                }
+
+                if (isActive)
+                    _dockControl.SetActive();
             }
         }
 
@@ -491,6 +499,29 @@ namespace YDock.Model
                     dockManager.LayoutRootPanel.RootGroupPanel.AttachChild(groupctrl, AttachMode.Bottom, dockManager.LayoutRootPanel.RootGroupPanel.Count);
                     break;
             }
+        }
+        #endregion
+
+        #region Save & Load
+        public XElement Save()
+        {
+            var ele = new XElement("Item");
+            ele.SetAttributeValue("ID", _id);
+            ele.SetAttributeValue("DesiredWidth", _desiredWidth);
+            ele.SetAttributeValue("DesiredHeight", _desiredHeight);
+            ele.SetAttributeValue("FloatLeft", _floatLeft);
+            ele.SetAttributeValue("FloatTop", _floatTop);
+            ele.SetAttributeValue("CanSelect", _canSelect);
+            return ele;
+        }
+
+        public void Load(XElement ele)
+        {
+            _desiredWidth = double.Parse(ele.Attribute("DesiredWidth").Value);
+            _desiredHeight = double.Parse(ele.Attribute("DesiredHeight").Value);
+            _floatLeft = double.Parse(ele.Attribute("FloatLeft").Value);
+            _floatTop = double.Parse(ele.Attribute("FloatTop").Value);
+            CanSelect = bool.Parse(ele.Attribute("CanSelect").Value);
         }
         #endregion
 

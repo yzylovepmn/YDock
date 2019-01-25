@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Markup;
+using System.Xml.Linq;
 using YDock.Enum;
 using YDock.Interface;
 
@@ -176,6 +177,68 @@ namespace YDock.Model
                 case DockSide.Bottom:
                     BottomSide.Attach(ele);
                     break;
+            }
+        }
+
+        public XElement GenerateLayout()
+        {
+            var ele = new XElement("ToolBar");
+
+            // Left bar
+            var node = new XElement("LeftBar");
+            foreach (var item in LeftSide.Children)
+                node.Add(new XElement("Item", item.ID));
+            ele.Add(node);
+
+            // Top bar
+            node = new XElement("TopBar");
+            foreach (var item in TopSide.Children)
+                node.Add(new XElement("Item", item.ID));
+            ele.Add(node);
+
+            // Right bar
+            node = new XElement("RightBar");
+            foreach (var item in RightSide.Children)
+                node.Add(new XElement("Item", item.ID));
+            ele.Add(node);
+
+            // Bottom bar
+            node = new XElement("BottomBar");
+            foreach (var item in BottomSide.Children)
+                node.Add(new XElement("Item", item.ID));
+            ele.Add(node);
+
+            return ele;
+        }
+
+        public void LoadLayout(XElement root)
+        {
+            foreach (var item in root.Element("LeftBar").Elements())
+            {
+                var id = int.Parse(item.Value);
+                var ele = _dockManager.GetDockControl(id);
+                ele.ProtoType.ToDockSide(DockSide.Left);
+            }
+
+            foreach (var item in root.Element("TopBar").Elements())
+            {
+                var id = int.Parse(item.Value);
+                var ele = _dockManager.GetDockControl(id);
+                ele.ProtoType.ToDockSide(DockSide.Top);
+            }
+
+            foreach (var item in root.Element("RightBar").Elements())
+            {
+                var id = int.Parse(item.Value);
+                var ele = _dockManager.GetDockControl(id);
+                ele.ProtoType.ToDockSide(DockSide.Right);
+            }
+
+            foreach (var item in root.Element("BottomBar").Elements())
+            {
+                var id = int.Parse(item.Value);
+                var ele = _dockManager.GetDockControl(id);
+                ele.ProtoType.ToDockSide(DockSide.Bottom);
             }
         }
 

@@ -328,7 +328,7 @@ namespace YDock.View
                                 if (layoutCrtl.DockViewParent != null)
                                 {
                                     layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
-                                    flag &= layoutpanel.Direction != Direction.UpToDown && layoutCrtl.ChildrenCount > 0;
+                                    flag &= layoutpanel.Direction != Direction.Vertical && layoutCrtl.ChildrenCount > 0;
                                 }
                                 if (flag)
                                 {
@@ -346,7 +346,7 @@ namespace YDock.View
                                 if (layoutCrtl.DockViewParent != null)
                                 {
                                     layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
-                                    if (layoutpanel.Direction == Direction.LeftToRight)
+                                    if (layoutpanel.Direction == Direction.Horizontal)
                                         flag &= layoutCrtl.IndexOf() == 0;
                                 }
                                 hoffset += (DropPanel.InnerRect.Size.Width - Constants.DropUnitLength) / 2 - Constants.DropUnitLength * 2;
@@ -372,7 +372,7 @@ namespace YDock.View
                                 if (layoutCrtl.DockViewParent != null)
                                 {
                                     layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
-                                    flag &= layoutpanel.Direction != Direction.UpToDown && layoutCrtl.ChildrenCount > 0;
+                                    flag &= layoutpanel.Direction != Direction.Vertical && layoutCrtl.ChildrenCount > 0;
                                 }
                                 if (flag)
                                 {
@@ -390,7 +390,7 @@ namespace YDock.View
                                 if (layoutCrtl.DockViewParent != null)
                                 {
                                     layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
-                                    if (layoutpanel.Direction == Direction.LeftToRight)
+                                    if (layoutpanel.Direction == Direction.Horizontal)
                                         flag &= layoutCrtl.IndexOf() == layoutpanel.Count - 1;
                                 }
                                 hoffset += DropPanel.InnerRect.Size.Width / 2 + Constants.DropUnitLength * 2.5;
@@ -416,7 +416,7 @@ namespace YDock.View
                                 if (layoutCrtl.DockViewParent != null)
                                 {
                                     layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
-                                    flag &= layoutpanel.Direction != Direction.LeftToRight && layoutCrtl.ChildrenCount > 0;
+                                    flag &= layoutpanel.Direction != Direction.Horizontal && layoutCrtl.ChildrenCount > 0;
                                 }
                                 if (flag)
                                 {
@@ -434,7 +434,7 @@ namespace YDock.View
                                 if (layoutCrtl.DockViewParent != null)
                                 {
                                     layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
-                                    if (layoutpanel.Direction == Direction.UpToDown)
+                                    if (layoutpanel.Direction == Direction.Vertical)
                                         flag &= layoutCrtl.IndexOf() == 0;
                                 }
                                 hoffset += (DropPanel.InnerRect.Size.Width - Constants.DropUnitLength) / 2;
@@ -460,7 +460,7 @@ namespace YDock.View
                                 if (layoutCrtl.DockViewParent != null)
                                 {
                                     layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
-                                    flag &= layoutpanel.Direction != Direction.LeftToRight && layoutCrtl.ChildrenCount > 0;
+                                    flag &= layoutpanel.Direction != Direction.Horizontal && layoutCrtl.ChildrenCount > 0;
                                 }
                                 if (flag)
                                 {
@@ -478,7 +478,7 @@ namespace YDock.View
                                 if (layoutCrtl.DockViewParent != null)
                                 {
                                     layoutpanel = layoutCrtl.DockViewParent as LayoutGroupPanel;
-                                    if (layoutpanel.Direction == Direction.UpToDown)
+                                    if (layoutpanel.Direction == Direction.Vertical)
                                         flag &= layoutCrtl.IndexOf() == layoutpanel.Count - 1;
                                 }
                                 hoffset += (DropPanel.InnerRect.Size.Width - Constants.DropUnitLength) / 2;

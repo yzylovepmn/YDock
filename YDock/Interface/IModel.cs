@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using System.Xml.Linq;
 using YDock.Enum;
 
 namespace YDock.Interface
@@ -20,7 +21,9 @@ namespace YDock.Interface
 
     public interface IDockElement : IDockOrigin
     {
-
+        XElement Save();
+        void Load(XElement ele);
+        void ToDockSide(DockSide side, bool isActive = false);
     }
 
     public interface IDockOrigin : ILayout, ILayoutSize, IDockItem, INotifyPropertyChanged, IDisposable

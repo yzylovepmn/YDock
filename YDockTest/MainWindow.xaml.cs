@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -14,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 using YDock;
 using YDock.Enum;
 using YDock.Interface;
@@ -31,7 +34,12 @@ namespace YDockTest
         {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
+            Closing += MainWindow_Closing;
+
+            _Init();
         }
+
+        static string SettingFileName { get { return string.Format(@"{0}\{1}", Environment.CurrentDirectory, "Layout.xml"); } }
 
         private Doc doc_0;
         private Doc doc_1;
@@ -46,7 +54,7 @@ namespace YDockTest
         private Doc top_1;
         private Doc bottom_1;
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private void _Init()
         {
             doc_0 = new Doc("doc_0");
             doc_1 = new Doc("doc_1");
@@ -75,19 +83,38 @@ namespace YDockTest
             DockManager.RegisterDock(right_1, DockSide.Right);
             DockManager.RegisterDock(top_1, DockSide.Top);
             DockManager.RegisterDock(bottom_1, DockSide.Bottom);
+        }
 
-            doc_0.DockControl.Show();
-            doc_1.DockControl.Show();
-            doc_2.DockControl.Show();
-            doc_3.DockControl.Show();
-            left.DockControl.Show();
-            right.DockControl.Show();
-            top.DockControl.Show();
-            bottom.DockControl.Show();
-            left_1.DockControl.Show();
-            right_1.DockControl.Show();
-            top_1.DockControl.Show();
-            bottom_1.DockControl.Show();
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (File.Exists(SettingFileName))
+            {
+                var layout = XDocument.Parse(File.ReadAllText(SettingFileName));
+                DockManager.LoadLayout(layout);
+            }
+            else
+            {
+                doc_0.DockControl.Show();
+                doc_1.DockControl.Show();
+                doc_2.DockControl.Show();
+                doc_3.DockControl.Show();
+                left.DockControl.Show();
+                right.DockControl.Show();
+                top.DockControl.Show();
+                bottom.DockControl.Show();
+                left_1.DockControl.Show();
+                right_1.DockControl.Show();
+                top_1.DockControl.Show();
+                bottom_1.DockControl.Show();
+            }
+        }
+
+        private void MainWindow_Closing(object sender, CancelEventArgs e)
+        {
+            var doc = DockManager.GenerateLayout();
+            doc.Save(SettingFileName);
+
+            DockManager.Dispose();
         }
     }
 

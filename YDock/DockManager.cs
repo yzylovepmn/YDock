@@ -9,8 +9,10 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Xml.Linq;
 using YDock.Enum;
 using YDock.Interface;
+using YDock.LayoutSetting;
 using YDock.Model;
 using YDock.View;
 
@@ -29,7 +31,7 @@ namespace YDock
         {
             Root = new DockRoot();
             _dragManager = new DragManager(this);
-            _dockControls = new Dictionary<int, IDockControl>();
+            _dockControls = new SortedDictionary<int, IDockControl>();
             _floatWindows = new List<BaseFloatWindow>();
             backwards = new Stack<int>();
             forwards = new Stack<int>();
@@ -386,7 +388,14 @@ namespace YDock
                     yield return ctrl.Value;
             }
         }
-        private Dictionary<int, IDockControl> _dockControls;
+        private SortedDictionary<int, IDockControl> _dockControls;
+
+        internal IDockControl GetDockControl(int id)
+        {
+            if (_dockControls.ContainsKey(id))
+                return _dockControls[id];
+            return null;
+        }
 
         internal void AddDockControl(IDockControl ctrl)
         {
@@ -413,7 +422,7 @@ namespace YDock
         /// <param name="desiredWidth">期望的宽度</param>
         /// <param name="desiredHeight">期望的高度</param>
         /// <returns></returns>
-        public void RegisterDocument(IDockSource content, bool canSelect = false, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength)
+        public void RegisterDocument(IDockSource content, bool canSelect = false, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength, double floatLeft = 0.0, double floatTop = 0.0)
         {
             DockElement ele = new DockElement(true)
             {
@@ -425,7 +434,9 @@ namespace YDock
                 Mode = DockMode.Normal,
                 CanSelect = canSelect,
                 DesiredWidth = desiredWidth,
-                DesiredHeight = desiredHeight
+                DesiredHeight = desiredHeight,
+                FloatLeft = floatLeft,
+                FloatTop = floatTop
             };
             var ctrl = new DockControl(ele);
             AddDockControl(ctrl);
@@ -443,7 +454,7 @@ namespace YDock
         /// <param name="desiredWidth">期望的宽度</param>
         /// <param name="desiredHeight">期望的高度</param>
         /// <returns></returns>
-        public void RegisterDock(IDockSource content, DockSide side = DockSide.Left, bool canSelect = false, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength)
+        public void RegisterDock(IDockSource content, DockSide side = DockSide.Left, bool canSelect = false, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength, double floatLeft = 0.0, double floatTop = 0.0)
         {
             DockElement ele = new DockElement()
             {
@@ -455,7 +466,9 @@ namespace YDock
                 Mode = DockMode.DockBar,
                 CanSelect = canSelect,
                 DesiredWidth = desiredWidth,
-                DesiredHeight = desiredHeight
+                DesiredHeight = desiredHeight,
+                FloatLeft = floatLeft,
+                FloatTop = floatTop
             };
             switch (side)
             {
@@ -483,7 +496,7 @@ namespace YDock
         /// <param name="desiredWidth">期望的宽度</param>
         /// <param name="desiredHeight">期望的高度</param>
         /// <returns></returns>
-        public void RegisterFloat(IDockSource content, DockSide side = DockSide.Left, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength)
+        public void RegisterFloat(IDockSource content, DockSide side = DockSide.Left, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength, double floatLeft = 0.0, double floatTop = 0.0)
         {
             DockElement ele = new DockElement()
             {
@@ -494,7 +507,9 @@ namespace YDock
                 Side = side,
                 Mode = DockMode.Float,
                 DesiredWidth = desiredWidth,
-                DesiredHeight = desiredHeight
+                DesiredHeight = desiredHeight,
+                FloatLeft = floatLeft,
+                FloatTop = floatTop
             };
             var ctrl = new DockControl(ele);
             var group = new LayoutGroup(side, ele.Mode, this);
@@ -687,19 +702,18 @@ namespace YDock
         /// <param name="source">源</param>
         /// <param name="target">目标</param>
         /// <param name="mode">附加模式</param>
-        public void AttachTo(IDockControl source, IDockControl target, AttachMode mode, double ratio = 1)
+        public void AttachTo(IDockControl source, IDockControl target, AttachMode mode, double ratio = -1)
         {
             if (target.Container.View == null) throw new InvalidOperationException("target must be visible!");
             if (target.IsDisposed) throw new InvalidOperationException("target is disposed!");
             if (source == target) throw new InvalidOperationException("source can not be target!");
             if (source == null || target == null) throw new ArgumentNullException("source or target is null!");
-            if (source.Container.View != target.Container.View && source.CanSelect)
-                source.SetActive();
-            else if (source.Container != null)
+            if (target.Mode == DockMode.DockBar) throw new ArgumentNullException("target is DockBar Mode!");
+            if (source.Container != null)
             {
                 //DockBar模式下无法合并，故先转换为Normal模式
-                if (target.Mode == DockMode.DockBar)
-                    target.ToDock();
+                //if (target.Mode == DockMode.DockBar)
+                //    target.ToDock();
 
                 source.Container.Detach(source.ProtoType);
 
@@ -707,36 +721,131 @@ namespace YDock
                 double width = (target.Container.View as ILayoutViewWithSize).DesiredWidth
                     , height = (target.Container.View as ILayoutViewWithSize).DesiredHeight;
 
-                if (mode == AttachMode.Right
+                if (ratio > 0)
+                {
+                    if (mode == AttachMode.Right
                     || mode == AttachMode.Left
                     || mode == AttachMode.Left_WithSplit
                     || mode == AttachMode.Right_WithSplit)
-                    width = (target.Container.View as ILayoutViewWithSize).DesiredWidth * ratio;
+                        width = (target.Container.View as ILayoutViewWithSize).DesiredWidth * ratio;
 
-                if (mode == AttachMode.Top
-                    || mode == AttachMode.Bottom
-                    || mode == AttachMode.Top_WithSplit
-                    || mode == AttachMode.Bottom_WithSplit)
-                    height = (target.Container.View as ILayoutViewWithSize).DesiredHeight * ratio;
+                    if (mode == AttachMode.Top
+                        || mode == AttachMode.Bottom
+                        || mode == AttachMode.Top_WithSplit
+                        || mode == AttachMode.Bottom_WithSplit)
+                        height = (target.Container.View as ILayoutViewWithSize).DesiredHeight * ratio;
+                }
 
                 BaseLayoutGroup group;
                 BaseGroupControl ctrl;
                 if (source.IsDocument)
                 {
                     group = new LayoutDocumentGroup(DockMode.Normal, this);
-                    ctrl = new LayoutDocumentGroupControl(group, width, height);
+                    ctrl = new LayoutDocumentGroupControl(group, ratio > 0 ? width : source.DesiredWidth, ratio > 0 ? height : source.DesiredHeight);
                 }
                 else
                 {
                     group = new LayoutGroup(source.Side, DockMode.Normal, this);
-                    ctrl = new AnchorSideGroupControl(group, width, height);
+                    ctrl = new AnchorSideGroupControl(group, ratio > 0 ? width : source.DesiredWidth, ratio > 0 ? height : source.DesiredHeight);
                 }
                 group.Attach(source.ProtoType);
                 var _atsource = target.ProtoType.Container.View as IAttcah;
                 _atsource.AttachWith(ctrl, mode);
-                source.SetActive();
+                //source.SetActive();
             }
             else throw new ArgumentNullException("the container of source is null!");
+        }
+        #endregion
+
+        #region Layout Setting
+        public XDocument GenerateLayout()
+        {
+            var doc = new XDocument();
+            var rootNode = new XElement("Layout");
+
+            if (_activeElement != null)
+                rootNode.Add(new XElement("ActiveItem", _activeElement.ID));
+
+            // FloatWindows SaveSize
+            _floatWindows.ForEach(fw => fw.SaveSize());
+
+            // Elements
+            var node = new XElement("Elements");
+            foreach (var item in _dockControls.Values.Select(dc => dc.ProtoType))
+                node.Add(item.Save());
+            rootNode.Add(node);
+
+            // Tool bar
+            rootNode.Add(_root.GenerateLayout());
+
+            // Layout Root
+            rootNode.Add(LayoutRootPanel.RootGroupPanel.GenerateLayout());
+
+            // FloatWindows
+            node = new XElement("FloatWindows");
+            foreach (var fw in _floatWindows)
+                node.Add(fw.GenerateLayout());
+            rootNode.Add(node);
+
+            doc.Add(rootNode);
+            return doc;
+        }
+
+        public void LoadLayout(XDocument doc)
+        {
+            HideAll();
+
+            int id;
+            var rootNode = doc.Element("Layout");
+            foreach (var item in rootNode.Element("Elements").Elements())
+            {
+                id = int.Parse(item.Attribute("ID").Value);
+                _dockControls[id].ProtoType.Load(item);
+            }
+
+            _root.LoadLayout(rootNode.Element("ToolBar"));
+
+            _LoadRootPanel(rootNode.Element("Panel"));
+
+            _LoadFloatWindows(rootNode.Element("FloatWindows"));
+
+            var node = rootNode.Element("ActiveItem");
+            if (node != null)
+            {
+                id = int.Parse(node.Value);
+                _dockControls[id].SetActive();
+            }
+        }
+
+        private void _LoadRootPanel(XElement ele)
+        {
+            var rootNode = new PanelNode(null);
+            rootNode.Load(ele);
+            rootNode.ApplyLayout(this);
+            rootNode.Dispose();
+        }
+
+        private void _LoadFloatWindows(XElement ele)
+        {
+            foreach (var item in ele.Elements())
+            {
+                var node = item.Element("Panel");
+                if (node != null)
+                {
+                    var panelNode = new PanelNode(null);
+                    panelNode.Load(node);
+                    panelNode.ApplyLayout(this, true);
+                    panelNode.Dispose();
+                }
+                else
+                {
+                    node = item.Element("Group");
+                    var groupNode = new GroupNode(null);
+                    groupNode.Load(node);
+                    groupNode.ApplyLayout(this, true);
+                    groupNode.Dispose();
+                }
+            }
         }
         #endregion
 

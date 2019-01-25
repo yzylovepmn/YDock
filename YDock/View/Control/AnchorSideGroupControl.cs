@@ -58,7 +58,7 @@ namespace YDock.View
                     wnd.DetachChild(this);
                     panel = new LayoutGroupPanel(Model.Side)
                     {
-                        Direction = (DropMode == DropMode.Left || DropMode == DropMode.Right) ? Direction.LeftToRight : Direction.UpToDown,
+                        Direction = (DropMode == DropMode.Left || DropMode == DropMode.Right) ? Direction.Horizontal : Direction.Vertical,
                         DesiredWidth = wnd.ActualWidth,
                         DesiredHeight = wnd.ActualHeight,
                         IsAnchorPanel = true
@@ -83,11 +83,11 @@ namespace YDock.View
             switch (mode)
             {
                 case DropMode.Left:
-                    if (panel.Direction == Direction.UpToDown)
+                    if (panel.Direction == Direction.Vertical)
                     {
                         var _subpanel = new LayoutGroupPanel(Model.Side)
                         {
-                            Direction = Direction.LeftToRight,
+                            Direction = Direction.Horizontal,
                             DesiredWidth = Math.Max(ActualWidth, Constants.DockDefaultWidthLength),
                             DesiredHeight = Math.Max(ActualHeight, Constants.DockDefaultHeightLength),
                             IsAnchorPanel = true
@@ -100,11 +100,11 @@ namespace YDock.View
                     else panel._AttachChild(source, index);
                     break;
                 case DropMode.Top:
-                    if (panel.Direction == Direction.LeftToRight)
+                    if (panel.Direction == Direction.Horizontal)
                     {
                         var _subpanel = new LayoutGroupPanel(Model.Side)
                         {
-                            Direction = Direction.UpToDown,
+                            Direction = Direction.Vertical,
                             DesiredWidth = Math.Max(ActualWidth, Constants.DockDefaultWidthLength),
                             DesiredHeight = Math.Max(ActualHeight, Constants.DockDefaultHeightLength),
                             IsAnchorPanel = true
@@ -117,11 +117,11 @@ namespace YDock.View
                     else panel._AttachChild(source, index);
                     break;
                 case DropMode.Right:
-                    if (panel.Direction == Direction.UpToDown)
+                    if (panel.Direction == Direction.Vertical)
                     {
                         var _subpanel = new LayoutGroupPanel(Model.Side)
                         {
-                            Direction = Direction.LeftToRight,
+                            Direction = Direction.Horizontal,
                             DesiredWidth = Math.Max(ActualWidth, Constants.DockDefaultWidthLength),
                             DesiredHeight = Math.Max(ActualHeight, Constants.DockDefaultHeightLength),
                             IsAnchorPanel = true
@@ -134,11 +134,11 @@ namespace YDock.View
                     else panel._AttachChild(source, index + 1);
                     break;
                 case DropMode.Bottom:
-                    if (panel.Direction == Direction.LeftToRight)
+                    if (panel.Direction == Direction.Horizontal)
                     {
                         var _subpanel = new LayoutGroupPanel(Model.Side)
                         {
-                            Direction = Direction.UpToDown,
+                            Direction = Direction.Vertical,
                             DesiredWidth = Math.Max(ActualWidth, Constants.DockDefaultWidthLength),
                             DesiredHeight = Math.Max(ActualHeight, Constants.DockDefaultHeightLength),
                             IsAnchorPanel = true

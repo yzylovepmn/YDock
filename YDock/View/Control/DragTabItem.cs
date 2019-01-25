@@ -59,7 +59,7 @@ namespace YDock.View
             if (e.MiddleButton == MouseButtonState.Pressed)
             {
                 if ((Content as DockElement).IsActive)
-                    Container.ShowWithActice(null);
+                    Container.ShowWithActive(null);
                 (Content as DockElement).CanSelect = false;
             }
         }
@@ -108,7 +108,7 @@ namespace YDock.View
             else _dockViewParent._rect = DockHelper.CreateChildRectFromParent(VisualParent as Panel, this);
             _dockViewParent.UpdateChildrenBounds(VisualParent as Panel);
 
-            Container.ShowWithActice(_dockViewParent._dragItem);
+            Container.ShowWithActive(_dockViewParent._dragItem);
 
             if (!IsMouseCaptured)
                 CaptureMouse();
@@ -117,7 +117,7 @@ namespace YDock.View
         protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
         {
             base.OnMouseRightButtonDown(e);
-            Container.ShowWithActice(Content as IDockElement);
+            Container.ShowWithActive(Content as IDockElement);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)

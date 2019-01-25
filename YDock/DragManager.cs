@@ -220,7 +220,7 @@ namespace YDock
 
                         #region AttachObj
                         var _parent = _layoutGroup.View.DockViewParent as LayoutGroupPanel;
-                        var _mode = _parent.Direction == Direction.LeftToRight ? AttachMode.Left : AttachMode.Top;
+                        var _mode = _parent.Direction == Direction.Horizontal ? AttachMode.Left : AttachMode.Top;
                         if (_parent.Direction == Direction.None)
                                 _mode = AttachMode.None;
                         var _index = _parent.IndexOf(_layoutGroup.View);
@@ -380,7 +380,7 @@ namespace YDock
                         {
                             #region AttachObj
                             var _parent = group.View.DockViewParent as LayoutGroupPanel;
-                            var _mode = _parent.Direction == Direction.LeftToRight ? AttachMode.Left : AttachMode.Top;
+                            var _mode = _parent.Direction == Direction.Horizontal ? AttachMode.Left : AttachMode.Top;
                             if (_parent.Direction == Direction.None)
                                 _mode = AttachMode.None;
                             var _index = _parent.IndexOf(group.View);

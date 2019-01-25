@@ -44,7 +44,7 @@ namespace YDock.View
                     var parent = Parent as LayoutGroupPanel;
                     switch (parent.Direction)
                     {
-                        case Direction.LeftToRight:
+                        case Direction.Horizontal:
                             if (mode == AttachMode.Left || mode == AttachMode.Right)
                             {
                                 if (child is LayoutGroupPanel)
@@ -55,13 +55,13 @@ namespace YDock.View
                             {
                                 int _index = parent.IndexOf(this);
                                 parent._DetachChild(this);
-                                var pparent = new LayoutGroupPanel() { Direction = Direction.UpToDown };
+                                var pparent = new LayoutGroupPanel() { Direction = Direction.Vertical };
                                 parent._AttachChild(pparent, _index);
                                 pparent._AttachChild(this, 0);
                                 pparent._AttachChild(child, mode == AttachMode.Top ? 0 : 1);
                             }
                             break;
-                        case Direction.UpToDown:
+                        case Direction.Vertical:
                             if (mode == AttachMode.Top || mode == AttachMode.Bottom)
                             {
                                 if (child is LayoutGroupPanel)
@@ -72,7 +72,7 @@ namespace YDock.View
                             {
                                 int _index = parent.IndexOf(this);
                                 parent._DetachChild(this);
-                                var pparent = new LayoutGroupPanel() { Direction = Direction.LeftToRight };
+                                var pparent = new LayoutGroupPanel() { Direction = Direction.Horizontal };
                                 parent._AttachChild(pparent, _index);
                                 pparent._AttachChild(this, 0);
                                 pparent._AttachChild(child, mode == AttachMode.Left ? 0 : 1);
@@ -113,7 +113,7 @@ namespace YDock.View
             if (child is LayoutDocumentGroupControl)
             {
                 if (Direction == Direction.None)
-                    Direction = (mode == AttachMode.Left_WithSplit || mode == AttachMode.Right_WithSplit) ? Direction.LeftToRight : Direction.UpToDown;
+                    Direction = (mode == AttachMode.Left_WithSplit || mode == AttachMode.Right_WithSplit) ? Direction.Horizontal : Direction.Vertical;
                 _AttachChild(child, index);
 
                 if (DockViewParent != null)

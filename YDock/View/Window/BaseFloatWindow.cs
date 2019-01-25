@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Xml.Linq;
 using YDock.Commands;
 using YDock.Enum;
 using YDock.Interface;
@@ -262,13 +263,7 @@ namespace YDock.View
             if (child == Content)
             {
                 DockManager.RemoveFloatWindow(this);
-                //保存Size信息
-                if (child is ILayoutSize)
-                {
-                    var _child = child as ILayoutSize;
-                    _child.DesiredWidth = Math.Max(ActualWidth - _widthEceeed, Constants.SideLength);
-                    _child.DesiredHeight = Math.Max(ActualHeight - _heightEceeed, Constants.SideLength);
-                }
+                SaveSize();
                 if (child is BaseGroupControl)
                     (child as BaseGroupControl).IsDraggingFromDock = false;
                 Content = null;
@@ -293,6 +288,27 @@ namespace YDock.View
             if (child == Child)
                 return 0;
             else return -1;
+        }
+
+        public void SaveSize()
+        {
+            //保存Size信息
+            if (Content is ILayoutSize)
+            {
+                var _child = Content as ILayoutSize;
+                _child.DesiredWidth = Math.Max(ActualWidth - _widthEceeed, Constants.SideLength);
+                _child.DesiredHeight = Math.Max(ActualHeight - _heightEceeed, Constants.SideLength);
+            }
+        }
+
+        public XElement GenerateLayout()
+        {
+            var ele = new XElement("FloatWindow");
+            if (Child is BaseGroupControl)
+                ele.Add((Child as BaseGroupControl).GenerateLayout());
+            else if (Child is LayoutGroupPanel)
+                ele.Add((Child as LayoutGroupPanel).GenerateLayout());
+            return ele;
         }
     }
 }

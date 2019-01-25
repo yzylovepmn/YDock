@@ -54,8 +54,8 @@ namespace YDock.View
         {
             var ele = Content as DockElement;
             if (ele == Container.DockManager.AutoHideElement)
-                Container.ShowWithActice(null);
-            else Container.ShowWithActice(ele);
+                Container.ShowWithActive(null);
+            else Container.ShowWithActive(ele);
             base.OnMouseLeftButtonDown(e);
         }
 

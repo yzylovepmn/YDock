@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Xml.Linq;
 using YDock.Enum;
 using YDock.Interface;
 using YDock.Model;
@@ -232,7 +233,7 @@ namespace YDock.View
             var stars = new List<double>();
             switch (Direction)
             {
-                case Direction.LeftToRight:
+                case Direction.Horizontal:
                     wholelength = layoutgroups.Sum(group => group.DesiredWidth);
                     foreach (var group in layoutgroups)
                         stars.Add(group.DesiredWidth / wholelength);
@@ -280,7 +281,7 @@ namespace YDock.View
                         }
                     }
                     break;
-                case Direction.UpToDown:
+                case Direction.Vertical:
                     wholelength = layoutgroups.Sum(group => group.DesiredHeight);
                     foreach (var group in layoutgroups)
                         stars.Add(group.DesiredHeight / wholelength);
@@ -344,7 +345,7 @@ namespace YDock.View
             double wholeLength = 0;
             switch (Direction)
             {
-                case Direction.LeftToRight:
+                case Direction.Horizontal:
                     foreach (var child in InternalChildren)
                     {
                         if (child is LayoutDragSplitter)
@@ -423,7 +424,7 @@ namespace YDock.View
                         }
                     }
                     break;
-                case Direction.UpToDown:
+                case Direction.Vertical:
                     foreach (var child in InternalChildren)
                     {
                         if (child is LayoutDragSplitter)
@@ -511,7 +512,7 @@ namespace YDock.View
             double minLength;
             switch (Direction)
             {
-                case Direction.LeftToRight:
+                case Direction.Horizontal:
                     double availableLength = availableSize.Width;
                     for (int i = 0; i < InternalChildren.Count; i += 2)
                     {
@@ -541,7 +542,7 @@ namespace YDock.View
                         }
                     }
                     break;
-                case Direction.UpToDown:
+                case Direction.Vertical:
                     availableLength = availableSize.Height;
                     for (int i = 0; i < InternalChildren.Count; i += 2)
                     {
@@ -596,7 +597,7 @@ namespace YDock.View
             var stars = new List<double>();
             switch (Direction)
             {
-                case Direction.LeftToRight:
+                case Direction.Horizontal:
                     wholelength = layoutgroups.Sum(group => group.DesiredWidth);
                     foreach (var group in layoutgroups)
                         stars.Add(group.DesiredWidth / wholelength);
@@ -646,7 +647,7 @@ namespace YDock.View
                         }
                     }
                     break;
-                case Direction.UpToDown:
+                case Direction.Vertical:
                     wholelength = layoutgroups.Sum(group => group.DesiredHeight);
                     foreach (var group in layoutgroups)
                         stars.Add(group.DesiredHeight / wholelength);
@@ -711,7 +712,7 @@ namespace YDock.View
             double wholeLength = 0;
             switch (Direction)
             {
-                case Direction.LeftToRight:
+                case Direction.Horizontal:
                     foreach (var child in InternalChildren)
                     {
                         if (child is LayoutDragSplitter)
@@ -780,7 +781,7 @@ namespace YDock.View
                         }
                     }
                     break;
-                case Direction.UpToDown:
+                case Direction.Vertical:
                     foreach (var child in InternalChildren)
                     {
                         if (child is LayoutDragSplitter)
@@ -859,7 +860,7 @@ namespace YDock.View
             double offset = 0;
             switch (Direction)
             {
-                case Direction.LeftToRight:
+                case Direction.Horizontal:
                     foreach (FrameworkElement child in InternalChildren)
                     {
                         if (child is LayoutDragSplitter)
@@ -874,7 +875,7 @@ namespace YDock.View
                         }
                     }
                     break;
-                case Direction.UpToDown:
+                case Direction.Vertical:
                     foreach (FrameworkElement child in InternalChildren)
                     {
                         if (child is LayoutDragSplitter)
@@ -898,7 +899,7 @@ namespace YDock.View
             double avaLength, offset = 0, minLength;
             switch (Direction)
             {
-                case Direction.LeftToRight:
+                case Direction.Horizontal:
                     avaLength = finalSize.Width;
 
                     foreach (FrameworkElement child in InternalChildren)
@@ -936,7 +937,7 @@ namespace YDock.View
                         }
                     }
                     break;
-                case Direction.UpToDown:
+                case Direction.Vertical:
                     avaLength = finalSize.Height;
 
                     foreach (FrameworkElement child in InternalChildren)
@@ -996,7 +997,7 @@ namespace YDock.View
 
         private void OnDragDelta(object sender, DragDeltaEventArgs e)
         {
-            if (Direction == Direction.LeftToRight)
+            if (Direction == Direction.Horizontal)
             {
                 if (e.HorizontalChange != 0)
                 {
@@ -1034,14 +1035,14 @@ namespace YDock.View
 
         private void OnDragCompleted(object sender, DragCompletedEventArgs e)
         {
-            double delta = Direction == Direction.LeftToRight ? _dragPopup.HorizontalOffset - pToScreen.X : _dragPopup.VerticalOffset - pToScreen.Y;
+            double delta = Direction == Direction.Horizontal ? _dragPopup.HorizontalOffset - pToScreen.X : _dragPopup.VerticalOffset - pToScreen.Y;
             double span1 = 0, span2 = 0;
             var index = Children.IndexOf(sender as UIElement);
             span1 = _GetMinLength(Children[index - 1]);
             span2 = _GetMinLength(Children[index + 1]);
             if (delta != 0)
             {
-                if (Direction == Direction.LeftToRight)
+                if (Direction == Direction.Horizontal)
                 {
                     if ((_dragPopup.HorizontalOffset >= _dragBound1 + span1) && (_dragPopup.HorizontalOffset <= _dragBound2 - span2))
                     {
@@ -1107,14 +1108,14 @@ namespace YDock.View
                 var _pToInterPanel = transfrom.Transform(new Point(0, 0));
                 pToScreen.X += _pToInterPanel.X;
                 pToScreen.Y += _pToInterPanel.Y;
-                if (Direction == Direction.LeftToRight)
+                if (Direction == Direction.Horizontal)
                     x1 = pToScreen.X + Constants.SplitterSpan;
                 else x1 = pToScreen.Y + Constants.SplitterSpan;
             }
             else
             {
                 var pToScreen = this.PointToScreenDPIWithoutFlowDirection(new Point());
-                if (Direction == Direction.LeftToRight)
+                if (Direction == Direction.Horizontal)
                     x1 = pToScreen.X;
                 else x1 = pToScreen.Y;
             }
@@ -1127,14 +1128,14 @@ namespace YDock.View
                 var _pToInterPanel = transfrom.Transform(new Point(0, 0));
                 pToScreen.X += _pToInterPanel.X;
                 pToScreen.Y += _pToInterPanel.Y;
-                if (Direction == Direction.LeftToRight)
+                if (Direction == Direction.Horizontal)
                     x2 = pToScreen.X - Constants.SplitterSpan;
                 else x2 = pToScreen.Y - Constants.SplitterSpan;
             }
             else
             {
                 var pToScreen = this.PointToScreenDPIWithoutFlowDirection(new Point());
-                if (Direction == Direction.LeftToRight)
+                if (Direction == Direction.Horizontal)
                     x2 = pToScreen.X + ActualWidth - Constants.SplitterSpan;
                 else x2 = pToScreen.Y + ActualHeight - Constants.SplitterSpan;
             }
@@ -1151,11 +1152,11 @@ namespace YDock.View
             int index = Children.IndexOf(splitter);
             switch (Direction)
             {
-                case Direction.LeftToRight:
+                case Direction.Horizontal:
                     (Children[index - 1] as ILayoutSize).DesiredWidth = (Children[index - 1] as FrameworkElement).ActualWidth;
                     (Children[index + 1] as ILayoutSize).DesiredWidth = (Children[index + 1] as FrameworkElement).ActualWidth;
                     break;
-                case Direction.UpToDown:
+                case Direction.Vertical:
                     (Children[index - 1] as ILayoutSize).DesiredHeight = (Children[index - 1] as FrameworkElement).ActualHeight;
                     (Children[index + 1] as ILayoutSize).DesiredHeight = (Children[index + 1] as FrameworkElement).ActualHeight;
                     break;
@@ -1192,7 +1193,7 @@ namespace YDock.View
             var splitter = new LayoutDragSplitter()
             {
                 Cursor = cursor,
-                Background = Direction == Direction.LeftToRight ? ResourceManager.SplitterBrushVertical : ResourceManager.SplitterBrushHorizontal,
+                Background = Direction == Direction.Horizontal ? ResourceManager.SplitterBrushVertical : ResourceManager.SplitterBrushHorizontal,
             };
             splitter.DragStarted += OnDragStarted;
             splitter.DragDelta += OnDragDelta;
@@ -1271,10 +1272,10 @@ namespace YDock.View
             {
                 case Direction.None:
                     if (mode == AttachMode.Left || mode == AttachMode.Right)
-                        Direction = Direction.LeftToRight;
-                    else Direction = Direction.UpToDown;
+                        Direction = Direction.Horizontal;
+                    else Direction = Direction.Vertical;
                     break;
-                case Direction.LeftToRight:
+                case Direction.Horizontal:
                     if (mode == AttachMode.Left || mode == AttachMode.Right)
                     {
                         if (child is LayoutGroupPanel && !(child as LayoutGroupPanel).IsDocumentPanel)
@@ -1293,7 +1294,7 @@ namespace YDock.View
                         else throw new ArgumentException("mode is illegal!");
                     }
                     break;
-                case Direction.UpToDown:
+                case Direction.Vertical:
                     if (mode == AttachMode.Top || mode == AttachMode.Bottom)
                     {
                         if (child is LayoutGroupPanel && !(child as LayoutGroupPanel).IsDocumentPanel)
@@ -1353,10 +1354,10 @@ namespace YDock.View
                                 case Direction.None:
                                     parent.AttachChild(child, AttachMode.None, Math.Max(index - 1, 0));
                                     break;
-                                case Direction.LeftToRight:
+                                case Direction.Horizontal:
                                     parent.AttachChild(child, AttachMode.Left, Math.Max(index - 1, 0));
                                     break;
-                                case Direction.UpToDown:
+                                case Direction.Vertical:
                                     parent.AttachChild(child, AttachMode.Top, Math.Max(index - 1, 0));
                                     break;
                             }
@@ -1381,12 +1382,12 @@ namespace YDock.View
             {
                 switch (Direction)
                 {
-                    case Direction.LeftToRight:
+                    case Direction.Horizontal:
                         if (index % 2 == 0)
                             Children.Insert(index + 1, _CreateSplitter(Cursors.SizeWE));
                         else Children.Insert(index, _CreateSplitter(Cursors.SizeWE));
                         break;
-                    case Direction.UpToDown:
+                    case Direction.Vertical:
                         if (index % 2 == 0)
                             Children.Insert(index + 1, _CreateSplitter(Cursors.SizeNS));
                         else Children.Insert(index, _CreateSplitter(Cursors.SizeNS));
@@ -1441,7 +1442,7 @@ namespace YDock.View
             parent.DetachChild(this);
             var pparent = new LayoutGroupPanel()
             {
-                Direction = (mode == AttachMode.Left || mode == AttachMode.Right) ? Direction.LeftToRight : Direction.UpToDown
+                Direction = (mode == AttachMode.Left || mode == AttachMode.Right) ? Direction.Horizontal : Direction.Vertical
             };
             parent.AttachChild(pparent, AttachMode.None, 0);
             if (mode == AttachMode.Left || mode == AttachMode.Top)
@@ -1577,6 +1578,26 @@ namespace YDock.View
         }
         #endregion
 
+        #region Layout Setting
+        public XElement GenerateLayout()
+        {
+            var ele = new XElement("Panel");
+            ele.SetAttributeValue("IsDocument", IsDocumentPanel);
+            ele.SetAttributeValue("Side", _side);
+            ele.SetAttributeValue("Direction", _direction);
+            foreach (var child in Children)
+            {
+                if (child is BaseGroupControl)
+                    ele.Add((child as BaseGroupControl).GenerateLayout());
+                else if (child is LayoutGroupPanel)
+                    ele.Add((child as LayoutGroupPanel).GenerateLayout());
+            }
+
+            return ele;
+        }
+        #endregion
+
+        #region Dispose
         public event EventHandler Disposed = delegate { };
 
         protected void _Dispose()
@@ -1593,5 +1614,6 @@ namespace YDock.View
             Children.Clear();
             Disposed(this ,new EventArgs());
         }
+        #endregion
     }
 }

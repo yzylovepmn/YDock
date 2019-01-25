@@ -247,7 +247,7 @@ namespace YDock
                     ToFloat(toActice);
                 else ToDockAsDocument(toActice);
             }
-            else Container.ShowWithActice(_protoType, toActice);
+            else Container.ShowWithActive(_protoType, toActice);
         }
 
         /// <summary>
@@ -305,7 +305,7 @@ namespace YDock
         public void SetActive(bool _isActive = true)
         {
             if (_isActive)
-                _protoType.Container.ShowWithActice(_protoType, _isActive);
+                _protoType.Container.ShowWithActive(_protoType, _isActive);
             else if(DockManager.ActiveElement == _protoType)
                 DockManager.ActiveElement = null;
         }

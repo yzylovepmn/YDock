@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace YDock.Enum
 {
-    public enum Direction
+    public enum LayoutNodeType
     {
-        None,
-
-        Horizontal,
-
-        Vertical
+        Panel,
+        Group,
+        Item
     }
 }

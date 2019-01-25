@@ -60,7 +60,7 @@ namespace YDock.View
                         {
                             DesiredWidth = Math.Max(parent.ActualWidth, Constants.DockDefaultWidthLength),
                             DesiredHeight = Math.Max(parent.ActualHeight, Constants.DockDefaultHeightLength),
-                            Direction = (DropMode == DropMode.Left_WithSplit || DropMode == DropMode.Right_WithSplit) ? Direction.LeftToRight : Direction.UpToDown
+                            Direction = (DropMode == DropMode.Left_WithSplit || DropMode == DropMode.Right_WithSplit) ? Direction.Horizontal : Direction.Vertical
                         };
                         panel._AttachChild(this, 0);
                         if (DropMode == DropMode.Left_WithSplit || DropMode == DropMode.Top_WithSplit)
@@ -71,7 +71,7 @@ namespace YDock.View
                     else
                     {
                         var parent = Parent as LayoutGroupDocumentPanel;
-                        parent.Direction = (DropMode == DropMode.Left_WithSplit || DropMode == DropMode.Right_WithSplit) ? Direction.LeftToRight : Direction.UpToDown;
+                        parent.Direction = (DropMode == DropMode.Left_WithSplit || DropMode == DropMode.Right_WithSplit) ? Direction.Horizontal : Direction.Vertical;
                         int index = parent.IndexOf(this);
                         switch (DropMode)
                         {
@@ -102,7 +102,7 @@ namespace YDock.View
                         rootPanel.DetachChild(_parent, false);
                         var pparent = new LayoutGroupPanel()
                         {
-                            Direction = (DropMode == DropMode.Left || DropMode == DropMode.Right) ? Direction.LeftToRight : Direction.UpToDown
+                            Direction = (DropMode == DropMode.Left || DropMode == DropMode.Right) ? Direction.Horizontal : Direction.Vertical
                         };
                         pparent._AttachChild(_parent, 0);
                         switch (DropMode)
@@ -134,14 +134,14 @@ namespace YDock.View
                         {
                             case DropMode.Left:
                                 DockManager.ChangeSide(child, DockSide.Left);
-                                if (panel.Direction == Direction.LeftToRight)
+                                if (panel.Direction == Direction.Horizontal)
                                     panel.AttachChild(child, AttachMode.Left, index);
                                 else
                                 {
                                     panel._DetachChild(_parent);
                                     var pparent = new LayoutGroupPanel()
                                     {
-                                        Direction = Direction.LeftToRight
+                                        Direction = Direction.Horizontal
                                     };
                                     pparent._AttachChild(_parent, 0);
                                     pparent._AttachChild(child, 0);
@@ -150,14 +150,14 @@ namespace YDock.View
                                 break;
                             case DropMode.Top:
                                 DockManager.ChangeSide(child, DockSide.Top);
-                                if (panel.Direction == Direction.UpToDown)
+                                if (panel.Direction == Direction.Vertical)
                                     panel.AttachChild(child, AttachMode.Top, index);
                                 else
                                 {
                                     panel._DetachChild(_parent);
                                     var pparent = new LayoutGroupPanel()
                                     {
-                                        Direction = Direction.UpToDown
+                                        Direction = Direction.Vertical
                                     };
                                     pparent._AttachChild(_parent, 0);
                                     pparent._AttachChild(child, 0);
@@ -166,14 +166,14 @@ namespace YDock.View
                                 break;
                             case DropMode.Right:
                                 DockManager.ChangeSide(child, DockSide.Right);
-                                if (panel.Direction == Direction.LeftToRight)
+                                if (panel.Direction == Direction.Horizontal)
                                     panel.AttachChild(child, AttachMode.Right, index + 1);
                                 else
                                 {
                                     panel._DetachChild(_parent);
                                     var pparent = new LayoutGroupPanel()
                                     {
-                                        Direction = Direction.LeftToRight
+                                        Direction = Direction.Horizontal
                                     };
                                     pparent._AttachChild(_parent, 0);
                                     pparent._AttachChild(child, 1);
@@ -182,14 +182,14 @@ namespace YDock.View
                                 break;
                             case DropMode.Bottom:
                                 DockManager.ChangeSide(child, DockSide.Bottom);
-                                if (panel.Direction == Direction.UpToDown)
+                                if (panel.Direction == Direction.Vertical)
                                     panel.AttachChild(child, AttachMode.Bottom, index + 1);
                                 else
                                 {
                                     panel._DetachChild(_parent);
                                     var pparent = new LayoutGroupPanel()
                                     {
-                                        Direction = Direction.UpToDown
+                                        Direction = Direction.Vertical
                                     };
                                     pparent._AttachChild(_parent, 0);
                                     pparent._AttachChild(child, 1);

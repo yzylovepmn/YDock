@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using YDock.Enum;
 
 namespace YDock.Interface
@@ -46,8 +47,8 @@ namespace YDock.Interface
         IEnumerable<IDockElement> Children { get; }
         void MoveTo(int src, int des);
         int IndexOf(IDockElement child);
-        void ShowWithActice(IDockElement element, bool toActice = true);
-        void ShowWithActice(int index, bool toActice = true);
+        void ShowWithActive(IDockElement element, bool toActice = true);
+        void ShowWithActive(int index, bool toActice = true);
         void Detach(IDockElement element);
         void Attach(IDockElement element, int index = -1);
         void RaisePropertyChanged(string propertyName);
@@ -60,5 +61,13 @@ namespace YDock.Interface
     {
         bool TryDeatchFromParent(bool isDispose = true);
         void AttachToParent(ILayoutPanel parent, int index);
+    }
+
+    public interface ILayoutNode : IDisposable
+    {
+        LayoutNodeType Type { get; }
+        ILayoutNode Parent { get; }
+        IEnumerable<ILayoutNode> Children { get; }
+        void Load(XElement ele);
     }
 }

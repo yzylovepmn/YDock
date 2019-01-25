@@ -167,7 +167,7 @@ namespace YDock.View
                     var panel = (view as LayoutGroupPanel);
                     if (panel.Direction == Direction.None)
                         break;
-                    if (panel.Direction == Direction.LeftToRight)
+                    if (panel.Direction == Direction.Horizontal)
                     {
                         if (side == DockSide.Top || side == DockSide.Bottom)
                             break;
