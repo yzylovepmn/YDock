@@ -535,13 +535,13 @@ namespace YDock.Model
         public void Dispose()
         {
             if (_isDisposed) return;
+            _isDisposed = true;
             _container?.Detach(this);
             _dockControl = null;
             if (_content is IDockSource)
                 (_content as IDockSource).DockControl = null;
             _content = null;
             _container = null;
-            _isDisposed = true;
         }
         #endregion
     }

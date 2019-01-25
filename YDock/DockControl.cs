@@ -319,11 +319,11 @@ namespace YDock
         public void Dispose()
         {
             if (_isDisposed) return;
+            _isDisposed = true;
             DockManager.RemoveDockControl(this);
             _protoType.PropertyChanged -= OnPrototypePropertyChanged;
             _protoType.Dispose();
             _protoType = null;
-            _isDisposed = true;
         }
     }
 }

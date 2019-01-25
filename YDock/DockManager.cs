@@ -598,7 +598,7 @@ namespace YDock
         private IEnumerable<Window> SortWindowsTopToBottom(IEnumerable<Window> unsorted)
         {
             var byHandle = unsorted.ToDictionary(win =>
-              ((new WindowInteropHelper(win)).Handle));
+              new WindowInteropHelper(win).Handle);
 
             for (IntPtr hWnd = Win32Helper.GetTopWindow(IntPtr.Zero); hWnd != IntPtr.Zero; hWnd = Win32Helper.GetWindow(hWnd, Win32Helper.GW_HWNDNEXT))
                 if (byHandle.ContainsKey(hWnd))
