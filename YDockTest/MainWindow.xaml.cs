@@ -90,7 +90,15 @@ namespace YDockTest
             if (File.Exists(SettingFileName))
             {
                 var layout = XDocument.Parse(File.ReadAllText(SettingFileName));
-                DockManager.LoadLayout(layout);
+                foreach (var item in layout.Root.Elements())
+                {
+                    var name = item.Attribute("Name").Value;
+                    if (DockManager.Layouts.ContainsKey(name))
+                        DockManager.Layouts[name].Load(item);
+                    else DockManager.Layouts[name] = new YDock.LayoutSetting.LayoutSetting(name, item);
+                }
+
+                DockManager.ApplyLayout("MainWindow");
             }
             else
             {
@@ -111,7 +119,14 @@ namespace YDockTest
 
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
-            var doc = DockManager.GenerateLayout();
+            DockManager.SaveCurrentLayout("MainWindow");
+
+            var doc = new XDocument();
+            var rootNode = new XElement("Layouts");
+            foreach (var layout in DockManager.Layouts.Values)
+                layout.Save(rootNode);
+            doc.Add(rootNode);
+
             doc.Save(SettingFileName);
 
             DockManager.Dispose();

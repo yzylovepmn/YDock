@@ -101,6 +101,7 @@
     <Compile Include="Interface\IView.cs" />
     <Compile Include="LayoutSetting\GroupNode.cs" />
     <Compile Include="LayoutSetting\ItemNode.cs" />
+    <Compile Include="LayoutSetting\LayoutSetting.cs" />
     <Compile Include="LayoutSetting\PanelNode.cs" />
     <Compile Include="Model\Element\DockElement.cs" />
     <Compile Include="Model\Layout\AttachObject.cs" />

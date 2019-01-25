@@ -35,6 +35,8 @@ namespace YDock
             _floatWindows = new List<BaseFloatWindow>();
             backwards = new Stack<int>();
             forwards = new Stack<int>();
+
+            _layouts = new SortedDictionary<string, LayoutSetting.LayoutSetting>();
         }
 
         #region Root
@@ -758,9 +760,54 @@ namespace YDock
         #endregion
 
         #region Layout Setting
-        public XDocument GenerateLayout()
+        public IDictionary<string, LayoutSetting.LayoutSetting> Layouts { get { return _layouts; } }
+        private SortedDictionary<string, LayoutSetting.LayoutSetting> _layouts;
+
+        /// <summary>
+        /// If name has exist, it will override the current layout,otherwise create a new layout.
+        /// </summary>
+        /// <param name="name">layout name</param>
+        public void SaveCurrentLayout(string name)
         {
-            var doc = new XDocument();
+            if (_layouts.ContainsKey(name))
+                _layouts[name].Layout = _GenerateCurrentLayout();
+            else _layouts[name] = new LayoutSetting.LayoutSetting(name, _GenerateCurrentLayout());
+        }
+
+        public void ApplyLayout(string name)
+        {
+            if (_layouts.ContainsKey(name))
+                _ApplyLayout(_layouts[name]);
+        }
+
+        private void _ApplyLayout(LayoutSetting.LayoutSetting layout)
+        {
+            HideAll();
+
+            int id;
+            var rootNode = layout.Layout;
+            foreach (var item in rootNode.Element("Elements").Elements())
+            {
+                id = int.Parse(item.Attribute("ID").Value);
+                _dockControls[id].ProtoType.Load(item);
+            }
+
+            _root.LoadLayout(rootNode.Element("ToolBar"));
+
+            _LoadRootPanel(rootNode.Element("Panel"));
+
+            _LoadFloatWindows(rootNode.Element("FloatWindows"));
+
+            var node = rootNode.Element("ActiveItem");
+            if (node != null)
+            {
+                id = int.Parse(node.Value);
+                _dockControls[id].SetActive();
+            }
+        }
+
+        private XElement _GenerateCurrentLayout()
+        {
             var rootNode = new XElement("Layout");
 
             if (_activeElement != null)
@@ -787,34 +834,7 @@ namespace YDock
                 node.Add(fw.GenerateLayout());
             rootNode.Add(node);
 
-            doc.Add(rootNode);
-            return doc;
-        }
-
-        public void LoadLayout(XDocument doc)
-        {
-            HideAll();
-
-            int id;
-            var rootNode = doc.Element("Layout");
-            foreach (var item in rootNode.Element("Elements").Elements())
-            {
-                id = int.Parse(item.Attribute("ID").Value);
-                _dockControls[id].ProtoType.Load(item);
-            }
-
-            _root.LoadLayout(rootNode.Element("ToolBar"));
-
-            _LoadRootPanel(rootNode.Element("Panel"));
-
-            _LoadFloatWindows(rootNode.Element("FloatWindows"));
-
-            var node = rootNode.Element("ActiveItem");
-            if (node != null)
-            {
-                id = int.Parse(node.Value);
-                _dockControls[id].SetActive();
-            }
+            return rootNode;
         }
 
         private void _LoadRootPanel(XElement ele)
