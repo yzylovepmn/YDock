@@ -563,7 +563,7 @@ namespace YDock.View
             var ele = new XElement("Group");
             ele.SetAttributeValue("IsDocument", Mode == DragMode.Document);
             ele.SetAttributeValue("Side", _model.Side);
-            foreach (var item in _model.Children.Reverse())
+            foreach (var item in _model.Children.Reverse().Where(child => child.CanSelect))
                 ele.Add(new XElement("Item", item.ID));
             return ele;
         }
