@@ -40,7 +40,6 @@ namespace YDock
         }
 
         #region Root
-        private DockRoot _root;
         internal DockRoot Root
         {
             get { return _root; }
@@ -56,6 +55,9 @@ namespace YDock
                 }
             }
         }
+        private DockRoot _root;
+
+        public int DocumentTabCount { get { return _root.DocumentModels.Count; } }
         #endregion
 
         #region Drag
@@ -622,6 +624,22 @@ namespace YDock
             }
         }
 
+        public int GetDocumentTabIndex(IDockControl dockControl)
+        {
+            int index = -1;
+            foreach (var model in _root.DocumentModels)
+            {
+                index++;
+                foreach (var item in model.Children)
+                {
+                    if (item == dockControl.ProtoType)
+                        return index;
+                }
+            }
+
+            return -1;
+        }
+
         #region Navigate
         public bool CanNavigateBackward
         {
@@ -753,7 +771,7 @@ namespace YDock
                 group.Attach(source.ProtoType);
                 var _atsource = target.ProtoType.Container.View as IAttcah;
                 _atsource.AttachWith(ctrl, mode);
-                //source.SetActive();
+                source.SetActive();
             }
             else throw new ArgumentNullException("the container of source is null!");
         }
@@ -774,10 +792,14 @@ namespace YDock
             else _layouts[name] = new LayoutSetting.LayoutSetting(name, _GenerateCurrentLayout());
         }
 
-        public void ApplyLayout(string name)
+        public bool ApplyLayout(string name)
         {
             if (_layouts.ContainsKey(name))
+            {
                 _ApplyLayout(_layouts[name]);
+                return true;
+            }
+            return false;
         }
 
         private void _ApplyLayout(LayoutSetting.LayoutSetting layout)

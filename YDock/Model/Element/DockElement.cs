@@ -401,11 +401,20 @@ namespace YDock.Model
 
         public void ToDockAsDocument(bool isActive = true)
         {
+            ToDockAsDocument(0, isActive);
+        }
+
+        public void ToDockAsDocument(int index, bool isActive = true)
+        {
             if (!CanDockAsDocument && isActive)
             {
                 _dockControl.SetActive();
                 return;
             }
+
+            if (index < 0 || index >= DockManager.DocumentTabCount)
+                return;
+
             if (_container != null)
             {
                 CanSelect = true;
@@ -415,7 +424,7 @@ namespace YDock.Model
                 Side = DockSide.None;
                 Mode = DockMode.Normal;
 
-                dockManager.Root.DocumentModels[0].Attach(this, 0);
+                dockManager.Root.DocumentModels[index].Attach(this, 0);
 
                 if (isActive)
                     _dockControl.SetActive();

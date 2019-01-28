@@ -150,7 +150,6 @@ namespace YDock.Model
             }
         }
 
-        private List<BaseLayoutGroup> _documentModels;
         internal List<BaseLayoutGroup> DocumentModels
         {
             get { return _documentModels; }
@@ -160,6 +159,7 @@ namespace YDock.Model
                     _documentModels = value;
             }
         }
+        private List<BaseLayoutGroup> _documentModels;
 
         internal void AddSideChild(IDockElement ele, DockSide side)
         {

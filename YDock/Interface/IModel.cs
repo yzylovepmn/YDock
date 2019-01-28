@@ -57,6 +57,7 @@ namespace YDock.Interface
         void ToFloat(bool isActive = true);
         void ToDock(bool isActive = true);
         void ToDockAsDocument(bool isActive = true);
+        void ToDockAsDocument(int index, bool isActive = true);
         void SwitchAutoHideStatus();
         void Hide();
         bool CanFloat { get; }

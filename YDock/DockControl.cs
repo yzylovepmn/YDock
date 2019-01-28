@@ -286,6 +286,14 @@ namespace YDock
         }
 
         /// <summary>
+        /// 转为Document模式
+        /// </summary>
+        public void ToDockAsDocument(int index, bool isActive = true)
+        {
+            _protoType?.ToDockAsDocument(index, isActive);
+        }
+
+        /// <summary>
         /// 在Normal和DockBar模式间切换
         /// </summary>
         public void SwitchAutoHideStatus()
