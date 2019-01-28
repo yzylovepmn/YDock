@@ -60,29 +60,34 @@ namespace YDock.LayoutSetting
                 }
                 else
                 {
-                    var panelNode = _children.First(n => n.Type == LayoutNodeType.Panel && (n as PanelNode).Side == DockSide.None) as PanelNode;
-                    panelNode.ApplyLayout(dockManager);
-                    var node = _children.Find(panelNode);
-                    if (node.Previous != null)
+                    var panelNode = _children.FirstOrDefault(n => n.Type == LayoutNodeType.Panel && (n as PanelNode).Side == DockSide.None) as PanelNode;
+                    if (panelNode == null)
+                        _TryCompleteLayout(dockManager, null, isFloat);
+                    else
                     {
-                        var cur = node.Previous;
-                        while (cur != null)
+                        panelNode.ApplyLayout(dockManager);
+                        var node = _children.Find(panelNode);
+                        if (node.Previous != null)
                         {
-                            if (cur.Value.Type == LayoutNodeType.Panel)
-                                (cur.Value as PanelNode).ApplyLayout(dockManager);
-                            else (cur.Value as GroupNode).ApplyLayout(dockManager);
-                            cur = cur.Previous;
+                            var cur = node.Previous;
+                            while (cur != null)
+                            {
+                                if (cur.Value.Type == LayoutNodeType.Panel)
+                                    (cur.Value as PanelNode).ApplyLayout(dockManager, isFloat);
+                                else (cur.Value as GroupNode).ApplyLayout(dockManager, isFloat);
+                                cur = cur.Previous;
+                            }
                         }
-                    }
-                    if (node.Next != null)
-                    {
-                        var cur = node.Next;
-                        while (cur != null)
+                        if (node.Next != null)
                         {
-                            if (cur.Value.Type == LayoutNodeType.Panel)
-                                (cur.Value as PanelNode).ApplyLayout(dockManager);
-                            else (cur.Value as GroupNode).ApplyLayout(dockManager);
-                            cur = cur.Next;
+                            var cur = node.Next;
+                            while (cur != null)
+                            {
+                                if (cur.Value.Type == LayoutNodeType.Panel)
+                                    (cur.Value as PanelNode).ApplyLayout(dockManager, isFloat);
+                                else (cur.Value as GroupNode).ApplyLayout(dockManager, isFloat);
+                                cur = cur.Next;
+                            }
                         }
                     }
                 }

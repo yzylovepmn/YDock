@@ -12,6 +12,7 @@ namespace YDock.Interface
         ImageSource DockImageSource { get; set; }
         string DockTitle { get; set; }
         IDockControl ActiveControl { get; }
+        int DocumentTabCount { get; }
 
         event EventHandler ActiveDockChanged;
         IDockControl SelectedDocument { get; }
@@ -25,5 +26,6 @@ namespace YDock.Interface
         void AttachTo(IDockControl source, IDockControl target, AttachMode mode, double ratio = 1);
         void SaveCurrentLayout(string name);
         bool ApplyLayout(string name);
+        int GetDocumentTabIndex(IDockControl dockControl);
     }
 }
