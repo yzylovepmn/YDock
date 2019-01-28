@@ -789,7 +789,8 @@ namespace YDock
             foreach (var item in rootNode.Element("Elements").Elements())
             {
                 id = int.Parse(item.Attribute("ID").Value);
-                _dockControls[id].ProtoType.Load(item);
+                if (_dockControls.ContainsKey(id))
+                    _dockControls[id].ProtoType.Load(item);
             }
 
             _root.LoadLayout(rootNode.Element("ToolBar"));
@@ -802,7 +803,8 @@ namespace YDock
             if (node != null)
             {
                 id = int.Parse(node.Value);
-                _dockControls[id].SetActive();
+                if (_dockControls.ContainsKey(id))
+                    _dockControls[id].SetActive();
             }
         }
 
