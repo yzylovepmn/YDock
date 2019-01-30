@@ -47,6 +47,7 @@ namespace YDock.View
             }
         }
 
+        internal IntPtr Handle { get { return _hwndSrc.Handle; } }
         protected HwndSource _hwndSrc;
         protected HwndSourceHook _hwndSrcHook;
 

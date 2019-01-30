@@ -454,8 +454,11 @@ namespace YDock
                     if (wnd != DockManager.FloatWindows.First())
                     {
                         DockManager.MoveFloatTo(wnd);
-                        wnd.Activate();
-                        _dragWnd.Activate();
+                        Application.Current.Dispatcher.InvokeAsync(() => 
+                        {
+                            Win32Helper.BringWindowToTop(wnd.Handle);
+                            Win32Helper.BringWindowToTop(_dragWnd.Handle);
+                        }, DispatcherPriority.Background);
                     }
                     wnd.HitTest(_mouseP);
 

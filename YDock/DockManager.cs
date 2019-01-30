@@ -663,12 +663,8 @@ namespace YDock
             {
                 forwards.Push(backwards.Pop());
                 int id = backwards.Peek();
-                var ctrl = _dockControls[id];
-                if (ctrl != null)
-                {
-                    ctrl.ToDockAsDocument();
-                    break;
-                }
+                if (_dockControls.ContainsKey(id))
+                    _dockControls[id].ToDockAsDocument();
             }
         }
 
@@ -680,12 +676,10 @@ namespace YDock
             while (CanNavigateForward)
             {
                 int id = forwards.Pop();
-                backwards.Push(id);
-                var ctrl = _dockControls[id];
-                if (ctrl != null)
+                if (_dockControls.ContainsKey(id))
                 {
-                    ctrl.ToDockAsDocument();
-                    break;
+                    backwards.Push(id);
+                    _dockControls[id].ToDockAsDocument();
                 }
             }
         }
