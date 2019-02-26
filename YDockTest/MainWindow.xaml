@@ -7,7 +7,12 @@
         xmlns:ydock="clr-namespace:YDock;assembly=YDock"
         mc:Ignorable="d" WindowState="Maximized"
         Title="MainWindow" Height="350" Width="525">
-    <DockPanel>
-        <ydock:DockManager x:Name="DockManager"/>
-    </DockPanel>
+    <Grid>
+        <!--<Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <ContentControl x:Name="ViewManagerHost"/>-->
+        <ydock:DockManager Grid.Column="1" x:Name="DockManager"/>
+    </Grid>
 </Window>

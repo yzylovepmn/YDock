@@ -275,7 +275,8 @@ namespace YDock.View
                     _model = value;
                     if (_model != null)
                         _CreateContentForModel(_model);
-                    RootPanel.InvalidateMeasure();
+                    (Parent as FrameworkElement).InvalidateMeasure();
+                    InvalidateMeasure();
                 }
             }
         }
