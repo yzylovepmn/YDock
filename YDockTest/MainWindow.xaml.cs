@@ -1,5 +1,4 @@
-﻿//using Microsoft.VisualStudio.PlatformUI.Shell;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -38,26 +37,6 @@ namespace YDockTest
             Closing += MainWindow_Closing;
 
             _Init();
-            /*
-            var msg = ViewManager.Instance;
-            msg.Preferences.IsPinnedTabPanelSeparate = true;
-            msg.Preferences.DocumentDockPreference = Microsoft.VisualStudio.PlatformUI.Shell.Preferences.DockPreference.DockAtEnd;
-            msg.Preferences.TabDockPreference = Microsoft.VisualStudio.PlatformUI.Shell.Preferences.DockPreference.DockAtEnd;
-            var res = new ResourceDictionary()
-            {
-                Source = new Uri("/Microsoft.VisualStudio.Shell.ViewManager;component/themes/generic.xaml", UriKind.Relative)
-            };
-            msg.Theme = res;
-            msg.Initialize(ViewManagerHost);
-            msg.WindowProfile = WindowProfile.Create("MainWindow");
-            for (int i = 0; i < 10; i++)
-            {
-                var view = View.Create(msg.WindowProfile, string.Format("Test_{0}", i));
-                view.Title = view.Name;
-                view.Content = new TextBlock() { Text = view.Name };
-                view.ShowInFront();
-            }
-            */
         }
 
         static string SettingFileName { get { return string.Format(@"{0}\{1}", Environment.CurrentDirectory, "Layout.xml"); } }

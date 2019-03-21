@@ -63,7 +63,7 @@
                                         <ColumnDefinition Width="32"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <Image Height="14" Source="{Binding ImageSource}"/>
+                                    <Image Height="18" Source="{Binding ImageSource}"/>
                                     <TextBlock Foreground="Black" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Title}" Margin="10,0,50,0"/>
                                 </Grid>
                                 <ControlTemplate.Triggers>
@@ -638,7 +638,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:AnchorHeaderControl}">
-                    <Border SnapsToDevicePixels="True"
+                    <Border SnapsToDevicePixels="True" UseLayoutRounding="True"
                         Background="{TemplateBinding Background}" Padding="3.5">
                         <Grid SnapsToDevicePixels="True">
                             <Grid.ColumnDefinitions>
@@ -647,7 +647,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock x:Name="HeaderTextBlock" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Text="{Binding Title}"/>
-                            <view:TexturePanel DataContext="{Binding}" Grid.Column="1" SnapsToDevicePixels="True" Margin="10,0,10,0"/>
+                            <view:TexturePanel UseLayoutRounding="True" DataContext="{Binding}" Grid.Column="1" SnapsToDevicePixels="True" Margin="10,0,10,0"/>
                             <StackPanel Grid.Column="2" Orientation="Horizontal" SnapsToDevicePixels="True">
                                 <ToggleButton x:Name="PART_DropMenu" ToolTip="{Global:Resource Key=Window_Position}" IsChecked="{Binding RelativeSource={RelativeSource Self},Path=ContextMenu.IsOpen}" IsThreeState="False" Style="{StaticResource Header_TB_Style}"/>
                                 <Button x:Name="Maximize" Style="{StaticResource Anchor_Maximize}" Command="{x:Static command:GlobalCommands.MaximizeCommand}" Visibility="{Binding RelativeSource={RelativeSource Self},Path=IsEnabled,Converter={StaticResource BoolToVisibilityConverter}}"/>
@@ -673,7 +673,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:LayoutContentControl}">
-                    <Border SnapsToDevicePixels="true" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                    <Border UseLayoutRounding="True" SnapsToDevicePixels="true" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}">
                         <Grid SnapsToDevicePixels="true"
                           KeyboardNavigation.TabNavigation="Local">
@@ -696,7 +696,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:DockBarGroupControl}">
-                    <Border SnapsToDevicePixels="True" Background="{TemplateBinding Background}">
+                    <Border UseLayoutRounding="True" SnapsToDevicePixels="True" Background="{TemplateBinding Background}">
                         <Border.ContextMenu>
                             <view:CustomContextMenu ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Model.Children_CanSelect}" Style="{StaticResource CustomContextMenuStyle}"/>
                         </Border.ContextMenu>
@@ -714,7 +714,7 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type view:DockBarItemControl}">
-                                <Border x:Name="Border" Margin="{TemplateBinding Margin}" SnapsToDevicePixels="True"
+                                <Border x:Name="Border" UseLayoutRounding="True" Margin="{TemplateBinding Margin}" SnapsToDevicePixels="True"
                                         Background="{TemplateBinding Background}">
                                     <Grid SnapsToDevicePixels="True">
                                         <Grid.RowDefinitions>
@@ -749,7 +749,7 @@
     </Style>
 
     <ControlTemplate x:Key="DocumentHeaderTemplate" TargetType="{x:Type view:DragTabItem}">
-        <Border Name="Border" SnapsToDevicePixels="True"
+        <Border Name="Border" SnapsToDevicePixels="True" UseLayoutRounding="True"
                 BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
             <Grid Margin="4,3,4,2" SnapsToDevicePixels="True">
                 <Grid.ColumnDefinitions>
@@ -789,7 +789,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Rectangle x:Name="Rect" Height="2" SnapsToDevicePixels="True" Grid.Row="1" Fill="{StaticResource BorderBrush}"/>
-            <Border x:Name="Border" SnapsToDevicePixels="True">
+            <Border x:Name="Border" SnapsToDevicePixels="True" UseLayoutRounding="True">
                 <Grid SnapsToDevicePixels="True">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -803,7 +803,7 @@
                     </view:CustomToggleButton>
                 </Grid>
             </Border>
-            <Border x:Name="ContentPanel"
+            <Border x:Name="ContentPanel" UseLayoutRounding="True"
                                 VerticalAlignment="Stretch"
                                 HorizontalAlignment="Stretch"
                                 BorderBrush="{TemplateBinding BorderBrush}"
@@ -834,10 +834,10 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Border x:Name="Border" SnapsToDevicePixels="True">
+            <Border x:Name="Border" SnapsToDevicePixels="True" UseLayoutRounding="True">
                 <view:DocumentPanel IsItemsHost="True" KeyboardNavigation.TabIndex="1"/>
             </Border>
-            <Border x:Name="ContentPanel"
+            <Border x:Name="ContentPanel" UseLayoutRounding="True"
                                 VerticalAlignment="Stretch"
                                 HorizontalAlignment="Stretch"
                                 BorderBrush="{TemplateBinding BorderBrush}"
@@ -860,8 +860,8 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Border Background="Transparent" Grid.RowSpan="2" SnapsToDevicePixels="True"/>
-            <Border x:Name="ContentPanel"
+            <Border Background="Transparent" UseLayoutRounding="True" Grid.RowSpan="2" SnapsToDevicePixels="True"/>
+            <Border x:Name="ContentPanel" UseLayoutRounding="True"
                                 VerticalAlignment="Stretch"
                                 HorizontalAlignment="Stretch"
                                 BorderBrush="{TemplateBinding BorderBrush}"
@@ -887,7 +887,7 @@
     <ControlTemplate x:Key="AnchorSideGroupControlDrag" TargetType="{x:Type view:AnchorSideGroupControl}">
         <Border x:Name="ContentPanel"
                 VerticalAlignment="Stretch"
-                HorizontalAlignment="Stretch"
+                HorizontalAlignment="Stretch" UseLayoutRounding="True"
                 BorderBrush="{TemplateBinding BorderBrush}"
                 BorderThickness="{TemplateBinding BorderThickness}"
                 Background="{TemplateBinding Background}"
@@ -998,7 +998,7 @@
     </Style>
 
     <ControlTemplate x:Key="AnchorGroupWindow_Single" TargetType="{x:Type view:AnchorGroupWindow}">
-        <Border BorderBrush="{TemplateBinding BorderBrush}"
+        <Border BorderBrush="{TemplateBinding BorderBrush}" UseLayoutRounding="True"
                     BorderThickness="{TemplateBinding BorderThickness}"
                     Background="{TemplateBinding Background}"
                     SnapsToDevicePixels="True" Padding="{TemplateBinding Padding}">
@@ -1009,7 +1009,7 @@
     </ControlTemplate>
 
     <ControlTemplate x:Key="AnchorGroupWindow_Multi" TargetType="{x:Type view:AnchorGroupWindow}">
-        <Border Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True" BorderBrush="{TemplateBinding BorderBrush}"
+        <Border UseLayoutRounding="True" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True" BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}">
             <Grid SnapsToDevicePixels="True">
@@ -1063,7 +1063,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type view:DocumentGroupWindow}">
-                    <Border SnapsToDevicePixels="True" BorderBrush="{TemplateBinding BorderBrush}"
+                    <Border UseLayoutRounding="True" SnapsToDevicePixels="True" BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
                         <Grid SnapsToDevicePixels="True">
@@ -1140,7 +1140,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ydock:DockManager}">
-                    <Border Background="{TemplateBinding Background}" SnapsToDevicePixels="True"
+                    <Border UseLayoutRounding="True" Background="{TemplateBinding Background}" SnapsToDevicePixels="True"
                             BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid FlowDirection="LeftToRight">
                             <Grid.RowDefinitions>
