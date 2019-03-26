@@ -664,7 +664,10 @@ namespace YDock
                 forwards.Push(backwards.Pop());
                 int id = backwards.Peek();
                 if (_dockControls.ContainsKey(id))
+                {
                     _dockControls[id].ToDockAsDocument();
+                    break;
+                }
             }
         }
 
@@ -680,6 +683,7 @@ namespace YDock
                 {
                     backwards.Push(id);
                     _dockControls[id].ToDockAsDocument();
+                    break;
                 }
             }
         }
