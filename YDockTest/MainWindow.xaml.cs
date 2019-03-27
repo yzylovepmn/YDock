@@ -131,6 +131,35 @@ namespace YDockTest
 
             DockManager.Dispose();
         }
+
+        private void OnClick(object sender, RoutedEventArgs e)
+        {
+            var item = sender as MenuItem;
+            if (item.Header.ToString() == "left")
+                left.DockControl.Show();
+            if (item.Header.ToString() == "left_1")
+                left_1.DockControl.Show();
+            if (item.Header.ToString() == "top")
+                top.DockControl.Show();
+            if (item.Header.ToString() == "top_1")
+                top_1.DockControl.Show();
+            if (item.Header.ToString() == "right")
+                right.DockControl.Show();
+            if (item.Header.ToString() == "right_1")
+                right_1.DockControl.Show();
+            if (item.Header.ToString() == "bottom")
+                bottom.DockControl.Show();
+            if (item.Header.ToString() == "bottom_1")
+                bottom_1.DockControl.Show();
+            if (item.Header.ToString() == "doc_0")
+                doc_0.DockControl.Show();
+            if (item.Header.ToString() == "doc_1")
+                doc_1.DockControl.Show();
+            if (item.Header.ToString() == "doc_2")
+                doc_2.DockControl.Show();
+            if (item.Header.ToString() == "doc_3")
+                doc_3.DockControl.Show();
+        }
     }
 
     public class Doc : TextBlock, IDockSource

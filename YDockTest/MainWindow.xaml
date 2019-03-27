@@ -8,11 +8,28 @@
         mc:Ignorable="d" WindowState="Maximized"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <!--<Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <ContentControl x:Name="ViewManagerHost"/>-->
-        <ydock:DockManager Grid.Column="1" x:Name="DockManager"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Menu VerticalAlignment="Top">
+            <MenuItem Header="ToolWindow">
+                <MenuItem Header="left" Click="OnClick"/>
+                <MenuItem Header="left_1" Click="OnClick"/>
+                <MenuItem Header="top" Click="OnClick"/>
+                <MenuItem Header="top_1" Click="OnClick"/>
+                <MenuItem Header="right" Click="OnClick"/>
+                <MenuItem Header="right_1" Click="OnClick"/>
+                <MenuItem Header="bottom" Click="OnClick"/>
+                <MenuItem Header="bottom_1" Click="OnClick"/>
+            </MenuItem>
+            <MenuItem Header="DocWindow">
+                <MenuItem Header="doc_0" Click="OnClick"/>
+                <MenuItem Header="doc_1" Click="OnClick"/>
+                <MenuItem Header="doc_2" Click="OnClick"/>
+                <MenuItem Header="doc_3" Click="OnClick"/>
+            </MenuItem>
+        </Menu>
+        <ydock:DockManager Grid.Row="1" x:Name="DockManager"/>
     </Grid>
 </Window>

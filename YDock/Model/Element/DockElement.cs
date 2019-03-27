@@ -235,7 +235,7 @@ namespace YDock.Model
             }
             set
             {
-                _desiredWidth = value;
+                _desiredWidth = Math.Max(0, value);
             }
         }
 
@@ -248,7 +248,7 @@ namespace YDock.Model
             }
             set
             {
-                _desiredHeight = value;
+                _desiredHeight = Math.Max(0, value);
             }
         }
 

@@ -84,16 +84,18 @@ namespace YDock.View
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            _rootGroupPanel.Measure(new Size(availableSize.Width - 10, availableSize.Height - 10));
+            var width = Math.Max(0, availableSize.Width - 10);
+            var height = Math.Max(0, availableSize.Height - 10);
+            _rootGroupPanel.Measure(new Size(width, height));
             switch (_ahWindow.Side)
             {
                 case DockSide.Right:
                 case DockSide.Left:
-                    _ahWindow.Measure(new Size(availableSize.Width, availableSize.Height - 10));
+                    _ahWindow.Measure(new Size(availableSize.Width, height));
                     break;
                 case DockSide.Top:
                 case DockSide.Bottom:
-                    _ahWindow.Measure(new Size(availableSize.Width - 10, availableSize.Height));
+                    _ahWindow.Measure(new Size(width, availableSize.Height));
                     break;
                 default:
                     _ahWindow.Measure(availableSize);
@@ -104,7 +106,9 @@ namespace YDock.View
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            _rootGroupPanel.Arrange(new Rect(new Point(5, 5), new Size(finalSize.Width - 10, finalSize.Height - 10)));
+            var width = Math.Max(0, finalSize.Width - 10);
+            var height = Math.Max(0, finalSize.Height - 10);
+            _rootGroupPanel.Arrange(new Rect(new Point(5, 5), new Size(width, height)));
             switch (_ahWindow.Side)
             {
                 case DockSide.Left:
