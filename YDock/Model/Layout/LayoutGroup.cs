@@ -29,8 +29,12 @@ namespace YDock.Model
             base.OnChildrenCollectionChanged(sender, e);
             if (_view == null) return;
             var tab = _view as TabControl;
-            if (e.NewItems?.Count > 0 && (e.NewItems[e.NewItems.Count - 1] as IDockElement).CanSelect)
-                tab.SelectedIndex = IndexOf(e.NewItems[e.NewItems.Count - 1] as IDockElement);
+            if (e.NewItems?.Count > 0)
+            {
+                var ele = e.NewItems[e.NewItems.Count - 1] as IDockElement;
+                if (ele.CanSelect)
+                    tab.SelectedIndex = IndexOf(ele);
+            }
             else tab.SelectedIndex = Math.Max(0, tab.SelectedIndex);
         }
 

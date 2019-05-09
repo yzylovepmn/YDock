@@ -18,5 +18,17 @@ namespace YDock.Model
                 return true;
             return false;
         }
+
+        public static int IndexOf<T>(this IEnumerable<T> source, T ele) where T : class
+        {
+            var index = -1;
+            foreach (var item in source)
+            {
+                index++;
+                if (item == ele)
+                    break;
+            }
+            return index;
+        }
     }
 }

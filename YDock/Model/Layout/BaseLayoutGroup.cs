@@ -140,7 +140,8 @@ namespace YDock.Model
         public int IndexOf(IDockElement child)
         {
             if (child == null) return -1;
-            return _children.IndexOf(child as DockElement);
+            return Children_CanSelect.IndexOf(child);
+            //return _children.IndexOf(child as DockElement);
         }
 
         public void MoveTo(int src, int des)
