@@ -25,12 +25,12 @@ namespace YDock.View
         }
 
         public static readonly DependencyProperty DropContextMenuProperty =
-            DependencyProperty.Register("DropContextMenu", typeof(CustomContextMenu), typeof(CustomToggleButton));
+            DependencyProperty.Register("DropContextMenu", typeof(OnItemClickMenu), typeof(CustomToggleButton));
 
 
-        public CustomContextMenu DropContextMenu
+        public OnItemClickMenu DropContextMenu
         {
-            get { return (CustomContextMenu)GetValue(DropContextMenuProperty); }
+            get { return (OnItemClickMenu)GetValue(DropContextMenuProperty); }
             set { SetValue(DropContextMenuProperty, value); }
         }
 
@@ -52,13 +52,13 @@ namespace YDock.View
         }
     }
 
-    public class CustomContextMenu : ContextMenu
+    public class CustomStyleMenu : ContextMenu
     {
-        static CustomContextMenu()
-        {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(CustomContextMenu), new FrameworkPropertyMetadata(typeof(CustomContextMenu)));
-        }
 
+    }
+
+    public class OnItemClickMenu : CustomStyleMenu
+    {
         protected override void OnOpened(RoutedEventArgs e)
         {
             BindingOperations.GetBindingExpression(this, ItemsSourceProperty).UpdateTarget();
@@ -68,15 +68,15 @@ namespace YDock.View
 
         protected override DependencyObject GetContainerForItemOverride()
         {
-            return new CustomMenuItem();
+            return new ClickMenuItem();
         }
     }
 
-    public class CustomMenuItem : MenuItem
+    public class ClickMenuItem : MenuItem
     {
-        static CustomMenuItem()
+        public ClickMenuItem()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(CustomMenuItem), new FrameworkPropertyMetadata(typeof(CustomMenuItem)));
+            SetBinding(HeaderProperty, new Binding("Title"));
         }
 
         protected override void OnClick()

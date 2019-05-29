@@ -13,7 +13,7 @@ using YDock.Interface;
 
 namespace YDock.View
 {
-    public class DocumentMenu : ContextMenu, IDisposable
+    public class DocumentMenu : CustomStyleMenu, IDisposable
     {
         public DocumentMenu(IDockElement targetObj)
         {

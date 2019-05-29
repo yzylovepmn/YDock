@@ -10,7 +10,7 @@ using YDock.Interface;
 
 namespace YDock.View
 {
-    public class DockMenu : ContextMenu, IDisposable
+    public class DockMenu : CustomStyleMenu, IDisposable
     {
         public DockMenu(IDockItem targetObj)
         {
