@@ -77,6 +77,9 @@ namespace YDock.View
         public ClickMenuItem()
         {
             SetBinding(HeaderProperty, new Binding("Title"));
+            var image = new Image();
+            Icon = image;
+            image.SetBinding(Image.SourceProperty, new Binding("ImageSource"));
         }
 
         protected override void OnClick()
