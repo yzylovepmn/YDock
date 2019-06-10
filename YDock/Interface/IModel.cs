@@ -30,7 +30,7 @@ namespace YDock.Interface
     {
         int ID { get; }
         string Title { get; set; }
-        ImageSource ImageSource { get; }
+        ImageSource ImageSource { get; set; }
         object Content { get; }
         bool IsDocument { get; }
         DockMode Mode { get; }

@@ -59,6 +59,7 @@ namespace YDock
             {
                 return _protoType.ImageSource;
             }
+            set { _protoType.ImageSource = value; }
         }
 
         public object Content
