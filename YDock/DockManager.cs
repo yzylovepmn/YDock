@@ -33,8 +33,8 @@ namespace YDock
             _dragManager = new DragManager(this);
             _dockControls = new SortedDictionary<int, IDockControl>();
             _floatWindows = new List<BaseFloatWindow>();
-            backwards = new Stack<int>();
-            forwards = new Stack<int>();
+            _backwards = new Stack<int>();
+            _forwards = new Stack<int>();
 
             _layouts = new SortedDictionary<string, LayoutSetting.LayoutSetting>();
         }
@@ -414,7 +414,23 @@ namespace YDock
         }
 
         #region Register
-        internal int id = 0;
+        private int _id = 0;
+
+        private int _GetID()
+        {
+            var id = 0;
+            if (_dockControls.Count < _id)
+            {
+                foreach (var key in _dockControls.Keys)
+                {
+                    if (key != id)
+                        break;
+                    id++;
+                }
+            }
+            else id = _id++;
+            return id;
+        }
 
         /// <summary>
         /// 以选项卡模式向DockManager注册一个DockElement
@@ -430,7 +446,7 @@ namespace YDock
         {
             DockElement ele = new DockElement(true)
             {
-                ID = id++,
+                ID = _GetID(),
                 Title = content.Header,
                 Content = content,
                 ImageSource = content.Icon,
@@ -462,7 +478,7 @@ namespace YDock
         {
             DockElement ele = new DockElement()
             {
-                ID = id++,
+                ID = _GetID(),
                 Title = content.Header,
                 Content = content,
                 ImageSource = content.Icon,
@@ -504,7 +520,7 @@ namespace YDock
         {
             DockElement ele = new DockElement()
             {
-                ID = id++,
+                ID = _GetID(),
                 Title = content.Header,
                 Content = content,
                 ImageSource = content.Icon,
@@ -613,6 +629,14 @@ namespace YDock
                 dockControl.Hide();
         }
 
+        public void Reset(bool hideAll = true)
+        {
+            HideAll();
+
+            _backwards.Clear();
+            _forwards.Clear();
+        }
+
         public void UpdateTitleAll()
         {
             IDockSource source;
@@ -643,16 +667,16 @@ namespace YDock
         #region Navigate
         public bool CanNavigateBackward
         {
-            get { return backwards.Count > 1; }
+            get { return _backwards.Count > 1; }
         }
 
         public bool CanNavigateForward
         {
-            get { return forwards.Count > 0; }
+            get { return _forwards.Count > 0; }
         }
 
-        internal Stack<int> backwards;
-        internal Stack<int> forwards;
+        internal Stack<int> _backwards;
+        internal Stack<int> _forwards;
 
         /// <summary>
         /// 向后导航
@@ -661,8 +685,8 @@ namespace YDock
         {
             while (CanNavigateBackward)
             {
-                forwards.Push(backwards.Pop());
-                int id = backwards.Peek();
+                _forwards.Push(_backwards.Pop());
+                int id = _backwards.Peek();
                 if (_dockControls.ContainsKey(id))
                 {
                     _dockControls[id].ToDockAsDocument();
@@ -678,10 +702,10 @@ namespace YDock
         {
             while (CanNavigateForward)
             {
-                int id = forwards.Pop();
+                int id = _forwards.Pop();
                 if (_dockControls.ContainsKey(id))
                 {
-                    backwards.Push(id);
+                    _backwards.Push(id);
                     _dockControls[id].ToDockAsDocument();
                     break;
                 }
@@ -690,10 +714,10 @@ namespace YDock
 
         internal void PushBackwards(int id)
         {
-            if (backwards.Count > 0 && backwards.Peek() == id) return;
+            if (_backwards.Count > 0 && _backwards.Peek() == id) return;
             if (id < 0) return;
-            backwards.Push(id);
-            forwards.Clear();
+            _backwards.Push(id);
+            _forwards.Clear();
         }
 
         public void ShowByID(int id)
@@ -704,7 +728,7 @@ namespace YDock
 
         internal int FindVisibleCtrl()
         {
-            foreach (var id in backwards)
+            foreach (var id in _backwards)
                 if (_dockControls.ContainsKey(id)
                     && !_dockControls[id].IsActive
                     && _dockControls[id].CanSelect)
@@ -905,10 +929,10 @@ namespace YDock
             Root = null;
             _windows.Clear();
             _windows = null;
-            backwards.Clear();
-            backwards = null;
-            forwards.Clear();
-            forwards = null;
+            _backwards.Clear();
+            _backwards = null;
+            _forwards.Clear();
+            _forwards = null;
         }
     }
 }
