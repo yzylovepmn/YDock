@@ -156,11 +156,11 @@ namespace YDock.Model
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public virtual void ShowWithActive(IDockElement element, bool toActice = true)
+        public virtual void ShowWithActive(IDockElement element, bool toActive = true)
         {
             if (element != null && !element.CanSelect)
                 (element as DockElement).CanSelect = true;
-            if (_view != null)
+            if (_view != null && toActive)
                 DockManager.ActiveElement = element;
         }
 

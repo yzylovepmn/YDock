@@ -29,6 +29,16 @@ namespace YDock
 
         public DockManager()
         {
+            _Init(0);
+        }
+
+        public DockManager(int fixCount)
+        {
+            _Init(fixCount);
+        }
+
+        private void _Init(int fixCount)
+        {
             Root = new DockRoot();
             _dragManager = new DragManager(this);
             _dockControls = new SortedDictionary<int, IDockControl>();
@@ -37,6 +47,7 @@ namespace YDock
             _forwards = new Stack<int>();
 
             _layouts = new SortedDictionary<string, LayoutSetting.LayoutSetting>();
+            _id = fixCount;
         }
 
         #region Root
@@ -405,6 +416,7 @@ namespace YDock
         {
             if (!_dockControls.ContainsKey(ctrl.ID))
                 _dockControls.Add(ctrl.ID, ctrl);
+            else throw new InvalidOperationException(string.Format("id {0} is repeated!", ctrl.ID));
         }
 
         internal void RemoveDockControl(IDockControl ctrl)
@@ -416,22 +428,6 @@ namespace YDock
         #region Register
         private int _id = 0;
 
-        private int _GetID()
-        {
-            var id = 0;
-            if (_dockControls.Count < _id)
-            {
-                foreach (var key in _dockControls.Keys)
-                {
-                    if (key != id)
-                        break;
-                    id++;
-                }
-            }
-            else id = _id++;
-            return id;
-        }
-
         /// <summary>
         /// 以选项卡模式向DockManager注册一个DockElement
         /// </summary>
@@ -442,11 +438,11 @@ namespace YDock
         /// <param name="desiredWidth">期望的宽度</param>
         /// <param name="desiredHeight">期望的高度</param>
         /// <returns></returns>
-        public void RegisterDocument(IDockSource content, bool canSelect = false, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength, double floatLeft = 0.0, double floatTop = 0.0)
+        public void RegisterDocument(IDockSource content, int? id = null, bool canSelect = false, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength, double floatLeft = 0.0, double floatTop = 0.0)
         {
             DockElement ele = new DockElement(true)
             {
-                ID = _GetID(),
+                ID = id.HasValue ? id.Value : _id++,
                 Title = content.Header,
                 Content = content,
                 ImageSource = content.Icon,
@@ -474,11 +470,11 @@ namespace YDock
         /// <param name="desiredWidth">期望的宽度</param>
         /// <param name="desiredHeight">期望的高度</param>
         /// <returns></returns>
-        public void RegisterDock(IDockSource content, DockSide side = DockSide.Left, bool canSelect = false, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength, double floatLeft = 0.0, double floatTop = 0.0)
+        public void RegisterDock(IDockSource content, DockSide side = DockSide.Left, int? id = null, bool canSelect = false, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength, double floatLeft = 0.0, double floatTop = 0.0)
         {
             DockElement ele = new DockElement()
             {
-                ID = _GetID(),
+                ID = id.HasValue ? id.Value : _id++,
                 Title = content.Header,
                 Content = content,
                 ImageSource = content.Icon,
@@ -516,11 +512,11 @@ namespace YDock
         /// <param name="desiredWidth">期望的宽度</param>
         /// <param name="desiredHeight">期望的高度</param>
         /// <returns></returns>
-        public void RegisterFloat(IDockSource content, DockSide side = DockSide.Left, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength, double floatLeft = 0.0, double floatTop = 0.0)
+        public void RegisterFloat(IDockSource content, DockSide side = DockSide.Left, int? id = null, double desiredWidth = Constants.DockDefaultWidthLength, double desiredHeight = Constants.DockDefaultHeightLength, double floatLeft = 0.0, double floatTop = 0.0)
         {
             DockElement ele = new DockElement()
             {
-                ID = _GetID(),
+                ID = id.HasValue ? id.Value : _id++,
                 Title = content.Header,
                 Content = content,
                 ImageSource = content.Icon,
