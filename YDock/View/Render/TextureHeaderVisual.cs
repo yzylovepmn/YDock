@@ -13,7 +13,7 @@ namespace YDock.View
     {
         public override void Update(Size size)
         {
-            double voffset = (size.Height - 4) / 2;
+            double voffset = (size.Height - 5) / 2;
             using (var ctx = RenderOpen())
             {
                 var model = (VisualParent as FrameworkElement).DataContext as DockElement;

@@ -716,23 +716,23 @@ namespace YDock
             ActiveDashPen = new Pen()
             {
                 Brush = Brushes.White,
-                Thickness = 0.8,
+                Thickness = 1,
                 DashCap = PenLineCap.Flat,
-                DashStyle = new DashStyle(new List<double>() { 1, 4 }, 0)
+                DashStyle = new DashStyle(new List<double>() { 1, 3 }, 0)
             };
 
             DisActiveDashPen = new Pen()
             {
                 Brush = Brushes.Black,
-                Thickness = 0.8,
+                Thickness = 1,
                 DashCap = PenLineCap.Flat,
-                DashStyle = new DashStyle(new List<double>() { 1, 4 }, 0)
+                DashStyle = new DashStyle(new List<double>() { 1, 3 }, 0)
             };
 
             BlueDashPen = new Pen()
             {
                 Brush = Brushes.Blue,
-                Thickness = 0.8,
+                Thickness = 1,
                 DashCap = PenLineCap.Flat,
                 DashStyle = new DashStyle(new List<double>() { 1, 3 }, 0)
             };
