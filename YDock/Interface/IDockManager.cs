@@ -15,6 +15,9 @@ namespace YDock.Interface
         int DocumentTabCount { get; }
 
         event EventHandler ActiveDockChanged;
+
+        event EventHandler SelectedDocumentChanged;
+
         IDockControl SelectedDocument { get; }
         IEnumerable<IDockControl> DockControls { get; }
 

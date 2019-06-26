@@ -627,7 +627,8 @@ namespace YDock
 
         public void Reset(bool hideAll = true)
         {
-            HideAll();
+            if (hideAll)
+                HideAll();
 
             _backwards.Clear();
             _forwards.Clear();
