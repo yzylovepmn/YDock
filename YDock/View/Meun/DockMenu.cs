@@ -92,7 +92,7 @@ namespace YDock.View
             base.OnInitialized(e);
         }
 
-        private void OnCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        internal void OnCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             if (_targetObj == null || _targetObj.IsDisposed)
             {
@@ -111,7 +111,7 @@ namespace YDock.View
                 e.CanExecute = _targetObj.CanHide;
         }
 
-        private void OnCommandExecute(object sender, ExecutedRoutedEventArgs e)
+        internal void OnCommandExecute(object sender, ExecutedRoutedEventArgs e)
         {
             if (_targetObj == null || _targetObj.IsDisposed)
                 return;

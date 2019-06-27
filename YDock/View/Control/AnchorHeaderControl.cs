@@ -109,5 +109,34 @@ namespace YDock.View
             menu.Placement = PlacementMode.Bottom;
             ctb.ContextMenu = menu;
         }
+
+        protected override void OnInitialized(EventArgs e)
+        {
+            CommandBindings.Add(new CommandBinding(GlobalCommands.SwitchAutoHideStatusCommand, OnCommandExecute, OnCommandCanExecute));
+            CommandBindings.Add(new CommandBinding(GlobalCommands.HideStatusCommand, OnCommandExecute, OnCommandCanExecute));
+            base.OnInitialized(e);
+        }
+
+        private void OnCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            var ele = DataContext as DockElement;
+            if (ele != null)
+            {
+                if (e.Command == GlobalCommands.HideStatusCommand)
+                    e.CanExecute = ele.CanHide;
+                if (e.Command == GlobalCommands.SwitchAutoHideStatusCommand)
+                    e.CanExecute = ele.CanSwitchAutoHideStatus;
+            }
+            else e.CanExecute = false;
+        }
+
+        private void OnCommandExecute(object sender, ExecutedRoutedEventArgs e)
+        {
+            var ele = DataContext as DockElement;
+            if (e.Command == GlobalCommands.HideStatusCommand)
+                ele.Hide();
+            if (e.Command == GlobalCommands.SwitchAutoHideStatusCommand)
+                ele.SwitchAutoHideStatus();
+        }
     }
 }
