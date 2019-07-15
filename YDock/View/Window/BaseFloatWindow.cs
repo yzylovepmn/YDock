@@ -140,10 +140,16 @@ namespace YDock.View
         #region Command
         protected override void OnInitialized(EventArgs e)
         {
+            CommandBindings.Add(new CommandBinding(SystemCommands.ShowSystemMenuCommand, OnShowSystemMenuExecute));
             CommandBindings.Add(new CommandBinding(GlobalCommands.CloseCommand, OnCloseExecute, OnCloseCanExecute));
             CommandBindings.Add(new CommandBinding(GlobalCommands.RestoreCommand, OnRestoreExecute, OnRestoreCanExecute));
             CommandBindings.Add(new CommandBinding(GlobalCommands.MaximizeCommand, OnMaximizeExecute, OnMaximizeCanExecute));
             base.OnInitialized(e);
+        }
+
+        private void OnShowSystemMenuExecute(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.ShowSystemMenu(this, new Point(WindowState == WindowState.Maximized ? 0 : Left, WindowState == WindowState.Maximized ? SystemParameters.CaptionHeight : SystemParameters.CaptionHeight + Top));
         }
 
         protected virtual void OnMaximizeCanExecute(object sender, CanExecuteRoutedEventArgs e)

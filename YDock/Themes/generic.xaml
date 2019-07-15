@@ -966,7 +966,18 @@
                 </Grid.RowDefinitions>
                 <DockPanel>
                     <StackPanel x:Name="Header_Title_Image" DockPanel.Dock="Left" Orientation="Horizontal">
-                        <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
+                        <Button VerticalAlignment="Center" Margin="7,0,5,0" Content="{Binding RelativeSource={RelativeSource Mode=TemplatedParent},Path=DockManager.DockImageSource}"
+                                Height="{x:Static SystemParameters.SmallIconHeight}"
+                                Width="{x:Static SystemParameters.SmallIconWidth}"
+                                WindowChrome.IsHitTestVisibleInChrome="True" IsTabStop="False"
+                                Command="{x:Static SystemCommands.ShowSystemMenuCommand}">
+                            <Button.Template>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Image Source="{TemplateBinding Content}"/>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <!--<Image Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>-->
                         <TextBlock x:Name="Title" Margin="5,0,0,0" VerticalAlignment="Center" FontSize="12" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
                     </StackPanel>
                     <StackPanel x:Name="HeaderPanel" DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
@@ -1020,7 +1031,18 @@
                             </Grid.RowDefinitions>
                             <DockPanel x:Name="PART_Header" Height="32">
                                 <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-                                    <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>
+                                    <Button VerticalAlignment="Center" Margin="7,0,5,0" Content="{Binding RelativeSource={RelativeSource Mode=TemplatedParent},Path=DockManager.DockImageSource}"
+                                            Height="{x:Static SystemParameters.SmallIconHeight}"
+                                            Width="{x:Static SystemParameters.SmallIconWidth}"
+                                            WindowChrome.IsHitTestVisibleInChrome="True" IsTabStop="False"
+                                            Command="{x:Static SystemCommands.ShowSystemMenuCommand}">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Image Source="{TemplateBinding Content}"/>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                    <!--<Image Source="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockImageSource}"/>-->
                                     <TextBlock x:Name="Title" Margin="5,0,0,0" VerticalAlignment="Center" FontSize="12" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DockManager.DockTitle}"/>
                                 </StackPanel>
                                 <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
