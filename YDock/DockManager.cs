@@ -47,7 +47,9 @@ namespace YDock
             _forwards = new Stack<int>();
 
             _layouts = new SortedDictionary<string, LayoutSetting.LayoutSetting>();
-            _id = fixCount;
+            _fixCount = fixCount;
+            _id = _fixCount;
+            _disposedID = new Stack<int>();
         }
 
         #region Root
@@ -422,11 +424,25 @@ namespace YDock
         internal void RemoveDockControl(IDockControl ctrl)
         {
             if (_dockControls.ContainsKey(ctrl.ID))
+            {
                 _dockControls.Remove(ctrl.ID);
+
+                if (ctrl.ID >= _fixCount)
+                    _disposedID.Push(ctrl.ID);
+            }
         }
 
         #region Register
         private int _id = 0;
+        private int _fixCount;
+        private Stack<int> _disposedID;
+
+        private int _GetID()
+        {
+            if (_disposedID.Count > 0)
+                return _disposedID.Pop();
+            else return _id++;
+        }
 
         /// <summary>
         /// 以选项卡模式向DockManager注册一个DockElement
@@ -442,7 +458,7 @@ namespace YDock
         {
             DockElement ele = new DockElement(true)
             {
-                ID = id.HasValue ? id.Value : _id++,
+                ID = id.HasValue ? id.Value : _GetID(),
                 Title = content.Header,
                 Content = content,
                 ImageSource = content.Icon,
@@ -474,7 +490,7 @@ namespace YDock
         {
             DockElement ele = new DockElement()
             {
-                ID = id.HasValue ? id.Value : _id++,
+                ID = id.HasValue ? id.Value : _GetID(),
                 Title = content.Header,
                 Content = content,
                 ImageSource = content.Icon,
@@ -516,7 +532,7 @@ namespace YDock
         {
             DockElement ele = new DockElement()
             {
-                ID = id.HasValue ? id.Value : _id++,
+                ID = id.HasValue ? id.Value : _GetID(),
                 Title = content.Header,
                 Content = content,
                 ImageSource = content.Icon,
