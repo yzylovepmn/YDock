@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using YDock.Commands;
 using YDock.Global;
@@ -16,7 +17,6 @@ namespace YDock.View
         {
             _targetObj = targetObj;
             _InitMenuItem();
-            ResourceExtension.LanaguageChanged += OnLanaguageChanged;
         }
 
         private IDockItem _targetObj;
@@ -31,54 +31,27 @@ namespace YDock.View
                 switch (i)
                 {
                     case 0:
-                        item.Header = Properties.Resources.Float;
+                        item.SetBinding(HeaderedItemsControl.HeaderProperty, new Binding("Value") { Source = new ResourceExtension("Float") });
                         item.Command = GlobalCommands.ToFloatCommand;
                         break;
                     case 1:
-                        item.Header = Properties.Resources.Dock;
+                        item.SetBinding(HeaderedItemsControl.HeaderProperty, new Binding("Value") { Source = new ResourceExtension("Dock") });
                         item.Command = GlobalCommands.ToDockCommand;
                         break;
                     case 2:
-                        item.Header = Properties.Resources.Dock_Document;
+                        item.SetBinding(HeaderedItemsControl.HeaderProperty, new Binding("Value") { Source = new ResourceExtension("Dock_Document") });
                         item.Command = GlobalCommands.ToDockAsDocumentCommand;
                         break;
                     case 3:
-                        item.Header = Properties.Resources.AutoHide;
+                        item.SetBinding(HeaderedItemsControl.HeaderProperty, new Binding("Value") { Source = new ResourceExtension("AutoHide") });
                         item.Command = GlobalCommands.SwitchAutoHideStatusCommand;
                         break;
                     case 4:
-                        item.Header = Properties.Resources.Hide;
+                        item.SetBinding(HeaderedItemsControl.HeaderProperty, new Binding("Value") { Source = new ResourceExtension("Hide") });
                         item.Command = GlobalCommands.HideStatusCommand;
                         break;
                 }
                 Items.Add(item);
-            }
-        }
-
-        private void OnLanaguageChanged(object sender, EventArgs e)
-        {
-            int index = 0;
-            foreach (MenuItem item in Items)
-            {
-                switch (index)
-                {
-                    case 0:
-                        item.Header = Properties.Resources.Float;
-                        break;
-                    case 1:
-                        item.Header = Properties.Resources.Dock;
-                        break;
-                    case 2:
-                        item.Header = Properties.Resources.Dock_Document;
-                        break;
-                    case 3:
-                        item.Header = Properties.Resources.AutoHide;
-                        break;
-                    case 4:
-                        item.Header = Properties.Resources.Hide;
-                        break;
-                }
-                index++;
             }
         }
 
@@ -129,7 +102,6 @@ namespace YDock.View
 
         public void Dispose()
         {
-            ResourceExtension.LanaguageChanged -= OnLanaguageChanged;
             _targetObj = null;
         }
     }
