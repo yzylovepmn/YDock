@@ -15,6 +15,7 @@ using YDock.Model;
 using System.Windows.Input;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Interop;
 
 namespace YDock.View
 {
@@ -28,6 +29,20 @@ namespace YDock.View
         public AnchorGroupWindow(DockManager dockManager) : base(dockManager)
         {
             ShowInTaskbar = false;
+            SourceInitialized += _OnSourceInitialized;
+        }
+
+        private void _OnSourceInitialized(object sender, EventArgs e)
+        {
+            SourceInitialized -= _OnSourceInitialized;
+
+            var wndInterop = new WindowInteropHelper(this);
+            var hwnd = wndInterop.Handle;
+
+            var wndLong = Win32Helper.GetWindowLong(hwnd, -16);
+            wndLong &= ~0x00080000;
+
+            Win32Helper.SetWindowLong(hwnd, -16, wndLong);
         }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
@@ -102,7 +117,9 @@ namespace YDock.View
                 case Win32Helper.WM_NCLBUTTONDOWN:
                 case Win32Helper.WM_NCRBUTTONDOWN:
                     ActiveSelf();
-                    if (IsSingleMode && msg == Win32Helper.WM_NCRBUTTONDOWN)
+                    break;
+                case Win32Helper.WM_NCRBUTTONUP:
+                    if (IsSingleMode && wParam.ToInt32() == Win32Helper.HT_CAPTION)
                     {
                         if (menu == null)
                             _ApplyMenu((Child as BaseGroupControl).SelectedItem as IDockItem);
@@ -111,17 +128,6 @@ namespace YDock.View
                     break;
             }
             return base.FilterMessage(hwnd, msg, wParam, lParam, ref handled);
-        }
-
-        protected override void OnPreviewMouseRightButtonDown(MouseButtonEventArgs e)
-        {
-            base.OnPreviewMouseRightButtonDown(e);
-            if (menu != null)
-            {
-                var p = e.GetPosition(this);
-                if (p.Y < 20)
-                    menu.IsOpen = true;
-            }
         }
 
         public override void Recreate()
