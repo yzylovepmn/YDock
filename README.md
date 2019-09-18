@@ -1,6 +1,6 @@
 # YDock
 
-## This is a layout system similar to viausl studio.
+## This is a layout system similar to visual studio.
 
 The lastest version is based on .NET4.5.
 if you use .NET4.0, You need to reference the Microsoft.Windows.Shell assembly to replace the WindowChrome class in .NET4.5.
