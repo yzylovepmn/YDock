@@ -41,6 +41,9 @@ namespace YDock.View
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
+            var ele = DataContext as DockElement;
+            if (ele.IsAutoHide && !ele.IsActive && ele.IsVisible)
+                ele.DockControl.SetActive();
             _mouseDown = e.GetPosition(this);
             if(!IsMouseCaptured)
                 CaptureMouse();
