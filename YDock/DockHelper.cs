@@ -52,10 +52,10 @@ namespace YDock
                 spliter.VerticalOffset = 0;
                 spliter.Height = size.Height + location.Y;
             }
-            if (location.X + size.Width > SystemParameters.PrimaryScreenWidth)
-                spliter.Width = SystemParameters.PrimaryScreenWidth - location.X;
-            if (location.Y + size.Height > SystemParameters.PrimaryScreenHeight)
-                spliter.Height = SystemParameters.PrimaryScreenHeight - location.Y;
+            if (location.X + size.Width > SystemParameters.VirtualScreenWidth)
+                spliter.Width = SystemParameters.VirtualScreenWidth - location.X;
+            if (location.Y + size.Height > SystemParameters.VirtualScreenHeight)
+                spliter.Height = SystemParameters.VirtualScreenHeight - location.Y;
         }
 
         public static void UpdateLocation(DropWindow wnd, double left, double top, double width, double height)
@@ -96,10 +96,10 @@ namespace YDock
                     wnd.HorizontalOffset = 0;
                     hrectoffset += left;
                 }
-                else if (left + wnd.Width > SystemParameters.PrimaryScreenWidth)
+                else if (left + wnd.Width > SystemParameters.VirtualScreenWidth)
                 {
-                    wnd.HorizontalOffset = SystemParameters.PrimaryScreenWidth - wnd.Width;
-                    hrectoffset += left + wnd.Width - SystemParameters.PrimaryScreenWidth;
+                    wnd.HorizontalOffset = SystemParameters.VirtualScreenWidth - wnd.Width;
+                    hrectoffset += left + wnd.Width - SystemParameters.VirtualScreenWidth;
                 }
                 else wnd.HorizontalOffset = left;
 
@@ -108,10 +108,10 @@ namespace YDock
                     wnd.VerticalOffset = 0;
                     vrectoffset += top;
                 }
-                else if (top + wnd.Height > SystemParameters.PrimaryScreenHeight)
+                else if (top + wnd.Height > SystemParameters.VirtualScreenHeight)
                 {
-                    wnd.VerticalOffset = SystemParameters.PrimaryScreenHeight - wnd.Height;
-                    vrectoffset += top + wnd.Height - SystemParameters.PrimaryScreenHeight;
+                    wnd.VerticalOffset = SystemParameters.VirtualScreenHeight - wnd.Height;
+                    vrectoffset += top + wnd.Height - SystemParameters.VirtualScreenHeight;
                 }
                 else wnd.VerticalOffset = top;
 
@@ -140,10 +140,10 @@ namespace YDock
                     wnd.HorizontalOffset = 0;
                     hrectoffset += left;
                 }
-                else if (left + width > SystemParameters.PrimaryScreenWidth)
+                else if (left + width > SystemParameters.VirtualScreenWidth)
                 {
-                    wnd.HorizontalOffset = SystemParameters.PrimaryScreenWidth - width;
-                    hrectoffset += left + width - SystemParameters.PrimaryScreenWidth;
+                    wnd.HorizontalOffset = SystemParameters.VirtualScreenWidth - width;
+                    hrectoffset += left + width - SystemParameters.VirtualScreenWidth;
                 }
                 else wnd.HorizontalOffset = left;
 
@@ -152,10 +152,10 @@ namespace YDock
                     wnd.VerticalOffset = 0;
                     vrectoffset += top;
                 }
-                else if (top + height > SystemParameters.PrimaryScreenHeight)
+                else if (top + height > SystemParameters.VirtualScreenHeight)
                 {
-                    wnd.VerticalOffset = SystemParameters.PrimaryScreenHeight - height;
-                    vrectoffset += top + height - SystemParameters.PrimaryScreenHeight;
+                    wnd.VerticalOffset = SystemParameters.VirtualScreenHeight - height;
+                    vrectoffset += top + height - SystemParameters.VirtualScreenHeight;
                 }
                 else wnd.VerticalOffset = top;
                 wnd.DropPanel.InnerRect = new Rect(hrectoffset, vrectoffset, wnd.Width, wnd.Height);
