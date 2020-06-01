@@ -440,26 +440,33 @@ namespace YDock
             }
             bool flag = false;
             _mouseP = DockHelper.GetMousePosition(DockManager);
-            foreach (var wnd in DockManager.FloatWindows)
+            foreach (var wnd in DockManager.Windows.Where(w => w is BaseFloatWindow).Cast<BaseFloatWindow>())
             {
                 if (wnd != _dragWnd
                     && wnd.RestoreBounds.Contains(_mouseP)
                     && !(wnd is DocumentGroupWindow && _dragItem.DragMode == DragMode.Anchor)
                     && !(wnd is AnchorGroupWindow && _dragItem.DragMode == DragMode.Document))
                 {
-                    if (wnd is DocumentGroupWindow)
-                        if (DockManager.IsBehindToMainWindow(wnd))
-                            continue;
+                    //if (wnd is DocumentGroupWindow)
+                    //    if (DockManager.IsBehindToMainWindow(wnd))
+                    //        continue;
 
-                    if (wnd != DockManager.FloatWindows.First())
+                    var lflag = false;
+                    if (!DockManager.IsAtWindowsIndex(wnd, 1))
                     {
-                        DockManager.MoveFloatTo(wnd);
-                        Application.Current.Dispatcher.InvokeAsync(() => 
-                        {
-                            Win32Helper.BringWindowToTop(wnd.Handle);
-                            Win32Helper.BringWindowToTop(_dragWnd.Handle);
-                        }, DispatcherPriority.Background);
+                        //DockManager.MoveFloatTo(wnd);
+                        lflag = true;
                     }
+                    else if (DockManager.IsBehindToMainWindow(wnd))
+                        lflag = true;
+
+                    if (lflag)
+                    {
+                        Win32Helper.BringWindowToTop(wnd.Handle);
+                        Win32Helper.BringWindowToTop(_dragWnd.Handle);
+                        DockManager.UpdateWindowZOrder();
+                    }
+
                     wnd.HitTest(_mouseP);
 
                     DockManager.LayoutRootPanel.RootGroupPanel.HideDropWindow();

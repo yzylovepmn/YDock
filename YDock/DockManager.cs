@@ -604,7 +604,8 @@ namespace YDock
                 _floatWindows.Remove(window);
         }
 
-        internal List<Window> _windows = new List<Window>();
+        internal IEnumerable<Window> Windows { get { return _windows; } }
+        private List<Window> _windows = new List<Window>();
         internal void UpdateWindowZOrder()
         {
             _windows.Clear();
@@ -613,7 +614,7 @@ namespace YDock
                 if (wnd is BaseFloatWindow)
                     unsorts.Add(wnd);
             unsorts.Add(MainWindow);
-            _windows.AddRange(SortWindowsTopToBottom(unsorts));
+            _windows = SortWindowsTopToBottom(unsorts).ToList();
         }
 
         internal bool IsBehindToMainWindow(BaseFloatWindow wnd)
@@ -623,6 +624,12 @@ namespace YDock
             int index1 = _windows.IndexOf(_mainWindow);
             int index2 = _windows.IndexOf(wnd);
             return index2 > index1;
+        }
+
+        internal bool IsAtWindowsIndex(BaseFloatWindow wnd, int index)
+        {
+            int index1 = _windows.IndexOf(wnd);
+            return index == index1;
         }
 
         private IEnumerable<Window> SortWindowsTopToBottom(IEnumerable<Window> unsorted)

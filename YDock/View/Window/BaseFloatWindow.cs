@@ -37,7 +37,7 @@ namespace YDock.View
         protected override void OnActivated(EventArgs e)
         {
             base.OnActivated(e);
-            if (Mouse.LeftButton == MouseButtonState.Pressed && (DockManager.DragManager._dragWnd == null || DockManager.DragManager._dragWnd == this))
+            if (DockManager.DragManager.DragItem != null && (DockManager.DragManager._dragWnd == null || DockManager.DragManager._dragWnd == this))
             {
                 IntPtr windowHandle = new WindowInteropHelper(this).Handle;
                 var mousePosition = this.PointToScreenDPI(Mouse.GetPosition(this));
