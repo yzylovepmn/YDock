@@ -46,7 +46,7 @@ namespace YDock.Global
         {
             IProvideValueTarget target = serviceProvider.GetService(typeof(IProvideValueTarget)) as IProvideValueTarget;
             Setter setter = target.TargetObject as Setter;
-            if (setter == null)
+            if (setter != null)
                 return new Binding("Value") { Source = this, Mode = BindingMode.OneWay };
             else
             {
