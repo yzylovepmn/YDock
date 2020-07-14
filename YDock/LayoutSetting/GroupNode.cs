@@ -37,6 +37,7 @@ namespace YDock.LayoutSetting
             foreach (var child in _children)
             {
                 var ele = dockManager.GetDockControl(child.ID);
+                if (ele == null) continue;
                 if (relative == null)
                 {
                     relative = ele;
