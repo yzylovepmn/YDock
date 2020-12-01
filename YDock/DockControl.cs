@@ -329,10 +329,13 @@ namespace YDock
         {
             if (_isDisposed) return;
             _isDisposed = true;
-            DockManager.RemoveDockControl(this);
-            _protoType.PropertyChanged -= OnPrototypePropertyChanged;
-            _protoType.Dispose();
-            _protoType = null;
+            DockManager?.RemoveDockControl(this);
+            if (_protoType != null)
+            {
+                _protoType.PropertyChanged -= OnPrototypePropertyChanged;
+                _protoType.Dispose();
+                _protoType = null;
+            }
         }
     }
 }
